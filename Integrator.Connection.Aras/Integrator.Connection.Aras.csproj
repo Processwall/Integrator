@@ -43,8 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Item.cs" />
     <Compile Include="ItemType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Property.cs" />
     <Compile Include="PropertyType.cs" />
     <Compile Include="PropertyTypes\Boolean.cs" />
     <Compile Include="PropertyTypes\Date.cs" />
@@ -55,6 +57,15 @@
     <Compile Include="PropertyTypes\List.cs" />
     <Compile Include="PropertyTypes\String.cs" />
     <Compile Include="PropertyTypes\Text.cs" />
+    <Compile Include="Props\Boolean.cs" />
+    <Compile Include="Props\Text.cs" />
+    <Compile Include="Props\String.cs" />
+    <Compile Include="Props\List.cs" />
+    <Compile Include="Props\Item.cs" />
+    <Compile Include="Props\Integer.cs" />
+    <Compile Include="Props\Image.cs" />
+    <Compile Include="Props\Decimal.cs" />
+    <Compile Include="Props\Date.cs" />
     <Compile Include="RelationshipType.cs" />
     <Compile Include="Session.cs" />
   </ItemGroup>

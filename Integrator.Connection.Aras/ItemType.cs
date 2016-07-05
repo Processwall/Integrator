@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Aras.IOM;
+using IOM = Aras.IOM;
 
 namespace Integrator.Connection.Aras
 {
@@ -23,7 +23,7 @@ namespace Integrator.Connection.Aras
                 {
                     this._propertyTypesCache = new Dictionary<String, PropertyType>();
 
-                    Item propertytypes = this.Session.Innovator.newItem("Property", "get");
+                    IOM.Item propertytypes = this.Session.Innovator.newItem("Property", "get");
                     propertytypes.setProperty("source_id", this.ID);
                     propertytypes.setAttribute("select", "name,data_type,stored_length,data_source");
                     propertytypes = propertytypes.apply();
@@ -32,7 +32,7 @@ namespace Integrator.Connection.Aras
                     {
                         for (int i = 0; i < propertytypes.getItemCount(); i++)
                         {
-                            Item propertype = propertytypes.getItemByIndex(i);
+                            IOM.Item propertype = propertytypes.getItemByIndex(i);
                             PropertyType proptype = null;
 
                             switch (propertype.getProperty("data_type"))

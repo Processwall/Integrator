@@ -11,8 +11,8 @@ namespace Integrator.Connection.Aras.Debug
         {
             ISession session = new Session("http://localhost/11SP6/", "Development11SP6", "admin", "innovator");
 
-            IItemType partitemtype = session.ItemType("Part");
-            IEnumerable<IPropertyType> proptypes = partitemtype.PropertyTypes;
+    
+            IEnumerable<IItem> parts = session.Index("Part");
 
         }
     }

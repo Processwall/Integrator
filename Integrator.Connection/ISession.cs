@@ -10,5 +10,13 @@ namespace Integrator.Connection
         IEnumerable<IItemType> ItemTypes { get; }
 
         IItemType ItemType(String Name);
+
+        IItem Create(IItemType ItemType);
+
+        IItem Create(String IName);
+
+        IEnumerable<IItem> Index(IItemType ItemType);
+
+        IEnumerable<IItem> Index(String Name);
     }
 }

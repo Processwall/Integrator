@@ -39,6 +39,39 @@ namespace Integrator.Connection.Aras.Properties
             }
         }
 
+        internal override System.String DBValue
+        {
+            get
+            {
+                if (this.Value == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    if (this.Value == true)
+                    {
+                        return "1";
+                    }
+                    else
+                    {
+                        return "0";
+                    }
+                }
+            }
+            set
+            {
+                if (value == null)
+                {
+                    this.Value = null;
+                }
+                else
+                {
+                    this.Value = "1".Equals(value);
+                }
+            }
+        }
+
         internal Boolean(PropertyTypes.Boolean PropertyType)
             : base(PropertyType)
         {

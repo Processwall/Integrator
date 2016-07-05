@@ -184,7 +184,7 @@ namespace Integrator.Connection.Aras
 
         private Dictionary<ItemType, Dictionary<String, Item>> ItemCache;
 
-        internal Item Create(ItemType ItemType, String ID, String ConfigID)
+        internal Item Create(ItemType ItemType, String ID, Boolean InDatabase)
         {
             if (!this.ItemCache.ContainsKey(ItemType))
             {
@@ -197,9 +197,101 @@ namespace Integrator.Connection.Aras
             }
             else
             {
-                Item item = new Item(ItemType, ID, ConfigID);
-                this.ItemCache[ItemType][ID] = item;
-                return item;
+                if (ItemType is RelationshipType)
+                {
+                    IOM.Item iomsource = this.Innovator.newItem(ItemType.Name, "get");
+                    iomsource.setID(ID);
+                    iomsource.setAttribute("select", "id,source_id,related_id");
+                    iomsource = iomsource.apply();
+
+                    if (!iomsource.isError())
+                    {
+                        return this.Create((RelationshipType)ItemType, ID, iomsource.getProperty("source_id"), iomsource.getProperty("related_id"), true);
+                    }
+                    else
+                    {
+                        throw new Exceptions.ReadException(iomsource.getErrorString());
+                    }
+                }
+                else
+                {
+                    Item item = new Item(ItemType, ID, InDatabase);
+                    this.ItemCache[ItemType][ID] = item;
+                    return item;
+                }
+            }
+        }
+
+        internal Relationship Create(RelationshipType RelationshipType, String ID, String SourceID, String RelatedID, Boolean InDatabase)
+        {
+            if (!this.ItemCache.ContainsKey(RelationshipType))
+            {
+                this.ItemCache[RelationshipType] = new Dictionary<String, Item>();
+            }
+
+            if (this.ItemCache[RelationshipType].ContainsKey(ID))
+            {
+                return (Relationship)this.ItemCache[RelationshipType][ID];
+            }
+            else
+            {
+                Item source = null;
+                Item related = null;
+
+                if (!System.String.IsNullOrEmpty(SourceID))
+                {
+                    if (RelationshipType.Source is RelationshipType)
+                    {
+                        IOM.Item iomsource = this.Innovator.newItem(RelationshipType.Source.Name, "get");
+                        iomsource.setID(SourceID);
+                        iomsource.setAttribute("select", "id,source_id,related_id");
+                        iomsource = iomsource.apply();
+
+                        if (!iomsource.isError())
+                        {
+                            source = this.Create((RelationshipType)RelationshipType.Source, SourceID, iomsource.getProperty("source_id"), iomsource.getProperty("related_id"), true);
+                        }
+                        else
+                        {
+                            throw new Exceptions.ReadException(iomsource.getErrorString());
+                        }
+                    }
+                    else
+                    {
+                        source = this.Create((ItemType)RelationshipType.Source, SourceID, InDatabase);
+                    }
+                }
+
+                if (RelationshipType.Related != null)
+                {
+                    if (!System.String.IsNullOrEmpty(RelatedID))
+                    {
+                        if (RelationshipType.Related is RelationshipType)
+                        {
+                            IOM.Item iomrelated = this.Innovator.newItem(RelationshipType.Related.Name, "get");
+                            iomrelated.setID(RelatedID);
+                            iomrelated.setAttribute("select", "id,source_id,related_id");
+                            iomrelated = iomrelated.apply();
+
+                            if (!iomrelated.isError())
+                            {
+                                related = this.Create((RelationshipType)RelationshipType.Related, RelatedID, iomrelated.getProperty("source_id"), iomrelated.getProperty("related_id"), true);
+                            }
+                            else
+                            {
+                                throw new Exceptions.ReadException(iomrelated.getErrorString());
+                            }
+                        }
+                        else
+                        {
+                            related = this.Create((ItemType)RelationshipType.Related, RelatedID, InDatabase);
+                        }
+                    }
+                }
+
+                Relationship relationship = new Relationship(RelationshipType, ID, source, related, InDatabase);
+                this.ItemCache[RelationshipType][ID] = relationship;
+                return relationship;
             }
         }
 
@@ -208,7 +300,7 @@ namespace Integrator.Connection.Aras
             if (ItemType is ItemType && ((ItemType)ItemType).Session.Equals(this))
             {
                 String ID = this.Innovator.getNewID();
-                return this.Create((ItemType)ItemType, ID, ID);
+                return this.Create((ItemType)ItemType, ID, false);
             }
             else
             {
@@ -226,7 +318,7 @@ namespace Integrator.Connection.Aras
             if (ItemType is ItemType && ((ItemType)ItemType).Session.Equals(this))
             {
                 IOM.Item iomitems = this.Innovator.newItem(ItemType.Name, "get");
-                iomitems.setAttribute("select", "id,config_id");
+                iomitems.setAttribute("select", "id");
                 iomitems = iomitems.apply();
 
                 if (!iomitems.isError())
@@ -236,7 +328,7 @@ namespace Integrator.Connection.Aras
                     for (int i = 0; i < iomitems.getItemCount(); i++)
                     {
                         IOM.Item iomitem = iomitems.getItemByIndex(i);
-                        items.Add(this.Create((ItemType)ItemType, iomitem.getID(), iomitem.getProperty("config_id")));
+                        items.Add(this.Create((ItemType)ItemType, iomitem.getID(), true));
                     }
 
                     return items;

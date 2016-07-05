@@ -38,6 +38,20 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        private String[] _systemProperties;
+        internal override String[] SystemProperties
+        {
+            get
+            {
+                if (this._systemProperties == null)
+                {
+                    this._systemProperties = new String[3] { "id", "source_id", "related_id" };
+                }
+
+                return this._systemProperties;
+            }
+        }
+
         internal RelationshipType(Session Session, String ID, String Name)
             : base(Session, ID, Name)
         {

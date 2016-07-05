@@ -13,6 +13,9 @@ namespace Integrator.Connection.Aras.Debug
 
     
             IEnumerable<IItem> parts = session.Index("Part");
+            IItem part1 = parts.Last();
+            IEnumerable<IProperty> props = part1.Properties;
+            IEnumerable<IRelationship> partboms = part1.Relationships("Part BOM");
 
         }
     }

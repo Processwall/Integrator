@@ -39,6 +39,32 @@ namespace Integrator.Connection.Aras.Properties
             }
         }
 
+        internal override System.String DBValue
+        {
+            get
+            {
+                if (this.Value == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return this.Value.ID;
+                }
+            }
+            set
+            {
+                if (value == null)
+                {
+                    this.Value = null;
+                }
+                else
+                {
+                    this.Value = this.Session.Create((ItemType)((PropertyTypes.Item)this.PropertyType).PropertyItemType, value, true);
+                }
+            }
+        }
+
         internal Item(PropertyTypes.Item PropertyType)
             : base(PropertyType)
         {

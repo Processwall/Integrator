@@ -39,6 +39,32 @@ namespace Integrator.Connection.Aras.Properties
             }
         }
 
+        internal override System.String DBValue
+        {
+            get
+            {
+                if (this.Value == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return ((System.Decimal)this.Value).ToString();
+                }
+            }
+            set
+            {
+                if (value == null)
+                {
+                    this.Value = null;
+                }
+                else
+                {
+                    this.Value = System.Decimal.Parse(value);
+                }
+            }
+        }
+
         internal Decimal(PropertyTypes.Decimal PropertyType)
             : base(PropertyType)
         {

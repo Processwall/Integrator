@@ -11,12 +11,12 @@ namespace Integrator.Connection
 
         String ID { get; }
 
-        String ConfigID { get; }
-
-        IEnumerable<IItem> Configurtions { get; }
+        IEnumerable<IItem> Revisions { get; }
 
         IEnumerable<IProperty> Properties { get; }
 
         IEnumerable<IRelationship> Relationships(IRelationshipType RelationshipType);
+
+        IEnumerable<IRelationship> Relationships(String Name);
     }
 }

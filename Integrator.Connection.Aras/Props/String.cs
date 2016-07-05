@@ -39,6 +39,19 @@ namespace Integrator.Connection.Aras.Properties
             }
         }
 
+        internal override System.String DBValue
+        {
+            get
+            {
+                return this.Value;
+
+            }
+            set
+            {
+                this.Value = value;
+            }
+        }
+
         internal String(PropertyTypes.String PropertyType)
             : base(PropertyType)
         {

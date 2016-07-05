@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Integrator.Connection.Aras.Properties
 {
-    public class Image : Property, Connection.Properties.IImage
+    public class MD5 : Property, Connection.Properties.IMD5
     {
         private object _object;
         public override object Object
@@ -52,7 +52,7 @@ namespace Integrator.Connection.Aras.Properties
             }
         }
 
-        internal Image(PropertyTypes.Image PropertyType)
+        internal MD5(PropertyTypes.MD5 PropertyType)
             : base(PropertyType)
         {
         }

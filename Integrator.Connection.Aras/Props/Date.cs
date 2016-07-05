@@ -39,6 +39,32 @@ namespace Integrator.Connection.Aras.Properties
             }
         }
 
+        internal override System.String DBValue
+        {
+            get
+            {
+                if (this.Value == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return ((System.DateTime)this.Value).ToString("yyyy-MM-ddTHH:mm:ss");
+                }
+            }
+            set
+            {
+                if (value == null)
+                {
+                    this.Value = null;
+                }
+                else
+                {
+                    this.Value = System.DateTime.Parse(value);
+                }
+            }
+        }
+
         internal Date(PropertyTypes.Date PropertyType)
             : base(PropertyType)
         {

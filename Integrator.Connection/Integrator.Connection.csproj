@@ -51,6 +51,7 @@
     <Compile Include="IItemType.cs" />
     <Compile Include="ISession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyTypes\IMD5.cs" />
     <Compile Include="PropertyTypes\IBoolean.cs" />
     <Compile Include="PropertyTypes\IDate.cs" />
     <Compile Include="PropertyTypes\IDecimal.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="PropertyTypes\IList.cs" />
     <Compile Include="PropertyTypes\IString.cs" />
     <Compile Include="PropertyTypes\IText.cs" />
+    <Compile Include="Props\IMD5.cs" />
     <Compile Include="Props\IText.cs" />
     <Compile Include="Props\IString.cs" />
     <Compile Include="Props\IList.cs" />

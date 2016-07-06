@@ -60,7 +60,7 @@ namespace Integrator.Connection.Aras.Properties
                 }
                 else
                 {
-                    this.Value = this.Session.Create((ItemType)((PropertyTypes.Item)this.PropertyType).PropertyItemType, value, true);
+                    this.Value = this.Session.Create((ItemType)((PropertyTypes.Item)this.PropertyType).PropertyItemType, value, State.Stored);
                 }
             }
         }

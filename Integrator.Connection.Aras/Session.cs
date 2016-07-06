@@ -184,7 +184,7 @@ namespace Integrator.Connection.Aras
 
         private Dictionary<ItemType, Dictionary<String, Item>> ItemCache;
 
-        internal Item Create(ItemType ItemType, String ID, Boolean InDatabase)
+        internal Item Create(ItemType ItemType, String ID, State Status)
         {
             if (!this.ItemCache.ContainsKey(ItemType))
             {
@@ -206,7 +206,7 @@ namespace Integrator.Connection.Aras
 
                     if (!iomsource.isError())
                     {
-                        return this.Create((RelationshipType)ItemType, ID, iomsource.getProperty("source_id"), iomsource.getProperty("related_id"), true);
+                        return this.Create((RelationshipType)ItemType, ID, State.Stored, iomsource.getProperty("source_id"), iomsource.getProperty("related_id"));
                     }
                     else
                     {
@@ -215,14 +215,14 @@ namespace Integrator.Connection.Aras
                 }
                 else
                 {
-                    Item item = new Item(ItemType, ID, InDatabase);
+                    Item item = new Item(ItemType, ID, Status);
                     this.ItemCache[ItemType][ID] = item;
                     return item;
                 }
             }
         }
 
-        internal Relationship Create(RelationshipType RelationshipType, String ID, String SourceID, String RelatedID, Boolean InDatabase)
+        internal Relationship Create(RelationshipType RelationshipType, String ID, State Status, String SourceID, String RelatedID)
         {
             if (!this.ItemCache.ContainsKey(RelationshipType))
             {
@@ -249,7 +249,7 @@ namespace Integrator.Connection.Aras
 
                         if (!iomsource.isError())
                         {
-                            source = this.Create((RelationshipType)RelationshipType.Source, SourceID, iomsource.getProperty("source_id"), iomsource.getProperty("related_id"), true);
+                            source = this.Create((RelationshipType)RelationshipType.Source, SourceID, State.Stored, iomsource.getProperty("source_id"), iomsource.getProperty("related_id"));
                         }
                         else
                         {
@@ -258,7 +258,7 @@ namespace Integrator.Connection.Aras
                     }
                     else
                     {
-                        source = this.Create((ItemType)RelationshipType.Source, SourceID, InDatabase);
+                        source = this.Create((ItemType)RelationshipType.Source, SourceID, Status);
                     }
                 }
 
@@ -275,7 +275,7 @@ namespace Integrator.Connection.Aras
 
                             if (!iomrelated.isError())
                             {
-                                related = this.Create((RelationshipType)RelationshipType.Related, RelatedID, iomrelated.getProperty("source_id"), iomrelated.getProperty("related_id"), true);
+                                related = this.Create((RelationshipType)RelationshipType.Related, RelatedID, State.Stored, iomrelated.getProperty("source_id"), iomrelated.getProperty("related_id"));
                             }
                             else
                             {
@@ -284,12 +284,12 @@ namespace Integrator.Connection.Aras
                         }
                         else
                         {
-                            related = this.Create((ItemType)RelationshipType.Related, RelatedID, InDatabase);
+                            related = this.Create((ItemType)RelationshipType.Related, RelatedID, State.Stored);
                         }
                     }
                 }
 
-                Relationship relationship = new Relationship(RelationshipType, ID, source, related, InDatabase);
+                Relationship relationship = new Relationship(RelationshipType, ID, Status, source, related);
                 this.ItemCache[RelationshipType][ID] = relationship;
                 return relationship;
             }
@@ -300,7 +300,7 @@ namespace Integrator.Connection.Aras
             if (ItemType is ItemType && ((ItemType)ItemType).Session.Equals(this))
             {
                 String ID = this.Innovator.getNewID();
-                return this.Create((ItemType)ItemType, ID, false);
+                return this.Create((ItemType)ItemType, ID, State.Created);
             }
             else
             {
@@ -328,7 +328,7 @@ namespace Integrator.Connection.Aras
                     for (int i = 0; i < iomitems.getItemCount(); i++)
                     {
                         IOM.Item iomitem = iomitems.getItemByIndex(i);
-                        items.Add(this.Create((ItemType)ItemType, iomitem.getID(), true));
+                        items.Add(this.Create((ItemType)ItemType, iomitem.getID(), State.Stored));
                     }
 
                     return items;

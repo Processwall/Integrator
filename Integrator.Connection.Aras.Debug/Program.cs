@@ -16,7 +16,15 @@ namespace Integrator.Connection.Aras.Debug
             IItem part1 = parts.Last();
             IEnumerable<IProperty> props = part1.Properties;
             IEnumerable<IRelationship> partboms = part1.Relationships("Part BOM");
+            part1.Refresh();
 
+            foreach(IRelationship rel in partboms)
+            {
+                rel.Refresh();
+            }
+
+            IEnumerable<IProperty> props2 = part1.Properties;
+            IEnumerable<IRelationship> partboms2 = part1.Relationships("Part BOM");
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Integrator.Connection.Aras
 
         public String ID { get; private set; }
 
-        internal Boolean InDatabase { get; private set; }
+        public State Status { get; protected set; }
 
         public IEnumerable<IItem> Revisions
         {
@@ -91,7 +91,7 @@ namespace Integrator.Connection.Aras
                         this._propertyCache[(PropertyType)proptype] = prop;
                     }
 
-                    if (this.InDatabase)
+                    if (this.Status == State.Stored)
                     {
                         IOM.Item iomproperties = this.Session.Innovator.newItem(this.ItemType.Name, "get");
                         iomproperties.setID(this.ID);
@@ -140,7 +140,7 @@ namespace Integrator.Connection.Aras
                         for (int i = 0; i < iomrels.getItemCount(); i++)
                         {
                             IOM.Item iomrel = iomrels.getItemByIndex(i);
-                            this.RelationshipsCache[(RelationshipType)RelationshipType].Add(this.Session.Create((RelationshipType)RelationshipType, iomrel.getID(), this.ID, iomrel.getProperty("related_id"), true));
+                            this.RelationshipsCache[(RelationshipType)RelationshipType].Add(this.Session.Create((RelationshipType)RelationshipType, iomrel.getID(), State.Stored, this.ID, iomrel.getProperty("related_id")));
                         }
 
                         return this.RelationshipsCache[(RelationshipType)RelationshipType];
@@ -171,11 +171,17 @@ namespace Integrator.Connection.Aras
             return this.Relationships(this.ItemType.RelationshipType(Name));
         }
 
-        internal Item(ItemType ItemType, String ID, Boolean InDatabase)
+        public virtual void Refresh()
+        {
+            this._propertyCache = null;
+            this.RelationshipsCache.Clear();
+        }
+
+        internal Item(ItemType ItemType, String ID, State Status)
         {
             this.ItemType = ItemType;
             this.ID = ID;
-            this.InDatabase = InDatabase;
+            this.Status = Status;
             this.RelationshipsCache = new Dictionary<RelationshipType, List<Relationship>>();
         }
     }

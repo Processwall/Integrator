@@ -7,18 +7,18 @@ namespace Integrator.Connection.Aras.Properties
 {
     public class MD5 : Property, Connection.Properties.IMD5
     {
-        private object _object;
+
         public override object Object
         {
             get
             {
-                return this._object;
+                return base.Object;
             }
             set
             {
                 if ((value == null) || (value is System.String))
                 {
-                    this._object = value;
+                    base.Object = value;
                 }
                 else
                 {

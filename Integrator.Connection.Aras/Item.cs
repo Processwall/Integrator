@@ -318,7 +318,10 @@ namespace Integrator.Connection.Aras
 
             foreach(IPropertyType proptype in this.ItemType.PropertyTypes)
             {
-                iomitem.setProperty(proptype.Name, this.PropertyCache[(PropertyType)proptype].DBValue);
+                if (this.PropertyCache[(PropertyType)proptype].ValueSet)
+                {
+                    iomitem.setProperty(proptype.Name, this.PropertyCache[(PropertyType)proptype].DBValue);
+                }
             }
 
             iomitem = iomitem.apply();
@@ -332,6 +335,8 @@ namespace Integrator.Connection.Aras
                     {
                         property.DBValue = iomitem.getProperty(property.PropertyType.Name);
                     }
+
+                    this.Status = State.Updating;
 
                     if (Unlock)
                     {

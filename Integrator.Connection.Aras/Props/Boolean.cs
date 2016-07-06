@@ -7,18 +7,17 @@ namespace Integrator.Connection.Aras.Properties
 {
     public class Boolean : Property, Connection.Properties.IBoolean
     {
-        private object _object;
         public override object Object
         {
             get
             {
-                return this._object;
+                return base.Object;
             }
             set
             {
                 if ((value == null) || (value is System.Boolean))
                 {
-                    this._object = value;
+                    base.Object = value;
                 }
                 else
                 {

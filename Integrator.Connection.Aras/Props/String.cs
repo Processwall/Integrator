@@ -7,18 +7,18 @@ namespace Integrator.Connection.Aras.Properties
 {
     public class String : Property, Connection.Properties.IString
     {
-        private object _object;
+
         public override object Object
         {
             get
             {
-                return this._object;
+                return base.Object;
             }
             set
             {
                 if ((value == null) || ((value is System.String) && (((System.String)value).Length <= ((PropertyTypes.String)this.PropertyType).Length)))
                 {
-                    this._object = value;
+                    base.Object = value;
                 }
                 else
                 {

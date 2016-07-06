@@ -15,15 +15,30 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        internal Boolean ValueSet { get; private set; }
+
         public IPropertyType PropertyType { get; private set; }
 
-        public abstract object Object { get; set; }
+        private object _object;
+        public virtual object Object 
+        { 
+            get
+            {
+                return this._object;
+            }
+            set
+            {
+                this._object = value;
+                this.ValueSet = true;
+            }
+        }
 
         internal abstract String DBValue { get; set; }
 
         internal Property(PropertyType PropertyType)
         {
             this.PropertyType = PropertyType;
+            this.ValueSet = false;
         }
     }
 }

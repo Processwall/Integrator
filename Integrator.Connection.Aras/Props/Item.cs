@@ -7,18 +7,18 @@ namespace Integrator.Connection.Aras.Properties
 {
     public class Item : Property, Connection.Properties.IItem
     {
-        private object _object;
+
         public override object Object
         {
             get
             {
-                return this._object;
+                return base.Object;
             }
             set
             {
                 if ((value == null) || ((value is Connection.IItem) && (((Connection.IItem)value).ItemType.Equals(((PropertyTypes.Item)this.PropertyType).PropertyItemType))))
                 {
-                    this._object = value;
+                    base.Object = value;
                 }
                 else
                 {

@@ -300,7 +300,8 @@ namespace Integrator.Connection.Aras
             if (ItemType is ItemType && ((ItemType)ItemType).Session.Equals(this))
             {
                 String ID = this.Innovator.getNewID();
-                return this.Create((ItemType)ItemType, ID, State.Created);
+                Item item = this.Create((ItemType)ItemType, ID, State.Created);
+                return item;
             }
             else
             {

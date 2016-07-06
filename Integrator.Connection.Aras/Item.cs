@@ -362,7 +362,43 @@ namespace Integrator.Connection.Aras
 
         public void Delete()
         {
+            throw new NotImplementedException();
+        }
 
+        public bool Equals(IItem other)
+        {
+            if (other != null)
+            {
+                return this.ID.Equals(other.ID) && this.ItemType.Equals(other.ItemType);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj != null)
+            {
+                if (obj is IItem)
+                {
+                    return this.Equals((IItem)obj);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ID.GetHashCode() ^ this.ItemType.GetHashCode();
         }
 
         internal Item(ItemType ItemType, String ID, State Status)

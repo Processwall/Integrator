@@ -7,7 +7,7 @@ namespace Integrator.Connection
 {
     public enum State { Created, Stored, Updating, Deleted };
 
-    public interface IItem
+    public interface IItem : IEquatable<IItem>
     {
         IItemType ItemType { get; }
 

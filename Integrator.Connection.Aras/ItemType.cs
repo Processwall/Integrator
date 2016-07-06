@@ -171,6 +171,30 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj != null)
+            {
+                if (obj is IItemType)
+                {
+                    return this.Equals((IItemType)obj);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ID.GetHashCode();
+        }
+
         public override string ToString()
         {
             return this.Name;

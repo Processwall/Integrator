@@ -112,6 +112,18 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        public IPropertyType PropertyType(String Name)
+        {
+            if (this.PropertyTypesCache.ContainsKey(Name))
+            {
+                return this.PropertyTypesCache[Name];
+            }
+            else
+            {
+                throw new Exceptions.ArgumentException("Invalid PropertyType Name");
+            }
+        }
+
         private List<RelationshipType> _relationshipTypes;
 
         internal void AddRelationshipType(RelationshipType RelationshipType)

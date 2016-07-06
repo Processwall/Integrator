@@ -91,7 +91,7 @@ namespace Integrator.Connection.Aras
                         this._propertyCache[(PropertyType)proptype] = prop;
                     }
 
-                    if (this.Status == State.Stored)
+                    if ((this.Status == State.Stored) || (this.Status == State.Updating))
                     {
                         IOM.Item iomproperties = this.Session.Innovator.newItem(this.ItemType.Name, "get");
                         iomproperties.setID(this.ID);
@@ -114,6 +114,23 @@ namespace Integrator.Connection.Aras
             {
                 return this.PropertyCache.Values;
             }
+        }
+
+        public IProperty Property(IPropertyType PropertyType)
+        {
+            if (this.PropertyCache.ContainsKey((PropertyType)PropertyType))
+            {
+                return this.PropertyCache[(PropertyType)PropertyType];
+            }
+            else
+            {
+                throw new Exceptions.ArgumentException("Invalid Property Name: " + PropertyType.Name);
+            }
+        }
+
+        public IProperty Property(String Name)
+        {
+            return this.Property(this.ItemType.PropertyType(Name));
         }
 
         private Dictionary<RelationshipType, List<Relationship>> RelationshipsCache;
@@ -175,6 +192,177 @@ namespace Integrator.Connection.Aras
         {
             this._propertyCache = null;
             this.RelationshipsCache.Clear();
+        }
+
+        protected Int32 LockStatus()
+        {
+            IOM.Item locksttatus = this.Session.Innovator.newItem(this.ItemType.Name, "get");
+            locksttatus.setID(this.ID);
+            return locksttatus.fetchLockStatus();
+        }
+
+        public void Lock()
+        {
+            switch (this.Status)
+            {
+                case State.Stored:
+                case State.Updating:
+
+                    switch(this.LockStatus())
+                    {
+                        case 0:
+
+                            // Lock Item
+                            IOM.Item lockitem = this.Session.Innovator.newItem(this.ItemType.Name, "lock");
+                            lockitem.setID(this.ID);
+                            lockitem = lockitem.apply();
+
+                            if (!lockitem.isError())
+                            {
+                                this.Status = State.Updating;
+                            }
+                            else
+                            {
+                                throw new Exceptions.UpdateException(lockitem.getErrorString());
+                            }
+
+                            break;
+                        case 1:
+
+                            // Already Locked by this User
+                            this.Status = State.Updating;
+
+                            break;
+                        default:
+
+                            // Locked by Another User
+                            throw new Exceptions.UpdateException("Item Locked by another User");
+                    }
+
+
+                    break;
+                default:
+                    throw new Exceptions.ArgumentException("Item is not stored in Database");
+            }
+        }
+
+        public void UnLock()
+        {
+            switch (this.Status)
+            {
+                case State.Stored:
+                case State.Updating:
+
+                    switch (this.LockStatus())
+                    {
+                        case 0:
+
+                            // Already UnLocked
+                            this.Status = State.Stored;
+
+                            break;
+                        case 1:
+
+                            // UnLock Item
+                            IOM.Item unlockitem = this.Session.Innovator.newItem(this.ItemType.Name, "unlock");
+                            unlockitem.setID(this.ID);
+                            unlockitem = unlockitem.apply();
+
+                            if (!unlockitem.isError())
+                            {
+                                this.Status = State.Stored;
+                            }
+                            else
+                            {
+                                throw new Exceptions.UpdateException(unlockitem.getErrorString());
+                            }
+
+                            break;
+                        default:
+
+                            // Locked by Another User
+                            throw new Exceptions.UpdateException("Item Locked by another User");
+                    }
+
+
+                    break;
+                default:
+                    throw new Exceptions.ArgumentException("Item is not stored in Database");
+            }
+        }
+
+        public virtual IItem Save(Boolean Unlock = true)
+        {
+            String action = null;
+
+            switch(this.Status)
+            {
+                case State.Created:
+                    action = "add";
+                    break;
+                case State.Updating:
+                    action = "update";
+                    break;
+
+                case State.Stored:
+
+                    throw new Exceptions.UpdateException("Item is not Locked");
+
+                default:
+
+                    throw new Exceptions.UpdateException("Item is Deleted");
+            }
+
+            IOM.Item iomitem = this.Session.Innovator.newItem(this.ItemType.Name, action);
+            iomitem.setID(this.ID);
+
+            foreach(IPropertyType proptype in this.ItemType.PropertyTypes)
+            {
+                iomitem.setProperty(proptype.Name, this.PropertyCache[(PropertyType)proptype].DBValue);
+            }
+
+            iomitem = iomitem.apply();
+
+            if (!iomitem.isError())
+            {
+                if (iomitem.getID().Equals(this.ID))
+                {
+                    // Update Properties
+                    foreach (Property property in this.PropertyCache.Values)
+                    {
+                        property.DBValue = iomitem.getProperty(property.PropertyType.Name);
+                    }
+
+                    if (Unlock)
+                    {
+                        // Unlock
+                        this.UnLock();
+                    }
+
+                    return this;
+                }
+                else
+                {
+                    Item newitem = this.Session.Create((ItemType)this.ItemType, iomitem.getID(), State.Updating);
+
+                    if (Unlock)
+                    {
+                        // Unlock
+                        newitem.UnLock();
+                    }
+
+                    return newitem;
+                }
+            }
+            else
+            {
+                throw new Exceptions.UpdateException(iomitem.getErrorString());
+            }
+        }
+
+        public void Delete()
+        {
+
         }
 
         internal Item(ItemType ItemType, String ID, State Status)

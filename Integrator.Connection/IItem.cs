@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Integrator.Connection
 {
-    public enum State { Created, Stored, Deleted };
+    public enum State { Created, Stored, Updating, Deleted };
 
     public interface IItem
     {
@@ -19,10 +19,22 @@ namespace Integrator.Connection
 
         IEnumerable<IProperty> Properties { get; }
 
+        IProperty Property(IPropertyType PropertyType);
+
+        IProperty Property(String Name);
+
         IEnumerable<IRelationship> Relationships(IRelationshipType RelationshipType);
 
         IEnumerable<IRelationship> Relationships(String Name);
 
         void Refresh();
+
+        void Lock();
+
+        void UnLock();
+
+        IItem Save(Boolean Unlock=true);
+
+        void Delete();
     }
 }

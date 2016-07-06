@@ -11,6 +11,8 @@ namespace Integrator.Connection
 
         IEnumerable<IPropertyType> PropertyTypes { get; }
 
+        IPropertyType PropertyType(String Name);
+
         IEnumerable<IRelationshipType> RelationshipTypes { get; }
 
         IRelationshipType RelationshipType(String Name);

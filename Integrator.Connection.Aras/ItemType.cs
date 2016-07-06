@@ -152,6 +152,20 @@ namespace Integrator.Connection.Aras
             throw new Exceptions.ArgumentException("Invalid RelationshipType Name");
         }
 
+        private String _tableName;
+        internal String TableName
+        {
+            get
+            {
+                if (this._tableName == null)
+                {
+                    this._tableName = "[" + this.Name.ToLower().Replace(' ', '_') + "]";
+                }
+
+                return this._tableName;
+            }
+        }
+
         public bool Equals(IItemType other)
         {
             if (other != null)

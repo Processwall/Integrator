@@ -40,6 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Condition.cs" />
+    <Compile Include="ConditionCreation.cs" />
+    <Compile Include="Conditions\And.cs" />
+    <Compile Include="Conditions\Or.cs" />
+    <Compile Include="Conditions\Property.cs" />
     <Compile Include="Exceptions\UpdateException.cs" />
     <Compile Include="IReltionship.cs" />
     <Compile Include="Exceptions\ArgumentException.cs" />

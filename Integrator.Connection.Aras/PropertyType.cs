@@ -11,6 +11,20 @@ namespace Integrator.Connection.Aras
 
         public System.String Name { get; private set; }
 
+        private String _columnName;
+        internal String ColumnName
+        {
+            get
+            {
+                if (this._columnName == null)
+                {
+                    this._columnName = this.ItemType.TableName + ".[" + this.Name + "]";
+                }
+
+                return this._columnName;
+            }
+        }
+
         public bool Equals(IPropertyType other)
         {
             if (other != null)

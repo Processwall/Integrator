@@ -358,6 +358,175 @@ namespace Integrator.Connection.Aras
             return this.Index(this.ItemType(Name));
         }
 
+        private static System.String OperatorString(Conditions.Operators Operator)
+        {
+            switch (Operator)
+            {
+                case Conditions.Operators.eq:
+                    return "=";
+                case Conditions.Operators.ne:
+                    return "<>";
+                case Conditions.Operators.gt:
+                    return ">";
+                case Conditions.Operators.lt:
+                    return "<";
+                case Conditions.Operators.le:
+                    return "<=";
+                case Conditions.Operators.ge:
+                    return ">=";
+                case Conditions.Operators.like:
+                    return "like";
+                default:
+                    throw new NotImplementedException("Property Condition Operator not implemented");
+            }
+        }
+
+        internal String Where(IItemType ItemType, Condition Condition)
+        {
+            String where = null;
+
+            switch(Condition.GetType().Name)
+            {
+                case "Property":
+
+                    if (((Conditions.Property)Condition).Name == "id")
+                    {
+                        if (((Conditions.Property)Condition).Value == null)
+                        {
+                            where = "(" + ((ItemType)ItemType).TableName + ".[id] is null)";
+                        }
+                        else
+                        {
+                            return "(" + ((ItemType)ItemType).TableName + ".[id]" + OperatorString(((Conditions.Property)Condition).Operator) + "'" + ((Conditions.Property)Condition).Value.ToString() + "')";
+                        }
+                    }
+                    else
+                    {
+                        PropertyType proptype = (PropertyType)ItemType.PropertyType(((Conditions.Property)Condition).Name);
+
+                        switch (proptype.GetType().Name)
+                        {
+                            case "String":
+
+                                if (((Conditions.Property)Condition).Value == null)
+                                {
+                                    return "(" + proptype.ColumnName + " is null)";
+                                }
+                                else
+                                {
+                                    return "(" + proptype.ColumnName + OperatorString(((Conditions.Property)Condition).Operator) + "'" + ((Conditions.Property)Condition).Value.ToString().Replace('*', '%') + "')";
+                                }
+
+                            default:
+                                throw new Exceptions.ArgumentException("Property Type not implemented: " + proptype.GetType().Name);
+                        }
+                    }
+
+                    break;
+
+                case "Or":
+
+                    switch (Condition.Children.Count())
+                    {
+                        case 0:
+                            throw new Exceptions.ArgumentException("Invalid Or Condition, must have at leat one Child");
+                        case 1:
+                            where = this.Where(ItemType, Condition.Children.First());
+
+                            break;
+                        default:
+                            where = "(" + this.Where(ItemType, Condition.Children.First());
+
+                            for (int i = 1; i < Condition.Children.Count(); i++)
+                            {
+                                where += " or " + this.Where(ItemType, Condition.Children.ElementAt(i));
+                            }
+
+                            where += ")";
+
+                            break;
+                    }
+
+                    break;
+
+                case "And":
+
+                    switch (Condition.Children.Count())
+                    {
+                        case 0:
+                            throw new Exceptions.ArgumentException("Invalid And Condition, must have at leat one Child");
+                        case 1:
+                            where = this.Where(ItemType, Condition.Children.First());
+
+                            break;
+                        default:
+                            where = "(" + this.Where(ItemType, Condition.Children.First());
+
+                            for (int i = 1; i < Condition.Children.Count(); i++)
+                            {
+                                where += " and " + this.Where(ItemType, Condition.Children.ElementAt(i));
+                            }
+
+                            where += ")";
+
+                            break;
+                    }
+
+                    break;
+
+                default:
+                    throw new Exceptions.ArgumentException("Condition not implemented: " + Condition.GetType().Name);
+            }
+
+            return where;
+        }
+
+        public IEnumerable<IItem> Query(String Name, Condition Condition)
+        {
+            return this.Query(this.ItemType(Name), Condition);
+        }
+
+        public IEnumerable<IItem> Query(IItemType ItemType, Condition Condition)
+        {
+            if (ItemType is ItemType && ((ItemType)ItemType).Session.Equals(this))
+            {
+                IOM.Item iomitems = this.Innovator.newItem(ItemType.Name, "get");
+                iomitems.setAttribute("select", "id");
+                iomitems.setAttribute("where", this.Where(ItemType, Condition));
+                iomitems = iomitems.apply();
+
+                if (!iomitems.isError())
+                {
+                    List<Item> items = new List<Item>();
+
+                    for (int i = 0; i < iomitems.getItemCount(); i++)
+                    {
+                        IOM.Item iomitem = iomitems.getItemByIndex(i);
+                        items.Add(this.Create((ItemType)ItemType, iomitem.getID(), State.Stored));
+                    }
+
+                    return items;
+                }
+                else
+                {
+                    String errormessage = iomitems.getErrorString();
+
+                    if (errormessage.Equals("No items of type " + ItemType.Name + " found."))
+                    {
+                        return new List<Item>();
+                    }
+                    else
+                    {
+                        throw new Exceptions.ReadException(errormessage);
+                    }
+                }
+            }
+            else
+            {
+                throw new Exceptions.ArgumentException("Invalid ItemType");
+            }
+        }
+
         public Session(String URL, String Database, String Username, String Password)
         {
             this.URL = URL;

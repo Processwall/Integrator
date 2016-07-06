@@ -18,5 +18,9 @@ namespace Integrator.Connection
         IEnumerable<IItem> Index(IItemType ItemType);
 
         IEnumerable<IItem> Index(String Name);
+
+        IEnumerable<IItem> Query(IItemType ItemType, Condition Condition);
+
+        IEnumerable<IItem> Query(String Name, Condition Condition);
     }
 }

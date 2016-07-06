@@ -86,6 +86,9 @@ namespace Integrator.Connection.Aras
                                     case "md5":
                                         proptype = new PropertyTypes.MD5(this, propname);
                                         break;
+                                    case "float":
+                                        proptype = new PropertyTypes.Float(this, propname);
+                                        break;
                                     default:
                                         throw new NotImplementedException("PropertyType not implemented: " + propertype.getProperty("data_type"));
                                 }

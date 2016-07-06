@@ -68,6 +68,109 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        public new IRelationship Save(Boolean Unlock = true)
+        {
+            // Check Source Item
+            switch (this.Source.Status)
+            {
+                case State.Created:
+                case State.Updating:
+
+                    break;
+
+                case State.Stored:
+
+                    throw new Exceptions.UpdateException("Source Item is not Locked");
+
+                default:
+
+                    throw new Exceptions.UpdateException("Source Item is Deleted");
+            }
+
+            String relaction = null;
+
+            switch (this.Status)
+            {
+                case State.Created:
+                    relaction = "add";
+                    break;
+                case State.Updating:
+                    relaction = "update";
+                    break;
+
+                case State.Stored:
+
+                    throw new Exceptions.UpdateException("Relationship is not Locked");
+
+                default:
+
+                    throw new Exceptions.UpdateException("Relationship is Deleted");
+            }
+
+            IOM.Item iomrel = this.Session.Innovator.newItem(this.RelationshipType.Name, relaction);
+            iomrel.setID(this.ID);
+            iomrel.setProperty("source_id", this.Source.ID);
+
+            foreach (IPropertyType proptype in this.ItemType.PropertyTypes)
+            {
+                if (((Property)this.Property(proptype)).ValueSet)
+                {
+                    iomrel.setProperty(proptype.Name, ((Property)this.Property(proptype)).DBValue);
+                }
+            }
+
+            if (this.Related == null)
+            {
+                iomrel.setProperty("related_id", null);
+            }
+            else
+            {
+                iomrel.setProperty("related_id", this.Related.ID);
+            }
+
+            iomrel = iomrel.apply();
+
+            if (!iomrel.isError())
+            {
+                if (iomrel.getID().Equals(this.ID))
+                {
+                    // Update Properties
+                    foreach (Property property in this.Properties)
+                    {
+                        property.DBValue = iomrel.getProperty(property.PropertyType.Name);
+                    }
+
+                    this.Status = State.Updating;
+
+                    if (Unlock)
+                    {
+                        // Unlock
+                        this.UnLock();
+                    }
+
+                    return this;
+                }
+                else
+                {
+                    Relationship newrel = this.Session.Create((RelationshipType)this.RelationshipType, iomrel.getID(), State.Updating, iomrel.getProperty("source_id"), iomrel.getProperty("related_id"));
+
+                    if (Unlock)
+                    {
+                        // Unlock
+                        newrel.UnLock();
+                    }
+
+                    return newrel;
+                }
+
+            }
+            else
+            {
+                throw new Exceptions.UpdateException(iomrel.getErrorString());
+            }
+
+        }
+
         internal Relationship(RelationshipType RelationshipType, String ID, State Status, Item Source, Item Related)
             : base(RelationshipType, ID, Status)
         {

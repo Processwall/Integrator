@@ -49,6 +49,7 @@
     <Compile Include="Property.cs" />
     <Compile Include="PropertyType.cs" />
     <Compile Include="PropertyTypes\Boolean.cs" />
+    <Compile Include="PropertyTypes\Float.cs" />
     <Compile Include="PropertyTypes\MD5.cs" />
     <Compile Include="PropertyTypes\Date.cs" />
     <Compile Include="PropertyTypes\Decimal.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="PropertyTypes\String.cs" />
     <Compile Include="PropertyTypes\Text.cs" />
     <Compile Include="Props\Boolean.cs" />
+    <Compile Include="Props\Float.cs" />
     <Compile Include="Props\MD5.cs" />
     <Compile Include="Props\Text.cs" />
     <Compile Include="Props\String.cs" />

@@ -12,5 +12,7 @@ namespace Integrator.Connection
         IItem Source { get; }
 
         IItem Related { get; }
+
+        new IRelationship Save(Boolean Unlock = true);
     }
 }

@@ -80,8 +80,13 @@ namespace Integrator.Connection.Aras
                             case "Text":
                                 prop = new Properties.Text((PropertyTypes.Text)proptype);
                                 break;
+
                             case "MD5":
                                 prop = new Properties.MD5((PropertyTypes.MD5)proptype);
+                                break;
+
+                            case "Float":
+                                prop = new Properties.Float((PropertyTypes.Float)proptype);
                                 break;
 
                             default:
@@ -367,7 +372,56 @@ namespace Integrator.Connection.Aras
 
         public void Delete()
         {
-            throw new NotImplementedException();
+            this.UnLock();
+
+            IOM.Item deleteitem = this.Session.Innovator.newItem(this.ItemType.Name, "delete");
+            deleteitem.setID(this.ID);
+            deleteitem = deleteitem.apply();
+
+            if (!deleteitem.isError())
+            {
+                this.Status = State.Deleted;
+            }
+            else
+            {
+                throw new Exceptions.DeleteException(deleteitem.getErrorString());
+            }
+        }
+
+        public IRelationship Create(IRelationshipType RelationshipType, IItem Related)
+        {
+            if ((RelationshipType != null) && (RelationshipType is RelationshipType) && RelationshipType.Source.Equals(this.ItemType))
+            {
+                String ID = this.Session.Innovator.getNewID();
+
+                if (Related == null)
+                {
+                    return this.Session.Create((RelationshipType)RelationshipType, ID, State.Created, this.ID, null);
+                }
+                else
+                {
+                    return this.Session.Create((RelationshipType)RelationshipType, ID, State.Created, this.ID, Related.ID);
+                }
+            }
+            else
+            {
+                throw new Exceptions.ArgumentException("Invalid RelationshipType");
+            }
+        }
+
+        public IRelationship Create(String Name, IItem Related)
+        {
+            return this.Create(this.ItemType.RelationshipType(Name), Related);
+        }
+
+        public IRelationship Create(IRelationshipType RelationshipType)
+        {
+            return this.Create(RelationshipType, null);
+        }
+
+        public IRelationship Create(String Name)
+        {
+            return this.Create(this.ItemType.RelationshipType(Name), null);
         }
 
         public bool Equals(IItem other)

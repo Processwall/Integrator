@@ -27,6 +27,14 @@ namespace Integrator.Connection
 
         IEnumerable<IRelationship> Relationships(String Name);
 
+        IRelationship Create(IRelationshipType RelationshipType);
+
+        IRelationship Create(String Name);
+
+        IRelationship Create(IRelationshipType RelationshipType, IItem Related);
+
+        IRelationship Create(String Name, IItem Related);
+
         void Refresh();
 
         void Lock();

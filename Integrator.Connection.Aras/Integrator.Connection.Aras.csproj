@@ -31,7 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IOM">
+    <Reference Include="IOM, Version=11.0.0.6357, Culture=neutral, PublicKeyToken=524d880b05474146, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Aras\11SP6\Innovator\Client\cbin\IOM.dll</HintPath>
     </Reference>
     <Reference Include="System" />

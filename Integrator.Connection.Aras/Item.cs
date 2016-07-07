@@ -22,11 +22,40 @@ namespace Integrator.Connection.Aras
 
         public State Status { get; protected set; }
 
+        private List<IItem> _revisions;
         public IEnumerable<IItem> Revisions
         {
             get
             {
-                throw new NotImplementedException();
+                if (this._revisions == null)
+                {
+                    String config_id = ((Property)this.Property("config_id")).DBValue;
+
+                    IOM.Item iomrevisions = this.Session.Innovator.newItem(this.ItemType.Name, "get");
+                    iomrevisions.setProperty("config_id", config_id);
+                    iomrevisions.setProperty("generation", "0");
+                    iomrevisions.setPropertyCondition("generation", "gt");
+                    iomrevisions.setAttribute("orderBy", "generation");
+                    iomrevisions.setAttribute("select", "id");
+                    iomrevisions = iomrevisions.apply();
+
+                    if (!iomrevisions.isError())
+                    {
+                        this._revisions = new List<IItem>();
+
+                        for(int i=0; i<iomrevisions.getItemCount(); i++)
+                        {
+                            IOM.Item iomrevision = iomrevisions.getItemByIndex(i);
+                            this._revisions.Add(this.Session.Create((ItemType)this.ItemType, iomrevision.getID(), State.Stored));
+                        }
+                    }
+                    else
+                    {
+                        throw new Exceptions.ReadException(iomrevisions.getErrorString());
+                    }
+                }
+
+                return this._revisions;
             }
         }
 
@@ -195,6 +224,7 @@ namespace Integrator.Connection.Aras
 
         public virtual void Refresh()
         {
+            this._revisions = null;
             this._propertyCache = null;
             this.RelationshipsCache.Clear();
         }

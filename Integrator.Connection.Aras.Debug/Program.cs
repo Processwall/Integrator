@@ -13,7 +13,7 @@ namespace Integrator.Connection.Aras.Debug
 
             IEnumerable<IItem> parts = session.Query("Part", Integrator.Conditions.Eq("item_number", "9876"));
             IItem part1 = parts.Last();
-            part1.Relationships("Part BOM").First().Delete();
+            IEnumerable<IItem> part1revisions = part1.Revisions;
         }
     }
 }

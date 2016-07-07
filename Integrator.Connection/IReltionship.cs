@@ -14,5 +14,7 @@ namespace Integrator.Connection
         IItem Related { get; }
 
         new IRelationship Save(Boolean Unlock = true);
+
+        new IEnumerable<IRelationship> Revisions { get; }
     }
 }

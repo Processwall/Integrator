@@ -35,6 +35,18 @@ namespace Integrator.Connection.Aras
 
         internal abstract String DBValue { get; set; }
 
+        public override string ToString()
+        {
+            if (this.Object != null)
+            {
+                return this.PropertyType.ToString() + ": " + this.Object.ToString();
+            }
+            else
+            {
+                return this.PropertyType.ToString() + ": null";
+            }
+        }
+
         internal Property(PropertyType PropertyType)
         {
             this.PropertyType = PropertyType;

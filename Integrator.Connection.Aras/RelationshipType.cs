@@ -52,8 +52,8 @@ namespace Integrator.Connection.Aras
             }
         }
 
-        internal RelationshipType(Session Session, String ID, String Name)
-            : base(Session, ID, Name)
+        internal RelationshipType(Session Session, String ID, String Name, Boolean CanVersion)
+            : base(Session, ID, Name, CanVersion)
         {
 
         }

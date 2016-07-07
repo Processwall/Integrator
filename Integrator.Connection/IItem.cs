@@ -15,7 +15,7 @@ namespace Integrator.Connection
 
         State Status { get; }
 
-        IEnumerable<IItem> Revisions { get; }
+        IEnumerable<IItem> Versions { get; }
 
         IEnumerable<IProperty> Properties { get; }
 

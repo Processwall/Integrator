@@ -15,6 +15,6 @@ namespace Integrator.Connection
 
         new IRelationship Save(Boolean Unlock = true);
 
-        new IEnumerable<IRelationship> Revisions { get; }
+        new IEnumerable<IRelationship> Versions { get; }
     }
 }

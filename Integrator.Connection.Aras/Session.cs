@@ -70,7 +70,7 @@ namespace Integrator.Connection.Aras
 
                     // Read ItemTypes
                     IOM.Item iomitemtypes = this.Innovator.newItem("ItemType", "get");
-                    iomitemtypes.setAttribute("select", "id,name,is_relationship");
+                    iomitemtypes.setAttribute("select", "id,name,is_relationship,is_versionable");
                     iomitemtypes = iomitemtypes.apply();
 
                     if (!iomitemtypes.isError())
@@ -81,12 +81,12 @@ namespace Integrator.Connection.Aras
 
                             if (iomitemtype.getProperty("is_relationship", "0").Equals("1"))
                             {
-                                RelationshipType relationshiptype = new RelationshipType(this, iomitemtype.getID(), iomitemtype.getProperty("name"));
+                                RelationshipType relationshiptype = new RelationshipType(this, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
                                 this.ItemTypeCache[relationshiptype.ID] = relationshiptype;
                             }
                             else
                             {
-                                ItemType itemtype = new ItemType(this, iomitemtype.getID(), iomitemtype.getProperty("name"));
+                                ItemType itemtype = new ItemType(this, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
                                 this.ItemTypeCache[itemtype.ID] = itemtype;
                             }
                         }

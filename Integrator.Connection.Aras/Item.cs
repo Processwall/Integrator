@@ -22,40 +22,48 @@ namespace Integrator.Connection.Aras
 
         public State Status { get; protected set; }
 
-        private List<IItem> _revisions;
-        public IEnumerable<IItem> Revisions
+        private List<IItem> _versions;
+        public IEnumerable<IItem> Versions
         {
             get
             {
-                if (this._revisions == null)
+                if (this._versions == null)
                 {
-                    String config_id = ((Property)this.Property("config_id")).DBValue;
-
-                    IOM.Item iomrevisions = this.Session.Innovator.newItem(this.ItemType.Name, "get");
-                    iomrevisions.setProperty("config_id", config_id);
-                    iomrevisions.setProperty("generation", "0");
-                    iomrevisions.setPropertyCondition("generation", "gt");
-                    iomrevisions.setAttribute("orderBy", "generation");
-                    iomrevisions.setAttribute("select", "id");
-                    iomrevisions = iomrevisions.apply();
-
-                    if (!iomrevisions.isError())
+                    if (this.ItemType.CanVersion)
                     {
-                        this._revisions = new List<IItem>();
+                        String config_id = ((Property)this.Property("config_id")).DBValue;
 
-                        for(int i=0; i<iomrevisions.getItemCount(); i++)
+                        IOM.Item iomrevisions = this.Session.Innovator.newItem(this.ItemType.Name, "get");
+                        iomrevisions.setProperty("config_id", config_id);
+                        iomrevisions.setProperty("generation", "0");
+                        iomrevisions.setPropertyCondition("generation", "gt");
+                        iomrevisions.setAttribute("orderBy", "generation");
+                        iomrevisions.setAttribute("select", "id");
+                        iomrevisions = iomrevisions.apply();
+
+                        if (!iomrevisions.isError())
                         {
-                            IOM.Item iomrevision = iomrevisions.getItemByIndex(i);
-                            this._revisions.Add(this.Session.Create((ItemType)this.ItemType, iomrevision.getID(), State.Stored));
+                            this._versions = new List<IItem>();
+
+                            for (int i = 0; i < iomrevisions.getItemCount(); i++)
+                            {
+                                IOM.Item iomrevision = iomrevisions.getItemByIndex(i);
+                                this._versions.Add(this.Session.Create((ItemType)this.ItemType, iomrevision.getID(), State.Stored));
+                            }
+                        }
+                        else
+                        {
+                            throw new Exceptions.ReadException(iomrevisions.getErrorString());
                         }
                     }
                     else
                     {
-                        throw new Exceptions.ReadException(iomrevisions.getErrorString());
+                        this._versions = new List<IItem>();
+                        this._versions.Add(this);
                     }
                 }
 
-                return this._revisions;
+                return this._versions;
             }
         }
 
@@ -224,7 +232,7 @@ namespace Integrator.Connection.Aras
 
         public virtual void Refresh()
         {
-            this._revisions = null;
+            this._versions = null;
             this._propertyCache = null;
             this.RelationshipsCache.Clear();
         }

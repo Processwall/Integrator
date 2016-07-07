@@ -31,40 +31,48 @@ namespace Integrator.Connection.Aras
             }
         }
 
-        private List<IRelationship> _revisions;
-        public new IEnumerable<IRelationship> Revisions
+        private List<IRelationship> _versions;
+        public new IEnumerable<IRelationship> Versions
         {
             get
             {
-                if (this._revisions == null)
+                if (this._versions == null)
                 {
-                    String config_id = ((Property)this.Property("config_id")).DBValue;
-
-                    IOM.Item iomrevisions = this.Session.Innovator.newItem(this.ItemType.Name, "get");
-                    iomrevisions.setProperty("config_id", config_id);
-                    iomrevisions.setProperty("generation", "0");
-                    iomrevisions.setPropertyCondition("generation", "gt");
-                    iomrevisions.setAttribute("orderBy", "generation");
-                    iomrevisions.setAttribute("select", "id,source_id,related_id");
-                    iomrevisions = iomrevisions.apply();
-
-                    if (!iomrevisions.isError())
+                    if (this.RelationshipType.CanVersion)
                     {
-                        this._revisions = new List<IRelationship>();
+                        String config_id = ((Property)this.Property("config_id")).DBValue;
 
-                        for (int i = 0; i < iomrevisions.getItemCount(); i++)
+                        IOM.Item iomrevisions = this.Session.Innovator.newItem(this.ItemType.Name, "get");
+                        iomrevisions.setProperty("config_id", config_id);
+                        iomrevisions.setProperty("generation", "0");
+                        iomrevisions.setPropertyCondition("generation", "gt");
+                        iomrevisions.setAttribute("orderBy", "generation");
+                        iomrevisions.setAttribute("select", "id,source_id,related_id");
+                        iomrevisions = iomrevisions.apply();
+
+                        if (!iomrevisions.isError())
                         {
-                            IOM.Item iomrevision = iomrevisions.getItemByIndex(i);
-                            this._revisions.Add(this.Session.Create((RelationshipType)this.RelationshipType, iomrevision.getID(), State.Stored, iomrevision.getProperty("source_id"), iomrevision.getProperty("related_id")));
+                            this._versions = new List<IRelationship>();
+
+                            for (int i = 0; i < iomrevisions.getItemCount(); i++)
+                            {
+                                IOM.Item iomrevision = iomrevisions.getItemByIndex(i);
+                                this._versions.Add(this.Session.Create((RelationshipType)this.RelationshipType, iomrevision.getID(), State.Stored, iomrevision.getProperty("source_id"), iomrevision.getProperty("related_id")));
+                            }
+                        }
+                        else
+                        {
+                            throw new Exceptions.ReadException(iomrevisions.getErrorString());
                         }
                     }
                     else
                     {
-                        throw new Exceptions.ReadException(iomrevisions.getErrorString());
+                        this._versions = new List<IRelationship>();
+                        this._versions.Add(this);
                     }
                 }
 
-                return this._revisions;
+                return this._versions;
             }
         }
 

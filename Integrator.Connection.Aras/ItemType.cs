@@ -21,6 +21,8 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        public Boolean CanVersion { get; private set; }
+
         public String Name { get; private set; }
 
         private String[] _systemProperties;
@@ -225,11 +227,12 @@ namespace Integrator.Connection.Aras
             return this.Name;
         }
 
-        internal ItemType(Session Session, String ID, String Name)
+        internal ItemType(Session Session, String ID, String Name, Boolean CanVersion)
         {
             this.Session = Session;
             this.ID = ID;
             this.Name = Name;
+            this.CanVersion = CanVersion;
             this._relationshipTypes = new List<RelationshipType>();
         }
     }

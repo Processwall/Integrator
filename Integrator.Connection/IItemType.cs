@@ -11,6 +11,8 @@ namespace Integrator.Connection
 
         String Name { get; }
 
+        Boolean CanVersion { get; }
+
         IEnumerable<IPropertyType> PropertyTypes { get; }
 
         IPropertyType PropertyType(String Name);

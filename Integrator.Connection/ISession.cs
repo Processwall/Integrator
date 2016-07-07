@@ -13,7 +13,7 @@ namespace Integrator.Connection
 
         IItem Create(IItemType ItemType);
 
-        IItem Create(String IName);
+        IItem Create(String Name);
 
         IEnumerable<IItem> Index(IItemType ItemType);
 

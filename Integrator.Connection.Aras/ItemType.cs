@@ -13,6 +13,14 @@ namespace Integrator.Connection.Aras
 
         internal String ID { get; private set; }
 
+        public IItemType Parent
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public String Name { get; private set; }
 
         private String[] _systemProperties;

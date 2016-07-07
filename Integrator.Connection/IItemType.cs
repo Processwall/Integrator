@@ -7,6 +7,8 @@ namespace Integrator.Connection
 {
     public interface IItemType : IEquatable<IItemType>
     {
+        IItemType Parent { get; }
+
         String Name { get; }
 
         IEnumerable<IPropertyType> PropertyTypes { get; }

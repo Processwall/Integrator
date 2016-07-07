@@ -33,7 +33,7 @@
   <ItemGroup>
     <Reference Include="IOM, Version=11.0.0.6357, Culture=neutral, PublicKeyToken=524d880b05474146, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Aras\11SP6\Innovator\Client\cbin\IOM.dll</HintPath>
+      <HintPath>Library\IOM.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -80,6 +80,10 @@
       <Project>{8AB912E8-3B95-4243-B045-3418A1466C25}</Project>
       <Name>Integrator.Connection</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Library\IOM.dll" />
+    <Content Include="Library\IOM.pdb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

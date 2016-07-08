@@ -22,5 +22,7 @@ namespace Integrator.Connection
         IEnumerable<IItem> Query(IItemType ItemType, Condition Condition);
 
         IEnumerable<IItem> Query(String Name, Condition Condition);
+
+        void Close();
     }
 }

@@ -528,6 +528,11 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        public void Close()
+        {
+
+        }
+
         public Session(String URL, String Database, String Username, String Password)
         {
             this.URL = URL;

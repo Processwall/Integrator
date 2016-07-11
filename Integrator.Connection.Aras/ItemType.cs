@@ -25,6 +25,25 @@ namespace Integrator.Connection.Aras
 
         public String Name { get; private set; }
 
+        public Boolean SubType(IItemType Other)
+        {
+            if (this.Equals(Other))
+            {
+                return true;
+            }
+            else
+            {
+                if (this.Parent != null)
+                {
+                    return this.Parent.SubType(Other);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         private String[] _systemProperties;
         internal virtual String[] SystemProperties
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using IOM = Aras.IOM;
 
 namespace Integrator.Connection.Aras
@@ -15,6 +16,25 @@ namespace Integrator.Connection.Aras
         public String Username { get; private set; }
 
         public String Password { get; private set; }
+
+        private DirectoryInfo _workspace;
+        internal DirectoryInfo WorkSpace
+        {
+            get
+            {
+                if (this._workspace == null)
+                {
+                    this._workspace = new DirectoryInfo(Path.GetTempPath() + "\\Integrator\\Aras");
+
+                    if (!this._workspace.Exists)
+                    {
+                        this._workspace.Create();
+                    }
+                }
+
+                return this._workspace;
+            }
+        }
 
         public bool Equals(ISession other)
         {
@@ -86,8 +106,16 @@ namespace Integrator.Connection.Aras
                             }
                             else
                             {
-                                ItemType itemtype = new ItemType(this, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
-                                this.ItemTypeCache[itemtype.ID] = itemtype;
+                                if (iomitemtype.getProperty("name").Equals("File"))
+                                {
+                                    FileType filetype = new FileType(this, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
+                                    this.ItemTypeCache[filetype.ID] = filetype;
+                                }
+                                else
+                                {
+                                    ItemType itemtype = new ItemType(this, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
+                                    this.ItemTypeCache[itemtype.ID] = itemtype;
+                                }
                             }
                         }
                     }
@@ -157,6 +185,41 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        private List<FileType> _fileTypes;
+        public IEnumerable<IFileType> FileTypes
+        {
+            get
+            {
+                if (this._fileTypes == null)
+                {
+                    this._fileTypes = new List<FileType>();
+
+                    foreach (ItemType itemtype in this.ItemTypeCache.Values)
+                    {
+                        if (itemtype is FileType)
+                        {
+                            this._fileTypes.Add((FileType)itemtype);
+                        }
+                    }
+                }
+
+                return this._fileTypes;
+            }
+        }
+
+        public IFileType FileType(String Name)
+        {
+            foreach (FileType itemtype in this.FileTypes)
+            {
+                if (itemtype.Name.Equals(Name))
+                {
+                    return itemtype;
+                }
+            }
+
+            throw new Exceptions.ArgumentException("Invalid FileType Name: " + Name);
+        }
+
         internal ItemType ItemTypeByID(String ID)
         {
             if (this.ItemTypeCache.ContainsKey(ID))
@@ -212,6 +275,12 @@ namespace Integrator.Connection.Aras
                     {
                         throw new Exceptions.ReadException(iomsource.getErrorString());
                     }
+                }
+                else if (ItemType is FileType)
+                {
+                    File file = new File((FileType)ItemType, ID, Status);
+                    this.ItemCache[ItemType][ID] = file;
+                    return file;
                 }
                 else
                 {
@@ -312,6 +381,26 @@ namespace Integrator.Connection.Aras
         public IItem Create(String Name)
         {
             return this.Create(this.ItemType(Name));
+        }
+
+        public IFile Create(IFileType FileType, String Filename)
+        {
+            if (FileType is FileType && ((FileType)FileType).Session.Equals(this))
+            {
+                String ID = this.Innovator.getNewID();
+                File item = (File)this.Create((FileType)FileType, ID, State.Created);
+                item.Filename = Filename;
+                return item;
+            }
+            else
+            {
+                throw new Exceptions.ArgumentException("Invalid FileType");
+            }
+        }
+
+        public IFile Create(String Name, String Filename)
+        {
+            return this.Create(this.FileType(Name), Filename);
         }
 
         public IEnumerable<IItem> Index(IItemType ItemType)

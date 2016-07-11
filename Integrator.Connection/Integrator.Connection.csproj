@@ -47,6 +47,8 @@
     <Compile Include="Conditions\Property.cs" />
     <Compile Include="Exceptions\DeleteException.cs" />
     <Compile Include="Exceptions\UpdateException.cs" />
+    <Compile Include="IFile.cs" />
+    <Compile Include="IFileType.cs" />
     <Compile Include="IReltionship.cs" />
     <Compile Include="Exceptions\ArgumentException.cs" />
     <Compile Include="Exceptions\ReadException.cs" />

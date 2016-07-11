@@ -11,9 +11,17 @@ namespace Integrator.Connection
 
         IItemType ItemType(String Name);
 
+        IEnumerable<IFileType> FileTypes { get; }
+
+        IFileType FileType(String Name);
+
         IItem Create(IItemType ItemType);
 
         IItem Create(String Name);
+
+        IFile Create(IFileType FileType, String Filename);
+
+        IFile Create(String Name, String Filename);
 
         IEnumerable<IItem> Index(IItemType ItemType);
 

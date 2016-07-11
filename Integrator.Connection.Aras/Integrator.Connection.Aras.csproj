@@ -44,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="File.cs" />
+    <Compile Include="FileType.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

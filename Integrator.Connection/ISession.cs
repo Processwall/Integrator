@@ -11,6 +11,8 @@ namespace Integrator.Connection
 
         IEnumerable<Parameter> Parameters { get; }
 
+        Parameter Parameter(String Name);
+
         void Login(String Token);
 
         IEnumerable<IItemType> ItemTypes { get; }

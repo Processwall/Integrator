@@ -29,6 +29,19 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        public Integrator.Connection.Parameter Parameter(String Name)
+        {
+            foreach (Integrator.Connection.Parameter param in this.Parameters)
+            {
+                if (param.Name.Equals(Name))
+                {
+                    return param;
+                }
+            }
+
+            throw new Integrator.Connection.Exceptions.ArgumentException("Invalid Parameter Name");
+        }
+
         public void Login(String Token)
         {
             Credentials cred = Cypher.Decrypt(Token, tokenpassword, tokensalt);
@@ -44,15 +57,7 @@ namespace Integrator.Connection.Aras
         {
             get
             {
-                foreach (Parameter parameter in this.Parameters)
-                {
-                    if (parameter.Name.Equals("URL"))
-                    {
-                        return parameter.Value;
-                    }
-                }
-
-                throw new Exceptions.ArgumentException("Parameter not found: URL");
+                return this.Parameter("URL").Value;
             }
         }
 
@@ -60,15 +65,7 @@ namespace Integrator.Connection.Aras
         {
             get
             {
-                foreach (Parameter parameter in this.Parameters)
-                {
-                    if (parameter.Name.Equals("Database"))
-                    {
-                        return parameter.Value;
-                    }
-                }
-
-                throw new Exceptions.ArgumentException("Parameter not found: Database");
+                return this.Parameter("Database").Value;
             }
         }
 

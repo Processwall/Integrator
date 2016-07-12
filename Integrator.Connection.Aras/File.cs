@@ -63,7 +63,7 @@ namespace Integrator.Connection.Aras
             {
                 if (this.Status == State.Created)
                 {
-                    IOM.Item iomitem = this.Session.Innovator.newItem(this.ItemType.Name, "add");
+                    IOM.Item iomitem = this.Session.Innovator.newItem(((ItemType)this.ItemType).DBName, "add");
                     iomitem.setID(this.ID);
                     iomitem.setProperty("filename", this.Filename);
                     iomitem.attachPhysicalFile(this.CacheFilename.FullName);

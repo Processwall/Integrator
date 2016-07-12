@@ -42,7 +42,7 @@ namespace Integrator.Connection.Aras
                     {
                         String config_id = ((Property)this.Property("config_id")).DBValue;
 
-                        IOM.Item iomrevisions = this.Session.Innovator.newItem(this.ItemType.Name, "get");
+                        IOM.Item iomrevisions = this.Session.Innovator.newItem(((ItemType)this.ItemType).DBName, "get");
                         iomrevisions.setProperty("config_id", config_id);
                         iomrevisions.setProperty("generation", "0");
                         iomrevisions.setPropertyCondition("generation", "gt");
@@ -82,7 +82,7 @@ namespace Integrator.Connection.Aras
 
             if (this.Related != null)
             {
-                IOM.Item iomrelated = this.Session.Innovator.newItem(this.RelationshipType.Name, "get");
+                IOM.Item iomrelated = this.Session.Innovator.newItem(((RelationshipType)this.RelationshipType).DBName, "get");
                 iomrelated.setAttribute("select", "related_id");
                 iomrelated.setID(this.ID);
                 iomrelated = iomrelated.apply();
@@ -100,7 +100,7 @@ namespace Integrator.Connection.Aras
                 {
                     String error_message = iomrelated.getErrorString();
 
-                    if (error_message.Equals("No items of type " + this.RelationshipType.Name + " found."))
+                    if (error_message.Equals("No items of type " + ((RelationshipType)this.RelationshipType).DBName + " found."))
                     {
                         // Deleted
                         this.Status = State.Deleted;
@@ -152,7 +152,7 @@ namespace Integrator.Connection.Aras
                     throw new Exceptions.UpdateException("Relationship is Deleted");
             }
 
-            IOM.Item iomrel = this.Session.Innovator.newItem(this.RelationshipType.Name, relaction);
+            IOM.Item iomrel = this.Session.Innovator.newItem(((RelationshipType)this.RelationshipType).DBName, relaction);
             iomrel.setID(this.ID);
             iomrel.setProperty("source_id", this.Source.ID);
 

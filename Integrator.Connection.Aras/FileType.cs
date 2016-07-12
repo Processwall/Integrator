@@ -8,8 +8,8 @@ namespace Integrator.Connection.Aras
 {
     public class FileType : ItemType, IFileType
     {
-        internal FileType(Session Session, String ID, String Name, Boolean CanVersion)
-            :base(Session, ID, Name, CanVersion)
+        internal FileType(Session Session, FileType Parent, String ID, String Name, Boolean CanVersion)
+            :base(Session, Parent, ID, Name, CanVersion)
         {
 
         }

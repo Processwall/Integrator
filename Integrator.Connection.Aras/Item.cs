@@ -33,7 +33,7 @@ namespace Integrator.Connection.Aras
                     {
                         String config_id = ((Property)this.Property("config_id")).DBValue;
 
-                        IOM.Item iomrevisions = this.Session.Innovator.newItem(this.ItemType.Name, "get");
+                        IOM.Item iomrevisions = this.Session.Innovator.newItem(((ItemType)this.ItemType).DBName, "get");
                         iomrevisions.setProperty("config_id", config_id);
                         iomrevisions.setProperty("generation", "0");
                         iomrevisions.setPropertyCondition("generation", "gt");
@@ -135,13 +135,20 @@ namespace Integrator.Connection.Aras
 
                     if ((this.Status == State.Stored) || (this.Status == State.Updating))
                     {
-                        IOM.Item iomproperties = this.Session.Innovator.newItem(this.ItemType.Name, "get");
+                        IOM.Item iomproperties = this.Session.Innovator.newItem(((ItemType)this.ItemType).DBName, "get");
                         iomproperties.setID(this.ID);
                         iomproperties = iomproperties.apply();
 
-                        foreach (Property property in this._propertyCache.Values)
+                        if (!iomproperties.isError())
                         {
-                            property.DBValue = iomproperties.getProperty(property.PropertyType.Name);
+                            foreach (Property property in this._propertyCache.Values)
+                            {
+                                property.DBValue = iomproperties.getProperty(property.PropertyType.Name);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exceptions.ReadException(iomproperties.getErrorString());
                         }
                     }
                 }
@@ -187,9 +194,9 @@ namespace Integrator.Connection.Aras
                 }
                 else
                 {
-                    IOM.Item iomrels = this.Session.Innovator.newItem(RelationshipType.Name, "get");
+                    IOM.Item iomrels = this.Session.Innovator.newItem(((RelationshipType)RelationshipType).DBName, "get");
                     iomrels.setProperty("source_id", this.ID);
-                    iomrels.setAttribute("select", "id,related_id");
+                    iomrels.setAttribute("select", "id,related_id,classification");
                     iomrels = iomrels.apply();
 
                     if (!iomrels.isError())
@@ -199,7 +206,7 @@ namespace Integrator.Connection.Aras
                         for (int i = 0; i < iomrels.getItemCount(); i++)
                         {
                             IOM.Item iomrel = iomrels.getItemByIndex(i);
-                            this.RelationshipsCache[(RelationshipType)RelationshipType].Add(this.Session.Create((RelationshipType)RelationshipType, iomrel.getID(), State.Stored, this.ID, iomrel.getProperty("related_id")));
+                            this.RelationshipsCache[(RelationshipType)RelationshipType].Add(this.Session.Create(((RelationshipType)RelationshipType).SubTypeFromClassification(iomrel.getProperty("classification")), iomrel.getID(), State.Stored, this.ID, iomrel.getProperty("related_id")));
                         }
 
                         return this.RelationshipsCache[(RelationshipType)RelationshipType];
@@ -208,7 +215,7 @@ namespace Integrator.Connection.Aras
                     {
                         String errormessage = iomrels.getErrorString();
 
-                        if (errormessage.Equals("No items of type " + RelationshipType.Name + " found."))
+                        if (errormessage.Equals("No items of type " + ((RelationshipType)RelationshipType).DBName + " found."))
                         {
                             return this.RelationshipsCache[(RelationshipType)RelationshipType] = new List<Relationship>();
                         }
@@ -239,7 +246,7 @@ namespace Integrator.Connection.Aras
 
         protected Int32 LockStatus()
         {
-            IOM.Item locksttatus = this.Session.Innovator.newItem(this.ItemType.Name, "get");
+            IOM.Item locksttatus = this.Session.Innovator.newItem(((ItemType)this.ItemType).DBName, "get");
             locksttatus.setID(this.ID);
             return locksttatus.fetchLockStatus();
         }
@@ -256,7 +263,7 @@ namespace Integrator.Connection.Aras
                         case 0:
 
                             // Lock Item
-                            IOM.Item lockitem = this.Session.Innovator.newItem(this.ItemType.Name, "lock");
+                            IOM.Item lockitem = this.Session.Innovator.newItem(((ItemType)this.ItemType).DBName, "lock");
                             lockitem.setID(this.ID);
                             lockitem = lockitem.apply();
 
@@ -307,7 +314,7 @@ namespace Integrator.Connection.Aras
                         case 1:
 
                             // UnLock Item
-                            IOM.Item unlockitem = this.Session.Innovator.newItem(this.ItemType.Name, "unlock");
+                            IOM.Item unlockitem = this.Session.Innovator.newItem(((ItemType)this.ItemType).DBName, "unlock");
                             unlockitem.setID(this.ID);
                             unlockitem = unlockitem.apply();
 
@@ -356,7 +363,7 @@ namespace Integrator.Connection.Aras
                     throw new Exceptions.UpdateException("Item is Deleted");
             }
 
-            IOM.Item iomitem = this.Session.Innovator.newItem(this.ItemType.Name, action);
+            IOM.Item iomitem = this.Session.Innovator.newItem(((ItemType)this.ItemType).DBName, action);
             iomitem.setID(this.ID);
 
             foreach(IPropertyType proptype in this.ItemType.PropertyTypes)
@@ -412,7 +419,7 @@ namespace Integrator.Connection.Aras
         {
             this.UnLock();
 
-            IOM.Item deleteitem = this.Session.Innovator.newItem(this.ItemType.Name, "delete");
+            IOM.Item deleteitem = this.Session.Innovator.newItem(((ItemType)this.ItemType).DBName, "delete");
             deleteitem.setID(this.ID);
             deleteitem = deleteitem.apply();
 

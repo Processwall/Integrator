@@ -13,17 +13,41 @@ namespace Integrator.Connection.Aras
 
         internal String ID { get; private set; }
 
-        public IItemType Parent
-        {
-            get
-            {
-                return null;
-            }
-        }
+        public IItemType Parent { get; private set; }
 
         public Boolean CanVersion { get; private set; }
 
         public String Name { get; private set; }
+
+        internal String DBName
+        {
+            get
+            {
+                if (this.Parent != null)
+                {
+                    return ((ItemType)this.Parent).DBName;
+                }
+                else
+                {
+                    return this.Name;
+                }
+            }
+        }
+
+        internal String DBClassification
+        {
+            get
+            {
+                if (this.Parent != null)
+                {
+                    return this.Name.Replace(this.DBName + ".", "").Replace('.', '/');
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
         public Boolean SubType(IItemType Other)
         {
@@ -44,6 +68,19 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        internal ItemType SubTypeFromClassification(String Classification)
+        {
+            if (String.IsNullOrEmpty(Classification))
+            {
+                return this;
+            }
+            else
+            {
+                String itemtypename = this.DBName + "." + Classification.Replace('/', '.');
+                return (ItemType)this.Session.ItemType(itemtypename);
+            }
+        }
+
         private String[] _systemProperties;
         internal virtual String[] SystemProperties
         {
@@ -51,7 +88,7 @@ namespace Integrator.Connection.Aras
             {
                 if (this._systemProperties == null)
                 {
-                    this._systemProperties = new String[1] { "id" };
+                    this._systemProperties = new String[2] { "id", "classification" };
                 }
 
                 return this._systemProperties;
@@ -67,68 +104,79 @@ namespace Integrator.Connection.Aras
                 {
                     this._propertyTypesCache = new Dictionary<String, PropertyType>();
 
-                    IOM.Item propertytypes = this.Session.Innovator.newItem("Property", "get");
-                    propertytypes.setProperty("source_id", this.ID);
-                    propertytypes.setAttribute("select", "name,data_type,stored_length,data_source");
-                    propertytypes = propertytypes.apply();
-
-                    if (!propertytypes.isError())
+                    if (this.Parent != null)
                     {
-                        for (int i = 0; i < propertytypes.getItemCount(); i++)
+                        foreach(PropertyType proptype in this.Parent.PropertyTypes)
                         {
-                            IOM.Item propertype = propertytypes.getItemByIndex(i);
-                            System.String propname = propertype.getProperty("name");
-
-                            if (!this.SystemProperties.Contains(propname))
-                            {
-                                PropertyType proptype = null;
-
-                                switch (propertype.getProperty("data_type"))
-                                {
-                                    case "string":
-                                        proptype = new PropertyTypes.String(this, propname, System.Int32.Parse(propertype.getProperty("stored_length", "0")));
-                                        break;
-                                    case "item":
-                                        proptype = new PropertyTypes.Item(this, propname, this.Session.ItemTypeByID(propertype.getProperty("data_source")));
-                                        break;
-                                    case "decimal":
-                                        proptype = new PropertyTypes.Decimal(this, propname);
-                                        break;
-                                    case "list":
-                                        proptype = new PropertyTypes.List(this, propname);
-                                        break;
-                                    case "date":
-                                        proptype = new PropertyTypes.Date(this, propname);
-                                        break;
-                                    case "text":
-                                        proptype = new PropertyTypes.Text(this, propname);
-                                        break;
-                                    case "integer":
-                                        proptype = new PropertyTypes.Integer(this, propname);
-                                        break;
-                                    case "boolean":
-                                        proptype = new PropertyTypes.Boolean(this, propname);
-                                        break;
-                                    case "image":
-                                        proptype = new PropertyTypes.Image(this, propname);
-                                        break;
-                                    case "md5":
-                                        proptype = new PropertyTypes.MD5(this, propname);
-                                        break;
-                                    case "float":
-                                        proptype = new PropertyTypes.Float(this, propname);
-                                        break;
-                                    default:
-                                        throw new NotImplementedException("PropertyType not implemented: " + propertype.getProperty("data_type"));
-                                }
-
-                                this._propertyTypesCache[proptype.Name] = proptype;
-                            }
+                            this._propertyTypesCache[proptype.Name] = proptype;
                         }
                     }
                     else
                     {
-                        throw new Exceptions.ReadException(propertytypes.getErrorString());
+
+                        IOM.Item propertytypes = this.Session.Innovator.newItem("Property", "get");
+                        propertytypes.setProperty("source_id", this.ID);
+                        propertytypes.setAttribute("select", "name,data_type,stored_length,data_source");
+                        propertytypes = propertytypes.apply();
+
+                        if (!propertytypes.isError())
+                        {
+                            for (int i = 0; i < propertytypes.getItemCount(); i++)
+                            {
+                                IOM.Item propertype = propertytypes.getItemByIndex(i);
+                                System.String propname = propertype.getProperty("name");
+
+                                if (!this.SystemProperties.Contains(propname))
+                                {
+                                    PropertyType proptype = null;
+
+                                    switch (propertype.getProperty("data_type"))
+                                    {
+                                        case "string":
+                                            proptype = new PropertyTypes.String(this, propname, System.Int32.Parse(propertype.getProperty("stored_length", "0")));
+                                            break;
+                                        case "item":
+                                            proptype = new PropertyTypes.Item(this, propname, this.Session.ItemTypeByID(propertype.getProperty("data_source")));
+                                            break;
+                                        case "decimal":
+                                            proptype = new PropertyTypes.Decimal(this, propname);
+                                            break;
+                                        case "list":
+                                            proptype = new PropertyTypes.List(this, propname);
+                                            break;
+                                        case "date":
+                                            proptype = new PropertyTypes.Date(this, propname);
+                                            break;
+                                        case "text":
+                                            proptype = new PropertyTypes.Text(this, propname);
+                                            break;
+                                        case "integer":
+                                            proptype = new PropertyTypes.Integer(this, propname);
+                                            break;
+                                        case "boolean":
+                                            proptype = new PropertyTypes.Boolean(this, propname);
+                                            break;
+                                        case "image":
+                                            proptype = new PropertyTypes.Image(this, propname);
+                                            break;
+                                        case "md5":
+                                            proptype = new PropertyTypes.MD5(this, propname);
+                                            break;
+                                        case "float":
+                                            proptype = new PropertyTypes.Float(this, propname);
+                                            break;
+                                        default:
+                                            throw new NotImplementedException("PropertyType not implemented: " + propertype.getProperty("data_type"));
+                                    }
+
+                                    this._propertyTypesCache[proptype.Name] = proptype;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            throw new Exceptions.ReadException(propertytypes.getErrorString());
+                        }
                     }
                 }
 
@@ -167,7 +215,14 @@ namespace Integrator.Connection.Aras
         {
             get
             {
-                return this._relationshipTypes;
+                if (this.Parent == null)
+                {
+                    return this._relationshipTypes;
+                }
+                else
+                {
+                    return this.Parent.RelationshipTypes;
+                }
             }
         }
 
@@ -246,9 +301,10 @@ namespace Integrator.Connection.Aras
             return this.Name;
         }
 
-        internal ItemType(Session Session, String ID, String Name, Boolean CanVersion)
+        internal ItemType(Session Session, ItemType Parent, String ID, String Name, Boolean CanVersion)
         {
             this.Session = Session;
+            this.Parent = Parent;
             this.ID = ID;
             this.Name = Name;
             this.CanVersion = CanVersion;

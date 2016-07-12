@@ -38,6 +38,19 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        internal new RelationshipType SubTypeFromClassification(String Classification)
+        {
+            if (String.IsNullOrEmpty(Classification))
+            {
+                return this;
+            }
+            else
+            {
+                String itemtypename = this.Name + "." + Classification.Replace('/', '.');
+                return (RelationshipType)this.RelationshipType(itemtypename);
+            }
+        }
+
         private String[] _systemProperties;
         internal override String[] SystemProperties
         {
@@ -45,15 +58,15 @@ namespace Integrator.Connection.Aras
             {
                 if (this._systemProperties == null)
                 {
-                    this._systemProperties = new String[3] { "id", "source_id", "related_id" };
+                    this._systemProperties = new String[4] { "id", "classification", "source_id", "related_id" };
                 }
 
                 return this._systemProperties;
             }
         }
 
-        internal RelationshipType(Session Session, String ID, String Name, Boolean CanVersion)
-            : base(Session, ID, Name, CanVersion)
+        internal RelationshipType(Session Session, RelationshipType Parent, String ID, String Name, Boolean CanVersion)
+            : base(Session, Parent, ID, Name, CanVersion)
         {
 
         }

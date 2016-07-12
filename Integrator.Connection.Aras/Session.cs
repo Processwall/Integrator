@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using IOM = Aras.IOM;
+using System.Xml;
 
 namespace Integrator.Connection.Aras
 {
@@ -79,6 +80,57 @@ namespace Integrator.Connection.Aras
             }
         }
 
+        private void ProcessClassStructure(ItemType Base, XmlNode Node)
+        {
+            if (Node != null)
+            {
+                foreach (XmlNode childnode in Node.SelectNodes("class"))
+                {
+                    String id = childnode.Attributes["id"].Value;
+                    String name = childnode.Attributes["name"].Value;
+
+                    if (Base is RelationshipType)
+                    {
+                        RelationshipType relationshiptype = new RelationshipType(this, (RelationshipType)Base, id, Base.Name + "." + name, Base.CanVersion);
+                        this._itemTypeCache[relationshiptype.ID] = relationshiptype;
+                        this.ProcessClassStructure(relationshiptype, childnode);
+                    }
+                    else if (Base is FileType)
+                    {
+                        FileType filetype = new FileType(this, (FileType)Base, id, Base.Name + "." + name, Base.CanVersion);
+                        this._itemTypeCache[filetype.ID] = filetype;
+                        this.ProcessClassStructure(filetype, childnode);
+                    }
+                    else
+                    {
+                        ItemType itemtype = new ItemType(this, Base, id, Base.Name + "." + name, Base.CanVersion);
+                        this._itemTypeCache[itemtype.ID] = itemtype;
+                        this.ProcessClassStructure(itemtype, childnode);
+                    }
+                }
+            }
+        }
+
+        private IEnumerable<ItemType> SubTypes(ItemType ItemType)
+        {
+            List<ItemType> ret = new List<ItemType>();
+
+            foreach(ItemType subitemtype in this._itemTypeCache.Values)
+            {
+                if ((subitemtype.Parent) != null && subitemtype.Parent.Equals(ItemType))
+                {
+                    ret.Add(subitemtype);
+
+                    foreach(ItemType subsubitemtype in this.SubTypes(subitemtype))
+                    {
+                        ret.Add(subsubitemtype);
+                    }
+                }
+            }
+
+            return ret;
+        }
+
         private Dictionary<String, ItemType> _itemTypeCache;
         private Dictionary<String, ItemType> ItemTypeCache
         {
@@ -90,7 +142,7 @@ namespace Integrator.Connection.Aras
 
                     // Read ItemTypes
                     IOM.Item iomitemtypes = this.Innovator.newItem("ItemType", "get");
-                    iomitemtypes.setAttribute("select", "id,name,is_relationship,is_versionable");
+                    iomitemtypes.setAttribute("select", "id,name,is_relationship,is_versionable,class_structure");
                     iomitemtypes = iomitemtypes.apply();
 
                     if (!iomitemtypes.isError())
@@ -99,22 +151,35 @@ namespace Integrator.Connection.Aras
                         {
                             IOM.Item iomitemtype = iomitemtypes.getItemByIndex(i);
 
+                            // Process ClassStructure
+                            XmlNode classnode = null;
+
+                            if (!String.IsNullOrEmpty(iomitemtype.getProperty("class_structure")))
+                            {
+                                XmlDocument doc = new XmlDocument();
+                                doc.LoadXml(iomitemtype.getProperty("class_structure"));
+                                classnode = doc.SelectSingleNode("class");
+                            }
+
                             if (iomitemtype.getProperty("is_relationship", "0").Equals("1"))
                             {
-                                RelationshipType relationshiptype = new RelationshipType(this, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
-                                this.ItemTypeCache[relationshiptype.ID] = relationshiptype;
+                                RelationshipType relationshiptype = new RelationshipType(this, null, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
+                                this._itemTypeCache[relationshiptype.ID] = relationshiptype;
+                                this.ProcessClassStructure(relationshiptype, classnode);
                             }
                             else
                             {
                                 if (iomitemtype.getProperty("name").Equals("File"))
                                 {
-                                    FileType filetype = new FileType(this, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
-                                    this.ItemTypeCache[filetype.ID] = filetype;
+                                    FileType filetype = new FileType(this, null, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
+                                    this._itemTypeCache[filetype.ID] = filetype;
+                                    this.ProcessClassStructure(filetype, classnode);
                                 }
                                 else
                                 {
-                                    ItemType itemtype = new ItemType(this, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
-                                    this.ItemTypeCache[itemtype.ID] = itemtype;
+                                    ItemType itemtype = new ItemType(this, null, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
+                                    this._itemTypeCache[itemtype.ID] = itemtype;
+                                    this.ProcessClassStructure(itemtype, classnode);
                                 }
                             }
                         }
@@ -151,6 +216,12 @@ namespace Integrator.Connection.Aras
                                 ((RelationshipType)this._itemTypeCache[iomrelationshiptype.getProperty("relationship_id")]).Related = this._itemTypeCache[related_id];
                             }
 
+                            // Process SubTypes
+                            foreach (RelationshipType subreltype in this.SubTypes(this._itemTypeCache[iomrelationshiptype.getProperty("relationship_id")]))
+                            {
+                                subreltype.Source = ((RelationshipType)this._itemTypeCache[iomrelationshiptype.getProperty("relationship_id")]).Source;
+                                subreltype.Related = ((RelationshipType)this._itemTypeCache[iomrelationshiptype.getProperty("relationship_id")]).Related;
+                            }
                         }
                     }
                     else
@@ -262,7 +333,7 @@ namespace Integrator.Connection.Aras
             {
                 if (ItemType is RelationshipType)
                 {
-                    IOM.Item iomsource = this.Innovator.newItem(ItemType.Name, "get");
+                    IOM.Item iomsource = this.Innovator.newItem(((ItemType)ItemType).DBName, "get");
                     iomsource.setID(ID);
                     iomsource.setAttribute("select", "id,source_id,related_id");
                     iomsource = iomsource.apply();
@@ -311,7 +382,7 @@ namespace Integrator.Connection.Aras
                 {
                     if (RelationshipType.Source is RelationshipType)
                     {
-                        IOM.Item iomsource = this.Innovator.newItem(RelationshipType.Source.Name, "get");
+                        IOM.Item iomsource = this.Innovator.newItem(((ItemType)RelationshipType.Source).DBName, "get");
                         iomsource.setID(SourceID);
                         iomsource.setAttribute("select", "id,source_id,related_id");
                         iomsource = iomsource.apply();
@@ -337,7 +408,7 @@ namespace Integrator.Connection.Aras
                     {
                         if (RelationshipType.Related is RelationshipType)
                         {
-                            IOM.Item iomrelated = this.Innovator.newItem(RelationshipType.Related.Name, "get");
+                            IOM.Item iomrelated = this.Innovator.newItem(((ItemType)RelationshipType.Related).DBName, "get");
                             iomrelated.setID(RelatedID);
                             iomrelated.setAttribute("select", "id,source_id,related_id");
                             iomrelated = iomrelated.apply();
@@ -407,8 +478,14 @@ namespace Integrator.Connection.Aras
         {
             if (ItemType is ItemType && ((ItemType)ItemType).Session.Equals(this))
             {
-                IOM.Item iomitems = this.Innovator.newItem(ItemType.Name, "get");
-                iomitems.setAttribute("select", "id");
+                IOM.Item iomitems = this.Innovator.newItem(((ItemType)ItemType).DBName, "get");
+                iomitems.setAttribute("select", "id,classification");
+
+                if (((ItemType)ItemType).DBClassification != null)
+                {
+                    iomitems.setProperty("classification", ((ItemType)ItemType).DBClassification);
+                }
+
                 iomitems = iomitems.apply();
 
                 if (!iomitems.isError())
@@ -418,7 +495,7 @@ namespace Integrator.Connection.Aras
                     for (int i = 0; i < iomitems.getItemCount(); i++)
                     {
                         IOM.Item iomitem = iomitems.getItemByIndex(i);
-                        items.Add(this.Create((ItemType)ItemType, iomitem.getID(), State.Stored));
+                        items.Add(this.Create(((ItemType)ItemType).SubTypeFromClassification(iomitem.getProperty("classification")), iomitem.getID(), State.Stored));
                     }
 
                     return items;
@@ -427,7 +504,7 @@ namespace Integrator.Connection.Aras
                 {
                     String errormessage = iomitems.getErrorString();
 
-                    if (errormessage.Equals("No items of type " + ItemType.Name + " found."))
+                    if (errormessage.Equals("No items of type " + ((ItemType)ItemType).DBName + " found."))
                     {
                         return new List<Item>();
                     }
@@ -580,8 +657,14 @@ namespace Integrator.Connection.Aras
         {
             if (ItemType is ItemType && ((ItemType)ItemType).Session.Equals(this))
             {
-                IOM.Item iomitems = this.Innovator.newItem(ItemType.Name, "get");
-                iomitems.setAttribute("select", "id");
+                IOM.Item iomitems = this.Innovator.newItem(((ItemType)ItemType).DBName, "get");
+                iomitems.setAttribute("select", "id,classification");
+
+                if (((ItemType)ItemType).DBClassification != null)
+                {
+                    iomitems.setProperty("classification", ((ItemType)ItemType).DBClassification);
+                }
+
                 iomitems.setAttribute("where", this.Where(ItemType, Condition));
                 iomitems = iomitems.apply();
 
@@ -592,7 +675,7 @@ namespace Integrator.Connection.Aras
                     for (int i = 0; i < iomitems.getItemCount(); i++)
                     {
                         IOM.Item iomitem = iomitems.getItemByIndex(i);
-                        items.Add(this.Create((ItemType)ItemType, iomitem.getID(), State.Stored));
+                        items.Add(this.Create(((ItemType)ItemType).SubTypeFromClassification(iomitem.getProperty("classification")), iomitem.getID(), State.Stored));
                     }
 
                     return items;
@@ -601,7 +684,7 @@ namespace Integrator.Connection.Aras
                 {
                     String errormessage = iomitems.getErrorString();
 
-                    if (errormessage.Equals("No items of type " + ItemType.Name + " found."))
+                    if (errormessage.Equals("No items of type " + ((ItemType)ItemType).DBName + " found."))
                     {
                         return new List<Item>();
                     }

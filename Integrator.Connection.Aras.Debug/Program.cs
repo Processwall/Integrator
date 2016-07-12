@@ -10,9 +10,28 @@ namespace Integrator.Connection.Aras.Debug
     {
         static void Main(string[] args)
         {
-            ISession session = new Session("http://localhost/11SP6/", "Development11SP6", "admin", "innovator");
+            ISession session = new Session();
+            String token = session.Token(null, "admin", "innovator");
+            session.Login(token);
 
-            IEnumerable<IItem> cadindex = session.Index("CAD.Mechanical.Assembly");
+            foreach(Connection.Parameter parameter in session.Parameters)
+            {
+                switch(parameter.Name)
+                {
+                    case "URL":
+                        parameter.Value = "http://localhost/11SP6/";
+                        break;
+                    case "Database":
+                        parameter.Value = "Development11SP6";
+                        break;
+
+                    default:
+
+                        break;
+                }
+            }
+
+            IEnumerable<IItem> cadindex = session.Index("CAD");
             IItem cadi = cadindex.First();
    
             IEnumerable<IItem> cads = session.Query("CAD.Mechanical.Drawing", Integrator.Conditions.Eq("item_number", "1234"));

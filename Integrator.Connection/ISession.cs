@@ -7,6 +7,12 @@ namespace Integrator.Connection
 {
     public interface ISession : IEquatable<ISession>
     {
+        String Token(String Group, String Username, String Password);
+
+        IEnumerable<Parameter> Parameters { get; }
+
+        void Login(String Token);
+
         IEnumerable<IItemType> ItemTypes { get; }
 
         IItemType ItemType(String Name);

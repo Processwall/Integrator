@@ -9,14 +9,68 @@ using System.Xml;
 namespace Integrator.Connection.Aras
 {
     public class Session : ISession
-    {
-        public String URL { get; private set; }
+    {   
+        private const String tokenpassword = "NBjwMRztM4PXxYqHvWKg";
+        private const String tokensalt = "xh8ufZgTVTtK3cjg4miE";
 
-        public String Database { get; private set; }
+        public String Token(String Group, String Username, String Password)
+        {
+            Credentials cred = new Credentials(Group, Username, Password);
+            return Cypher.Encrypt(cred, tokenpassword, tokensalt);
+        }
 
-        public String Username { get; private set; }
 
-        public String Password { get; private set; }
+        private List<Connection.Parameter> _paramters;
+        public IEnumerable<Connection.Parameter> Parameters
+        {
+            get
+            {
+                return this._paramters;
+            }
+        }
+
+        public void Login(String Token)
+        {
+            Credentials cred = Cypher.Decrypt(Token, tokenpassword, tokensalt);
+            this.Username = cred.Username;
+            this.Password = cred.Password;
+        }
+
+        private String Username { get; set; }
+
+        private String Password { get; set; }
+
+        private String URL
+        {
+            get
+            {
+                foreach (Parameter parameter in this.Parameters)
+                {
+                    if (parameter.Name.Equals("URL"))
+                    {
+                        return parameter.Value;
+                    }
+                }
+
+                throw new Exceptions.ArgumentException("Parameter not found: URL");
+            }
+        }
+
+        private String Database
+        {
+            get
+            {
+                foreach (Parameter parameter in this.Parameters)
+                {
+                    if (parameter.Name.Equals("Database"))
+                    {
+                        return parameter.Value;
+                    }
+                }
+
+                throw new Exceptions.ArgumentException("Parameter not found: Database");
+            }
+        }
 
         private DirectoryInfo _workspace;
         internal DirectoryInfo WorkSpace
@@ -705,12 +759,11 @@ namespace Integrator.Connection.Aras
 
         }
 
-        public Session(String URL, String Database, String Username, String Password)
+        public Session()
         {
-            this.URL = URL;
-            this.Database = Database;
-            this.Username = Username;
-            this.Password = Password;
+            this._paramters = new List<Parameter>();
+            this._paramters.Add(new Parameter("URL"));
+            this._paramters.Add(new Parameter("Database"));
             this.ItemCache = new Dictionary<ItemType,Dictionary<String,Item>>();
         }
     }

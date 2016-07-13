@@ -47,21 +47,15 @@
     <Compile Include="Conditions\Property.cs" />
     <Compile Include="Credentials.cs" />
     <Compile Include="Cypher.cs" />
-    <Compile Include="Exceptions\DeleteException.cs" />
-    <Compile Include="Exceptions\UpdateException.cs" />
     <Compile Include="IFile.cs" />
     <Compile Include="IFileType.cs" />
     <Compile Include="IReltionship.cs" />
-    <Compile Include="Exceptions\ArgumentException.cs" />
-    <Compile Include="Exceptions\ReadException.cs" />
     <Compile Include="IItem.cs" />
     <Compile Include="IProperty.cs" />
     <Compile Include="IPropertyType.cs" />
     <Compile Include="IRelationshipType.cs" />
-    <Compile Include="Exceptions\LoginException.cs" />
     <Compile Include="IItemType.cs" />
     <Compile Include="ISession.cs" />
-    <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyTypes\IFloat.cs" />
     <Compile Include="PropertyTypes\IMD5.cs" />
@@ -85,6 +79,12 @@
     <Compile Include="Props\IDecimal.cs" />
     <Compile Include="Props\IDate.cs" />
     <Compile Include="Props\IBoolean.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Integrator\Integrator.csproj">
+      <Project>{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}</Project>
+      <Name>Integrator</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

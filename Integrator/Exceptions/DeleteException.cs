@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Integrator.Connection.Exceptions
+namespace Integrator.Exceptions
 {
-    public class ReadException : Exception
+    public class DeleteException : Exception
     {
-        public ReadException(String Message)
+        public DeleteException(String Message)
             : base(Message)
         {
         }

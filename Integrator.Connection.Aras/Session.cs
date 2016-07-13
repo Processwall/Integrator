@@ -13,6 +13,8 @@ namespace Integrator.Connection.Aras
         private const String tokenpassword = "NBjwMRztM4PXxYqHvWKg";
         private const String tokensalt = "xh8ufZgTVTtK3cjg4miE";
 
+        public String Name { get; private set; }
+
         public String Token(String Group, String Username, String Password)
         {
             Credentials cred = new Credentials(Group, Username, Password);
@@ -20,26 +22,18 @@ namespace Integrator.Connection.Aras
         }
 
 
-        private List<Connection.Parameter> _paramters;
-        public IEnumerable<Connection.Parameter> Parameters
+        private Parameters _paramters;
+        public Parameters Parameters
         {
             get
             {
+                if (this._paramters == null)
+                {
+                    this._paramters = new Parameters(new String[2] { "URL", "Database" });
+                }
+
                 return this._paramters;
             }
-        }
-
-        public Integrator.Connection.Parameter Parameter(String Name)
-        {
-            foreach (Integrator.Connection.Parameter param in this.Parameters)
-            {
-                if (param.Name.Equals(Name))
-                {
-                    return param;
-                }
-            }
-
-            throw new Integrator.Connection.Exceptions.ArgumentException("Invalid Parameter Name");
         }
 
         public void Login(String Token)
@@ -52,7 +46,7 @@ namespace Integrator.Connection.Aras
             }
             catch (Exception e)
             {
-                throw new Connection.Exceptions.LoginException("Failed to Login", e);
+                throw new Exceptions.LoginException("Failed to Login", e);
             }
 
         }
@@ -65,7 +59,7 @@ namespace Integrator.Connection.Aras
         {
             get
             {
-                return this.Parameter("URL").Value;
+                return this.Parameters.Parameter("URL").Value;
             }
         }
 
@@ -73,7 +67,7 @@ namespace Integrator.Connection.Aras
         {
             get
             {
-                return this.Parameter("Database").Value;
+                return this.Parameters.Parameter("Database").Value;
             }
         }
 
@@ -769,12 +763,10 @@ namespace Integrator.Connection.Aras
             return "Aras Connection: " + this.Username;
         }
 
-        public Session()
+        public Session(String Name)
         {
-            this._paramters = new List<Parameter>();
-            this._paramters.Add(new Parameter("URL"));
-            this._paramters.Add(new Parameter("Database"));
-            this.ItemCache = new Dictionary<ItemType,Dictionary<String,Item>>();
+            this.Name = Name;
+            this.ItemCache = new Dictionary<ItemType, Dictionary<String, Item>>();
         }
     }
 }

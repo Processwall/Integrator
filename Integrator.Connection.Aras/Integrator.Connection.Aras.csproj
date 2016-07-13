@@ -82,6 +82,10 @@
       <Project>{8AB912E8-3B95-4243-B045-3418A1466C25}</Project>
       <Name>Integrator.Connection</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Integrator\Integrator.csproj">
+      <Project>{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}</Project>
+      <Name>Integrator</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Library\IOM.dll" />

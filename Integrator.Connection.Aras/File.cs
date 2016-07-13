@@ -94,12 +94,12 @@ namespace Integrator.Connection.Aras
                 }
                 else
                 {
-                    throw new Integrator.Connection.Exceptions.UpdateException("Not possible to update Files");
+                    throw new Exceptions.UpdateException("Not possible to update Files");
                 }
             }
             else
             {
-                throw new Integrator.Connection.Exceptions.UpdateException("File does not exist in Cache");
+                throw new Exceptions.UpdateException("File does not exist in Cache");
             }
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Integrator.Connection.Exceptions
+namespace Integrator.Exceptions
 {
     public class LoginException : Exception
     {

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Integrator.Sync.Exceptions
+namespace Integrator.Exceptions
 {
-    public class ArgumentException : Exception
+    public class ReadException : Exception
     {
-        internal ArgumentException(String Message)
+        public ReadException(String Message)
             : base(Message)
         {
         }

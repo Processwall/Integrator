@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{EC3037F5-D4DE-4950-AD97-A2FC0D86CCE1}</ProjectGuid>
+    <ProjectGuid>{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Integrator.Sync</RootNamespace>
-    <AssemblyName>Integrator.Sync</AssemblyName>
+    <RootNamespace>Integrator</RootNamespace>
+    <AssemblyName>Integrator</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,20 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IAction.cs" />
-    <Compile Include="Map.cs" />
-    <Compile Include="Session.cs" />
+    <Compile Include="Exceptions\ArgumentException.cs" />
+    <Compile Include="Exceptions\DeleteException.cs" />
+    <Compile Include="Exceptions\LoginException.cs" />
+    <Compile Include="Exceptions\MappingException.cs" />
+    <Compile Include="Exceptions\ReadException.cs" />
+    <Compile Include="Exceptions\UpdateException.cs" />
+    <Compile Include="Parameter.cs" />
+    <Compile Include="Parameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Integrator.Connection\Integrator.Connection.csproj">
-      <Project>{8AB912E8-3B95-4243-B045-3418A1466C25}</Project>
-      <Name>Integrator.Connection</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Integrator\Integrator.csproj">
-      <Project>{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}</Project>
-      <Name>Integrator</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

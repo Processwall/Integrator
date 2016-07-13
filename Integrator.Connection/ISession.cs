@@ -7,11 +7,11 @@ namespace Integrator.Connection
 {
     public interface ISession : IEquatable<ISession>
     {
+        String Name { get; }
+
         String Token(String Group, String Username, String Password);
 
-        IEnumerable<Parameter> Parameters { get; }
-
-        Parameter Parameter(String Name);
+        Parameters Parameters { get; }
 
         void Login(String Token);
 

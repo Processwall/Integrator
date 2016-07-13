@@ -11,7 +11,11 @@ namespace Integrator.Sync.Debug
         static void Main(string[] args)
         {
             Session session = new Session(new FileInfo("D:\\dev\\LM\\Mapping\\Sync.xml"));
-            IEnumerable<Connection.ISession> connections = session.Connections;
+
+            IAction action = session.Action("Assembly from Teamcenter to Aras");
+            Integrator.Parameters parameters = new Parameters(action.ParameterNames);
+            parameters.Parameter("Number").Value = "1746798-3";
+            action.Execute(parameters);
         }
     }
 }

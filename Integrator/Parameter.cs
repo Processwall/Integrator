@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Integrator.Connection
+namespace Integrator
 {
     public class Parameter
     {
@@ -23,7 +23,7 @@ namespace Integrator.Connection
             }
         }
 
-        public Parameter(String Name)
+        internal Parameter(String Name)
         {
             this.Name = Name;
         }

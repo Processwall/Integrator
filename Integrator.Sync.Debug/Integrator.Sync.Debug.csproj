@@ -55,6 +55,10 @@
       <Project>{93716D3D-700C-4517-9961-51F6CF9E6542}</Project>
       <Name>LM.Connection.Teamcenter</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\LM\LM.Sync\LM.Sync.csproj">
+      <Project>{FCD220FE-8615-4899-A476-007F85894EE2}</Project>
+      <Name>LM.Sync</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Integrator.Connection.Aras\Integrator.Connection.Aras.csproj">
       <Project>{EE9E0015-567D-418D-95CB-E0F34A7F6BFD}</Project>
       <Name>Integrator.Connection.Aras</Name>
@@ -66,6 +70,10 @@
     <ProjectReference Include="..\Integrator.Sync\Integrator.Sync.csproj">
       <Project>{EC3037F5-D4DE-4950-AD97-A2FC0D86CCE1}</Project>
       <Name>Integrator.Sync</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Integrator\Integrator.csproj">
+      <Project>{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}</Project>
+      <Name>Integrator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

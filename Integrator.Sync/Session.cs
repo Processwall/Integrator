@@ -27,12 +27,12 @@ namespace Integrator.Sync
                     }
                     catch (Exception e)
                     {
-                        throw new Exceptions.MappingException("Unbale to read Mapping File", e);
+                        throw new Integrator.Exceptions.MappingException("Unbale to read Mapping File", e);
                     }
 
                     if (this._syncNode == null)
                     {
-                        throw new Exceptions.MappingException("sync node not present in Mapping File");
+                        throw new Integrator.Exceptions.MappingException("sync node not present in Mapping File");
                     }
                 }
 
@@ -67,12 +67,12 @@ namespace Integrator.Sync
                         String assemblylocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + assemblyname + ".dll";
                         Assembly assembly = Assembly.LoadFile(assemblylocation);
                         Type classtype = assembly.GetType(classname);
-                        this._connectionsCache[name] = (Connection.ISession)Activator.CreateInstance(classtype);
+                        this._connectionsCache[name] = (Connection.ISession)Activator.CreateInstance(classtype, name);
 
                         // Set Parameters
                         foreach (XmlNode parameternode in connectionnode.SelectNodes("parameters/parameter"))
                         {
-                            this._connectionsCache[name].Parameter(parameternode.Attributes["name"].Value).Value = parameternode.Attributes["value"].Value;
+                            this._connectionsCache[name].Parameters.Parameter(parameternode.Attributes["name"].Value).Value = parameternode.Attributes["value"].Value;
                         }
 
                         // Login
@@ -101,6 +101,97 @@ namespace Integrator.Sync
             else
             {
                 throw new Exceptions.ArgumentException("Invalid Connection Name");
+            }
+        }
+
+        private Dictionary<String, Map> _mapsCache;
+        private Dictionary<String, Map> MapsCache
+        {
+            get
+            {
+                if (this._mapsCache == null)
+                {
+                    this._mapsCache = new Dictionary<String, Map>();
+
+                    foreach (XmlNode mapnode in this.SyncNode.SelectNodes("maps/map"))
+                    {
+                        String name = mapnode.Attributes["name"].Value;
+                        Connection.ISession source = this.Connection(mapnode.Attributes["source"].Value);
+                        Connection.ISession target = this.Connection(mapnode.Attributes["target"].Value);
+                        this._mapsCache[name] = new Map(name, source, target);
+                    }
+                }
+
+                return this._mapsCache;
+            }
+        }
+
+        public IEnumerable<Map> Maps
+        {
+            get
+            {
+                return this.MapsCache.Values;
+            }
+        }
+
+        public Map Map(String Name)
+        {
+            if (this.MapsCache.ContainsKey(Name))
+            {
+                return this.MapsCache[Name];
+            }
+            else
+            {
+                throw new Exceptions.ArgumentException("Invalid Map Name");
+            }
+        }
+
+        private Dictionary<String, IAction> _actionsCache;
+        private Dictionary<String, IAction> ActionsCache
+        {
+            get
+            {
+                if (this._actionsCache == null)
+                {
+                    this._actionsCache = new Dictionary<String, IAction>();
+
+                    foreach (XmlNode connectionnode in this.SyncNode.SelectNodes("actions/action"))
+                    {
+                        String name = connectionnode.Attributes["name"].Value;
+                        String assemblyname = connectionnode.Attributes["assembly"].Value;
+                        String classname = connectionnode.Attributes["class"].Value;
+                        Map map = this.Map(connectionnode.Attributes["map"].Value);
+
+                        // Create Action
+                        String assemblylocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + assemblyname + ".dll";
+                        Assembly assembly = Assembly.LoadFile(assemblylocation);
+                        Type classtype = assembly.GetType(classname);
+                        this._actionsCache[name] = (IAction)Activator.CreateInstance(classtype, name, map);
+                    }
+
+                }
+
+                return this._actionsCache;
+            }
+        }
+
+        public IEnumerable<IAction> Actions
+        {
+            get
+            {
+                return this.ActionsCache.Values;
+            }
+        }
+
+        public IAction Action(String Name)
+        {
+            if (this.ActionsCache.ContainsKey(Name))
+            {
+                return this.ActionsCache[Name];
+            }
+            else
+            {
+                throw new Exceptions.ArgumentException("Invalid Action Name");
             }
         }
 

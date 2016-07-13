@@ -11,25 +11,10 @@ namespace Integrator.Connection.Aras.Debug
         static void Main(string[] args)
         {
             ISession session = new Session();
+            session.Parameter("URL").Value = "http://localhost/11SP6/";
+            session.Parameter("Database").Value = "Development11SP6";
             String token = session.Token(null, "admin", "innovator");
             session.Login(token);
-
-            foreach(Connection.Parameter parameter in session.Parameters)
-            {
-                switch(parameter.Name)
-                {
-                    case "URL":
-                        parameter.Value = "http://localhost/11SP6/";
-                        break;
-                    case "Database":
-                        parameter.Value = "Development11SP6";
-                        break;
-
-                    default:
-
-                        break;
-                }
-            }
 
             IEnumerable<IItem> cadindex = session.Index("CAD");
             IItem cadi = cadindex.First();

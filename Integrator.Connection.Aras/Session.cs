@@ -44,9 +44,17 @@ namespace Integrator.Connection.Aras
 
         public void Login(String Token)
         {
-            Credentials cred = Cypher.Decrypt(Token, tokenpassword, tokensalt);
-            this.Username = cred.Username;
-            this.Password = cred.Password;
+            try
+            {
+                Credentials cred = Cypher.Decrypt(Token, tokenpassword, tokensalt);
+                this.Username = cred.Username;
+                this.Password = cred.Password;
+            }
+            catch (Exception e)
+            {
+                throw new Connection.Exceptions.LoginException("Failed to Login", e);
+            }
+
         }
 
         private String Username { get; set; }
@@ -754,6 +762,11 @@ namespace Integrator.Connection.Aras
         public void Close()
         {
 
+        }
+
+        public override string ToString()
+        {
+            return "Aras Connection: " + this.Username;
         }
 
         public Session()

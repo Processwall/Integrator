@@ -11,5 +11,10 @@ namespace Integrator.Connection.Exceptions
             : base(Message)
         {
         }
+
+        public LoginException(String Message, Exception e)
+            : base(Message, e)
+        {
+        }
     }
 }

@@ -146,14 +146,14 @@ namespace Integrator.Sync
             }
         }
 
-        private Dictionary<String, IAction> _actionsCache;
-        private Dictionary<String, IAction> ActionsCache
+        private Dictionary<String, Action> _actionsCache;
+        private Dictionary<String, Action> ActionsCache
         {
             get
             {
                 if (this._actionsCache == null)
                 {
-                    this._actionsCache = new Dictionary<String, IAction>();
+                    this._actionsCache = new Dictionary<String, Action>();
 
                     foreach (XmlNode connectionnode in this.SyncNode.SelectNodes("actions/action"))
                     {
@@ -166,7 +166,7 @@ namespace Integrator.Sync
                         String assemblylocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + assemblyname + ".dll";
                         Assembly assembly = Assembly.LoadFile(assemblylocation);
                         Type classtype = assembly.GetType(classname);
-                        this._actionsCache[name] = (IAction)Activator.CreateInstance(classtype, name, map);
+                        this._actionsCache[name] = (Action)Activator.CreateInstance(classtype, name, map);
                     }
 
                 }
@@ -175,7 +175,7 @@ namespace Integrator.Sync
             }
         }
 
-        public IEnumerable<IAction> Actions
+        public IEnumerable<Action> Actions
         {
             get
             {
@@ -183,7 +183,7 @@ namespace Integrator.Sync
             }
         }
 
-        public IAction Action(String Name)
+        public Action Action(String Name)
         {
             if (this.ActionsCache.ContainsKey(Name))
             {

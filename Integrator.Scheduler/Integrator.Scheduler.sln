@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integrator.Scheduler", "Integrator.Scheduler.csproj", "{BA502451-C688-4D23-AAE4-B7ABE67ABDAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integrator.Sync", "..\Integrator.Sync\Integrator.Sync.csproj", "{EC3037F5-D4DE-4950-AD97-A2FC0D86CCE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integrator", "..\Integrator\Integrator.csproj", "{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integrator.Connection", "..\Integrator.Connection\Integrator.Connection.csproj", "{8AB912E8-3B95-4243-B045-3418A1466C25}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA502451-C688-4D23-AAE4-B7ABE67ABDAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA502451-C688-4D23-AAE4-B7ABE67ABDAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA502451-C688-4D23-AAE4-B7ABE67ABDAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA502451-C688-4D23-AAE4-B7ABE67ABDAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC3037F5-D4DE-4950-AD97-A2FC0D86CCE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC3037F5-D4DE-4950-AD97-A2FC0D86CCE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC3037F5-D4DE-4950-AD97-A2FC0D86CCE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC3037F5-D4DE-4950-AD97-A2FC0D86CCE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AB912E8-3B95-4243-B045-3418A1466C25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AB912E8-3B95-4243-B045-3418A1466C25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AB912E8-3B95-4243-B045-3418A1466C25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AB912E8-3B95-4243-B045-3418A1466C25}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

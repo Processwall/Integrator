@@ -12,6 +12,8 @@ namespace Integrator.Sync
     {
         public FileInfo Filename {get; private set;}
 
+        public Log Log { get; private set; }
+
         private XmlNode _syncNode;
         private XmlNode SyncNode
         {
@@ -193,9 +195,10 @@ namespace Integrator.Sync
             }
         }
 
-        public Session(FileInfo Filename)
+        public Session(FileInfo Filename, Log Log)
         {
             this.Filename = Filename;
+            this.Log = Log;
         }
     }
 }

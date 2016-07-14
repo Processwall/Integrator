@@ -10,7 +10,8 @@ namespace Integrator.Sync.Debug
     {
         static void Main(string[] args)
         {
-            Session session = new Session(new FileInfo("c:\\dev\\Integrator\\Mapping\\Sync.xml"));
+            Log log = new Logs.Console();
+            Session session = new Session(new FileInfo("c:\\dev\\Integrator\\Mapping\\Sync.xml"), log);
 
             Action action = session.Action("Assembly from Aras to Aras");
             Integrator.Parameters parameters = action.CreateParameters();

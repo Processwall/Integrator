@@ -115,10 +115,8 @@ namespace Integrator.Sync
 
                     foreach (XmlNode mapnode in this.SyncNode.SelectNodes("maps/map"))
                     {
-                        String name = mapnode.Attributes["name"].Value;
-                        Connection.ISession source = this.Connection(mapnode.Attributes["source"].Value);
-                        Connection.ISession target = this.Connection(mapnode.Attributes["target"].Value);
-                        this._mapsCache[name] = new Map(name, source, target);
+                        Map map = new Sync.Map(this, mapnode);
+                        this._mapsCache[map.Name] = new Map(this, mapnode);                        
                     }
                 }
 

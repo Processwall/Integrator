@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="Maps\PropertyType.cs" />
+    <Compile Include="Maps\ItemType.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

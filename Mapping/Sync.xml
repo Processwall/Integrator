@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sync>
+	<connections>
+		<connection name="Aras11SP1" assembly="Integrator.Connection.Aras" class="Integrator.Connection.Aras.Session" token="XHMa8tZiF/F2lz+f+KZ9lrbThKIR2J+z/o5Q9Rr9uh4ImTcqj5KAX5CWRNYg/C5uumj5VwAnYxaztjA78/O9og==" >
+			<parameters>
+				<parameter name="URL" value="http://localhost/11SP1/" />
+				<parameter name="Database" value="Development11SP1" />
+			</parameters>
+		</connection>
+		<connection name="Aras11SP6" assembly="Integrator.Connection.Aras" class="Integrator.Connection.Aras.Session" token="XHMa8tZiF/F2lz+f+KZ9lrbThKIR2J+z/o5Q9Rr9uh4ImTcqj5KAX5CWRNYg/C5uumj5VwAnYxaztjA78/O9og==" >
+			<parameters>
+				<parameter name="URL" value="http://localhost/11SP6/" />
+				<parameter name="Database" value="Development11SP6" />
+			</parameters>
+		</connection>
+	</connections>
+	<maps>
+		<map name="Aras to Aras" source="Aras11SP1" target="Aras11SP6">
+			<itemtypes>
+				<itemtype source="Part" target="Part">
+					<propertytypes>
+						<propertytype source="item_number" target="item_number" key="true"/>
+						<propertytype source="major_rev" target="major_rev"/>
+						<propertytype source="name" target="name"/>
+					</propertytypes>
+				</itemtype>
+			</itemtypes>
+		</map>
+	</maps>
+	<actions>
+		<action name="Assembly from Aras to Aras" assembly="Integrator.Sync.Aras" class="Integrator.Sync.Aras.AssemblyfromArastoAras" map="Aras to Aras"/>
+	</actions>
+</sync>

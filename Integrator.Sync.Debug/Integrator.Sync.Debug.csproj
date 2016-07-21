@@ -51,6 +51,14 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\LM\LM.Connection.Teamcenter\LM.Connection.Teamcenter.csproj">
+      <Project>{93716d3d-700c-4517-9961-51f6cf9e6542}</Project>
+      <Name>LM.Connection.Teamcenter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\LM\LM.Sync\LM.Sync.csproj">
+      <Project>{fcd220fe-8615-4899-a476-007f85894ee2}</Project>
+      <Name>LM.Sync</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Integrator.Connection.Aras\Integrator.Connection.Aras.csproj">
       <Project>{EE9E0015-567D-418D-95CB-E0F34A7F6BFD}</Project>
       <Name>Integrator.Connection.Aras</Name>

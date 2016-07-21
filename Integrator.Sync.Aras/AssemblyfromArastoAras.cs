@@ -154,6 +154,33 @@ namespace Integrator.Sync.Aras
                     {
                         targetbomline = relatedsource[sourcebomline.Related];
                     }
+
+                    // Create Instance
+                    targetbomline.Lock();
+                    Connection.IRelationship targetinstance = null;
+
+                    foreach(Connection.IRelationship thistargetinstance in targetbomline.Relationships("BOM Instance"))
+                    {
+                        if (thistargetinstance.Property("pwb_cad_instance_name").Object.Equals(sourcebomline.Property("instance_name").Object))
+                        {
+                            targetinstance = thistargetinstance;
+                            break;
+                        }
+                    }
+
+                    if (targetinstance == null)
+                    {
+                        targetinstance = targetbomline.Create("BOM Instance");
+                        targetinstance.Property("pwb_cad_instance_name").Object = sourcebomline.Property("instance_name").Object;
+                    }
+                    else
+                    {
+                        targetinstance.Lock(); 
+                    }
+
+                    targetinstance.Property("pwb_transformation_matrix").Object = sourcebomline.Property("transformation").Object;
+                    targetinstance.Save();
+                    targetinstance.UnLock();
                 }
 
                 Target.UnLock();

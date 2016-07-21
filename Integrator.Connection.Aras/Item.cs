@@ -365,6 +365,7 @@ namespace Integrator.Connection.Aras
 
             IOM.Item iomitem = this.Session.Innovator.newItem(((ItemType)this.ItemType).DBName, action);
             iomitem.setID(this.ID);
+            iomitem.setProperty("classification", ((ItemType)this.ItemType).DBClassification);
 
             foreach(IPropertyType proptype in this.ItemType.PropertyTypes)
             {

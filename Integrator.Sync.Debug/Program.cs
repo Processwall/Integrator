@@ -15,7 +15,7 @@ namespace Integrator.Sync.Debug
 
             Action action = session.Action("Assembly from Aras to Aras");
             Integrator.Parameters parameters = action.CreateParameters();
-            parameters.Parameter("Number").Value = "G10010";
+            parameters.Parameter("Number").Value = "1234";
             action.Execute(parameters);
         }
     }

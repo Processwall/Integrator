@@ -10,9 +10,9 @@ namespace Integrator.Connection.Aras.Debug
     {
         static void Main(string[] args)
         {
-            ISession session = new Session();
-            session.Parameter("URL").Value = "http://localhost/11SP6/";
-            session.Parameter("Database").Value = "Development11SP6";
+            ISession session = new Session("Aras");
+            session.Parameters.Parameter("URL").Value = "http://localhost/11SP6/";
+            session.Parameters.Parameter("Database").Value = "Development11SP6";
             String token = session.Token(null, "admin", "innovator");
             session.Login(token);
 

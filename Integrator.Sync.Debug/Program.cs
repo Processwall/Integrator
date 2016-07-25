@@ -15,7 +15,7 @@ namespace Integrator.Sync.Debug
 
             Action action = session.Action("Assembly from Teamcenter to Aras");
             Integrator.Parameters parameters = action.CreateParameters();
-            parameters.Parameter("Number").Value = "1234";
+            parameters.Parameter("Number").Value = "2TRN13777-0001";
             action.Execute(parameters);
         }
     }

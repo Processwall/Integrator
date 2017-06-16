@@ -31,9 +31,11 @@ namespace Integrator
 
         private ConcurrentQueue<Message> Messages;
 
+        private volatile Boolean Process;
+
         private void ProcessQueue()
         {
-            while (true)
+            while (this.Process)
             {
                 Message message = null;
 
@@ -46,17 +48,24 @@ namespace Integrator
             }
         }
 
-        public virtual void Dispose()
+        public virtual void Close()
         {
-            // Stop Workder
             if (this.Worker != null)
             {
-                this.Worker.Abort();
+                this.Process = false;
+                this.Worker.Join();
             }
+        }
+
+        public void Dispose()
+        {
+            this.Close();
         }
 
         public Log()
         {
+            this.Process = true;
+
             // Default Logging to Information
             this.Level = Levels.INF;
 

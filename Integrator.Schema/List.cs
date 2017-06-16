@@ -44,7 +44,7 @@ namespace Integrator.Schema
                 }
                 else
                 {
-                    throw new ArgumentException("Duplicate List Value: " + this.Name + ": " + listvalue.Value);
+                    throw new Exceptions.ArgumentException("Duplicate List Value: " + this.Name + ": " + listvalue.Value);
                 }
             }
         }

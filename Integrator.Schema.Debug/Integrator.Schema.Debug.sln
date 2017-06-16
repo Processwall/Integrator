@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integrator.Schema.Debug", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integrator.Schema", "..\Integrator.Schema\Integrator.Schema.csproj", "{9636EE04-863E-4C87-85C7-FE7F49673FBE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integrator", "..\Integrator\Integrator.csproj", "{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{9636EE04-863E-4C87-85C7-FE7F49673FBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9636EE04-863E-4C87-85C7-FE7F49673FBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9636EE04-863E-4C87-85C7-FE7F49673FBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

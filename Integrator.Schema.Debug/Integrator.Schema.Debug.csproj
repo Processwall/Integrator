@@ -53,6 +53,10 @@
       <Project>{9636ee04-863e-4c87-85c7-fe7f49673fbe}</Project>
       <Name>Integrator.Schema</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Integrator\Integrator.csproj">
+      <Project>{e4567cd2-2b49-4132-9ba5-4dc7ba85161e}</Project>
+      <Name>Integrator</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Sample.xml">

@@ -54,6 +54,12 @@
     <Compile Include="ListValue.cs" />
     <Compile Include="RelationshipType.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Integrator\Integrator.csproj">
+      <Project>{e4567cd2-2b49-4132-9ba5-4dc7ba85161e}</Project>
+      <Name>Integrator</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

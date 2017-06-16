@@ -52,7 +52,7 @@ namespace Integrator.Schema
             }
             else
             {
-                throw new ArgumentException("Invalid List Name: " + Name);
+                throw new Exceptions.ArgumentException("Invalid List Name: " + Name);
             }
         }
 
@@ -66,7 +66,7 @@ namespace Integrator.Schema
             }
             else
             {
-                throw new ArgumentException("ItemType is already in Cache: " + ItemType.Name);
+                throw new Exceptions.ArgumentException("ItemType is already in Cache: " + ItemType.Name);
             }
         }
 
@@ -83,7 +83,7 @@ namespace Integrator.Schema
             }
             else
             {
-                throw new ArgumentException("Invalid ItemType Name: " + Name);
+                throw new Exceptions.ArgumentException("Invalid ItemType Name: " + Name);
             }
         }
 
@@ -103,7 +103,7 @@ namespace Integrator.Schema
             }
             else
             {
-                throw new ArgumentException("Invalid ItemTypeCache Name: " + Name);
+                throw new Exceptions.ArgumentException("Invalid ItemTypeCache Name: " + Name);
             }
         }
 
@@ -120,7 +120,7 @@ namespace Integrator.Schema
                 }
                 else
                 {
-                    throw new ArgumentException("Duplicate List: " + list.Name);
+                    throw new Exceptions.ArgumentException("Duplicate List: " + list.Name);
                 }
             }
 

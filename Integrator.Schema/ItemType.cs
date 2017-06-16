@@ -46,7 +46,7 @@ namespace Integrator.Schema
                 }
                 else
                 {
-                    throw new ArgumentException("Invalid Property Name: " + Name);
+                    throw new Exceptions.ArgumentException("Invalid Property Name: " + Name);
                 }
             }
         }
@@ -69,7 +69,7 @@ namespace Integrator.Schema
             }
             else
             {
-                throw new ArgumentException("Invalid RelationshipType Name: " + Name);
+                throw new Exceptions.ArgumentException("Invalid RelationshipType Name: " + Name);
             }
         }
 
@@ -112,7 +112,7 @@ namespace Integrator.Schema
 
                     default:
 
-                        throw new ArgumentException("PropertyType not implemented: " + proptypenode.Attributes["type"].Value);
+                        throw new Exceptions.ArgumentException("PropertyType not implemented: " + proptypenode.Attributes["type"].Value);
                 }
 
                 if (!this.PropertyTypesCache.ContainsKey(proptype.Name))
@@ -121,7 +121,7 @@ namespace Integrator.Schema
                 }
                 else
                 {
-                    throw new ArgumentException("Duplicate PropertyType Name: " + this.Name + ": " + proptype.Name);
+                    throw new Exceptions.ArgumentException("Duplicate PropertyType Name: " + this.Name + ": " + proptype.Name);
                 }
             }
 
@@ -136,7 +136,7 @@ namespace Integrator.Schema
                 }
                 else
                 {
-                    throw new ArgumentException("Duplicate RelationshipType: " + reltype.Name);
+                    throw new Exceptions.ArgumentException("Duplicate RelationshipType: " + reltype.Name);
                 }
             }
         }

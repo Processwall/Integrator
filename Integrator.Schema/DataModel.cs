@@ -58,11 +58,25 @@ namespace Integrator.Schema
 
         private Dictionary<String, ItemType> ItemTypeCache;
 
+        private Dictionary<String, RelationshipType> RelationshipTypeCache;
+
+        private Dictionary<String, FileType> FileTypeCache;
+
         internal void AddItemTypeToCache(ItemType ItemType)
         {
             if (!this.ItemTypeCache.ContainsKey(ItemType.Name))
             {
                 this.ItemTypeCache[ItemType.Name] = ItemType;
+
+                if (ItemType is FileType)
+                {
+                    this.FileTypeCache[ItemType.Name] = (FileType)ItemType;
+                }
+
+                if (ItemType is RelationshipType)
+                {
+                    this.RelationshipTypeCache[ItemType.Name] = (RelationshipType)ItemType;
+                }
             }
             else
             {
@@ -103,7 +117,27 @@ namespace Integrator.Schema
             }
             else
             {
-                throw new Exceptions.ArgumentException("Invalid ItemTypeCache Name: " + Name);
+                throw new Exceptions.ArgumentException("Invalid ItemType Name: " + Name);
+            }
+        }
+
+        public IEnumerable<FileType> FileTypes
+        {
+            get
+            {
+                return this.FileTypeCache.Values;
+            }
+        }
+
+        public FileType FileType(String Name)
+        {
+            if (this.FileTypeCache.ContainsKey(Name))
+            {
+                return this.FileTypeCache[Name];
+            }
+            else
+            {
+                throw new Exceptions.ArgumentException("Invalid FileType Name: " + Name);
             }
         }
 
@@ -128,6 +162,12 @@ namespace Integrator.Schema
             foreach (XmlNode itemtypenode in this.Node.SelectNodes("itemtypes/itemtype"))
             {
                 ItemType itemtype = new ItemType(this, itemtypenode);
+            }
+
+            // Load FileTypes
+            foreach (XmlNode itemtypenode in this.Node.SelectNodes("filetypes/filetype"))
+            {
+                FileType filetype = new FileType(this, itemtypenode);
             }
         }
 
@@ -176,6 +216,8 @@ namespace Integrator.Schema
         {
             this.ListsCache = new Dictionary<String, List>();
             this.ItemTypeCache = new Dictionary<String, ItemType>();
+            this.RelationshipTypeCache = new Dictionary<String, RelationshipType>();
+            this.FileTypeCache = new Dictionary<String, FileType>();
             this.Document = Document;
             this.Load();
         }

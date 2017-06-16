@@ -25,6 +25,8 @@
         <propertytype name="listprop" type="List" list="list1"/>
         <propertytype name="itemprop" type="Item" itemtype="test2"/>
         <propertytype name="dateprop" type="Date"/>
+        <propertytype name="decimalprop" type="Decimal"/>
+        <propertytype name="textprop" type="Text"/>
       </propertytypes>
       
       <relationshiptypes>
@@ -59,8 +61,25 @@
       </propertytypes>
    
     </itemtype>
+
+    <itemtype name="test5" parent="test3">
+
+      <propertytypes>
+        <propertytype name="stringprop2" type="String"/>
+        <propertytype name="integerprop2" type="Integer"/>
+      </propertytypes>
+      
+    </itemtype>
     
   </itemtypes>
+
+  <filetypes>
+
+    <filetype name ="test6">
+      
+    </filetype>
+    
+  </filetypes>
   
 </integrator>
 

@@ -19,6 +19,10 @@ namespace Integrator.Schema.Debug
             doc.Load(resourcestream);
 
             DataModel datamodel = new DataModel(doc);
+
+            ItemType test5 = datamodel.ItemType("test5");
+            ItemType test5parent = test5.Parent;
+            ItemType test2 = test5parent.Parent;
         }
     }
 }

@@ -13,6 +13,23 @@ namespace Integrator.Schema
 
         protected XmlNode Node { get; private set; }
 
+        public ItemType Parent
+        {
+            get
+            {
+                XmlAttribute parentattribute = this.Node.Attributes["parent"];
+
+                if (parentattribute != null)
+                {
+                    return this.DataModel.ItemType(parentattribute.Value);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         public String Name
         {
             get
@@ -75,6 +92,15 @@ namespace Integrator.Schema
 
         private void Load()
         {
+            // Load Parent PropertyTypes
+            if (this.Parent != null)
+            {
+                foreach(PropertyType proptype in this.Parent.PropertyTypes)
+                {
+                    this.PropertyTypesCache[proptype.Name] = proptype;
+                }
+            }
+
             // Load PropertyTypes
             foreach (XmlNode proptypenode in this.Node.SelectNodes("propertytypes/propertytype"))
             {
@@ -110,6 +136,14 @@ namespace Integrator.Schema
                         proptype = new PropertyTypes.Date(this, proptypenode);
                         break;
 
+                    case "Decimal":
+                        proptype = new PropertyTypes.Decimal(this, proptypenode);
+                        break;
+
+                    case "Text":
+                        proptype = new PropertyTypes.Text(this, proptypenode);
+                        break;
+
                     default:
 
                         throw new Exceptions.ArgumentException("PropertyType not implemented: " + proptypenode.Attributes["type"].Value);
@@ -122,6 +156,15 @@ namespace Integrator.Schema
                 else
                 {
                     throw new Exceptions.ArgumentException("Duplicate PropertyType Name: " + this.Name + ": " + proptype.Name);
+                }
+            }
+
+            // Load Parent RelationshipTypes
+            if (this.Parent != null)
+            {
+                foreach (RelationshipType reltype in this.Parent.RelationshipTypes)
+                {
+                    this.RelationshipTypesCache[reltype.Name] = reltype;
                 }
             }
 

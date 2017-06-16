@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<integrator name="Sample Schema">
+
+  <lists>
+    
+    <list name="list1">
+      <values>
+        <value value="value1" label="Value 1"/>
+        <value value="value2" label="Value 2"/>
+        <value value="value3" label="Value 3"/>
+      </values>
+    </list>  
+    
+  </lists>
+  
+  <itemtypes>
+    
+    <itemtype name="test1">
+
+      <propertytypes>
+        <propertytype name="stringprop" type="String"/>
+        <propertytype name="integerprop" type="Integer"/>
+        <propertytype name="booleanprop" type="Boolean"/>
+        <propertytype name="doubleprop" type="Double"/>
+        <propertytype name="listprop" type="List" list="list1"/>
+        <propertytype name="itemprop" type="Item" itemtype="test2"/>
+        <propertytype name="dateprop" type="Date"/>
+      </propertytypes>
+      
+      <relationshiptypes>
+    
+        <relationshiptype name="test4" related="test3">
+          
+          <propertytypes>
+            <propertytype name="stringprop" type="String"/>
+            <propertytype name="integerprop" type="Integer"/>
+          </propertytypes>
+          
+        </relationshiptype>  
+     
+      </relationshiptypes>
+    
+    </itemtype>
+    
+    <itemtype name="test2">
+      
+      <propertytypes>
+        <propertytype name="stringprop" type="String"/>
+        <propertytype name="integerprop" type="Integer"/>
+      </propertytypes>
+    
+    </itemtype>
+
+    <itemtype name="test3">
+    
+      <propertytypes>
+        <propertytype name="stringprop" type="String"/>
+        <propertytype name="integerprop" type="Integer"/>
+      </propertytypes>
+   
+    </itemtype>
+    
+  </itemtypes>
+  
+</integrator>
+

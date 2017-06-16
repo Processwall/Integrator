@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Integrator.Connection.Properties
 {
-    public interface IFloat
+    public interface IDouble : IProperty
     {
         System.Double? Value { get; set; }
     }

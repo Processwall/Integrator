@@ -7,7 +7,7 @@ namespace Integrator.Connection
 {
     public interface IProperty
     {
-        IPropertyType PropertyType { get; }
+        Schema.PropertyType PropertyType { get; }
 
         object Object { get; set; }
     }

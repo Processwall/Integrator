@@ -9,7 +9,7 @@ namespace Integrator.Connection
 
     public interface IItem : IEquatable<IItem>
     {
-        IItemType ItemType { get; }
+        Schema.ItemType ItemType { get; }
 
         String ID { get; }
 
@@ -19,19 +19,19 @@ namespace Integrator.Connection
 
         IEnumerable<IProperty> Properties { get; }
 
-        IProperty Property(IPropertyType PropertyType);
+        IProperty Property(Schema.PropertyType PropertyType);
 
         IProperty Property(String Name);
 
-        IEnumerable<IRelationship> Relationships(IRelationshipType RelationshipType);
+        IEnumerable<IRelationship> Relationships(Schema.RelationshipType RelationshipType);
 
         IEnumerable<IRelationship> Relationships(String Name);
 
-        IRelationship Create(IRelationshipType RelationshipType);
+        IRelationship Create(Schema.RelationshipType RelationshipType);
 
         IRelationship Create(String Name);
 
-        IRelationship Create(IRelationshipType RelationshipType, IItem Related);
+        IRelationship Create(Schema.RelationshipType RelationshipType, IItem Related);
 
         IRelationship Create(String Name, IItem Related);
 

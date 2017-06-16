@@ -7,7 +7,7 @@ namespace Integrator.Connection
 {
     public interface IRelationship : IItem
     {
-        IRelationshipType RelationshipType { get; }
+        Schema.RelationshipType RelationshipType { get; }
 
         IItem Source { get; }
 

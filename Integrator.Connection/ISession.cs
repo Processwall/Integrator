@@ -15,27 +15,21 @@ namespace Integrator.Connection
 
         void Login(String Token);
 
-        IEnumerable<IItemType> ItemTypes { get; }
+        Schema.DataModel DataModel { get; }
 
-        IItemType ItemType(String Name);
-
-        IEnumerable<IFileType> FileTypes { get; }
-
-        IFileType FileType(String Name);
-
-        IItem Create(IItemType ItemType);
+        IItem Create(Schema.ItemType ItemType);
 
         IItem Create(String Name);
 
-        IFile Create(IFileType FileType, String Filename);
+        IFile Create(Schema.FileType FileType, String Filename);
 
         IFile Create(String Name, String Filename);
 
-        IEnumerable<IItem> Index(IItemType ItemType);
+        IEnumerable<IItem> Index(Schema.ItemType ItemType);
 
         IEnumerable<IItem> Index(String Name);
 
-        IEnumerable<IItem> Query(IItemType ItemType, Condition Condition);
+        IEnumerable<IItem> Query(Schema.ItemType ItemType, Condition Condition);
 
         IEnumerable<IItem> Query(String Name, Condition Condition);
 

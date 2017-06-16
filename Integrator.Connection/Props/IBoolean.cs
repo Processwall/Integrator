@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Integrator.Connection.Properties
 {
-    public interface IBoolean
+    public interface IBoolean : IProperty
     {
         System.Boolean? Value { get; set; }
     }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Integrator.Connection.Properties
 {
-    public interface IDate
+    public interface IDate : IProperty
     {
         System.DateTime? Value { get; set; }
     }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Integrator.Connection.Properties
 {
-    public interface IString
+    public interface IString : IProperty
     {
         System.String Value { get; set; }
     }

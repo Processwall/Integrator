@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Integrator.Connection</RootNamespace>
     <AssemblyName>Integrator.Connection</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -48,39 +51,26 @@
     <Compile Include="Credentials.cs" />
     <Compile Include="Cypher.cs" />
     <Compile Include="IFile.cs" />
-    <Compile Include="IFileType.cs" />
     <Compile Include="IReltionship.cs" />
     <Compile Include="IItem.cs" />
     <Compile Include="IProperty.cs" />
-    <Compile Include="IPropertyType.cs" />
-    <Compile Include="IRelationshipType.cs" />
-    <Compile Include="IItemType.cs" />
     <Compile Include="ISession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyTypes\IFloat.cs" />
-    <Compile Include="PropertyTypes\IMD5.cs" />
-    <Compile Include="PropertyTypes\IBoolean.cs" />
-    <Compile Include="PropertyTypes\IDate.cs" />
-    <Compile Include="PropertyTypes\IDecimal.cs" />
-    <Compile Include="PropertyTypes\IImage.cs" />
-    <Compile Include="PropertyTypes\IInteger.cs" />
-    <Compile Include="PropertyTypes\IItem.cs" />
-    <Compile Include="PropertyTypes\IList.cs" />
-    <Compile Include="PropertyTypes\IString.cs" />
-    <Compile Include="PropertyTypes\IText.cs" />
-    <Compile Include="Props\IFloat.cs" />
-    <Compile Include="Props\IMD5.cs" />
+    <Compile Include="Props\IDouble.cs" />
     <Compile Include="Props\IText.cs" />
     <Compile Include="Props\IString.cs" />
     <Compile Include="Props\IList.cs" />
     <Compile Include="Props\IItem.cs" />
     <Compile Include="Props\IInteger.cs" />
-    <Compile Include="Props\IImage.cs" />
     <Compile Include="Props\IDecimal.cs" />
     <Compile Include="Props\IDate.cs" />
     <Compile Include="Props\IBoolean.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Integrator.Schema\Integrator.Schema.csproj">
+      <Project>{9636ee04-863e-4c87-85c7-fe7f49673fbe}</Project>
+      <Name>Integrator.Schema</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Integrator\Integrator.csproj">
       <Project>{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}</Project>
       <Name>Integrator</Name>

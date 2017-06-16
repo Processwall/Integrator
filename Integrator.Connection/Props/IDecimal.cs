@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Integrator.Connection.Properties
 {
-    public interface IDecimal
+    public interface IDecimal : IProperty
     {
         System.Decimal? Value { get; set; }
     }

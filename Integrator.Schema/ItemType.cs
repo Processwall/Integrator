@@ -68,6 +68,25 @@ namespace Integrator.Schema
             }
         }
 
+        public Boolean IsSubTypeOf(ItemType BaseItemType)
+        {
+            if (this.Parent != null)
+            {
+                if (this.Parent.Equals(BaseItemType))
+                {
+                    return true;
+                }
+                else
+                {
+                    return this.Parent.IsSubTypeOf(BaseItemType);
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private Dictionary<String, RelationshipType> RelationshipTypesCache;
 
         public IEnumerable<RelationshipType> RelationshipTypes
@@ -159,20 +178,40 @@ namespace Integrator.Schema
                 }
             }
 
+            // Load RelationshipTypes
+            List<RelationshipType> reltypes = new List<RelationshipType>();
+
+            foreach (XmlNode reltypenode in this.Node.SelectNodes("relationshiptypes/relationshiptype"))
+            {
+                reltypes.Add(new RelationshipType(this, reltypenode));
+            }
+
             // Load Parent RelationshipTypes
             if (this.Parent != null)
             {
-                foreach (RelationshipType reltype in this.Parent.RelationshipTypes)
+                foreach (RelationshipType parentreltype in this.Parent.RelationshipTypes)
                 {
-                    this.RelationshipTypesCache[reltype.Name] = reltype;
+                    Boolean issubtype = false;
+
+                    foreach(RelationshipType reltype in reltypes)
+                    {
+                        if (reltype.IsSubTypeOf(parentreltype))
+                        {
+                            issubtype = true;
+                            break;
+                        }
+                    }
+
+                    if (!issubtype)
+                    {
+                        this.RelationshipTypesCache[parentreltype.Name] = parentreltype;
+                    }
                 }
             }
 
-            // Load RelationshipTypes
-            foreach (XmlNode reltypenode in this.Node.SelectNodes("relationshiptypes/relationshiptype"))
+            // Add RelationshipTypes to Cache
+            foreach(RelationshipType reltype in reltypes)
             {
-                RelationshipType reltype = new RelationshipType(this, reltypenode);
-
                 if (!this.RelationshipTypesCache.ContainsKey(reltype.Name))
                 {
                     this.RelationshipTypesCache[reltype.Name] = reltype;

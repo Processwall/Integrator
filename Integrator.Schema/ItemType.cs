@@ -9,7 +9,7 @@ namespace Integrator.Schema
 {
     public class ItemType : IEquatable<ItemType>
     {
-        public DataModel DataModel { get; private set; }
+        public Session DataModel { get; private set; }
 
         protected XmlNode Node { get; private set; }
 
@@ -226,7 +226,7 @@ namespace Integrator.Schema
             return this.Name;
         }
 
-        internal ItemType(DataModel DataModel, XmlNode Node)
+        internal ItemType(Session DataModel, XmlNode Node)
         {
             this.PropertyTypesCache = new Dictionary<String, PropertyType>();
             this.RelationshipTypesCache = new Dictionary<String, RelationshipType>();

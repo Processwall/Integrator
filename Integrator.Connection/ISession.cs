@@ -15,7 +15,7 @@ namespace Integrator.Connection
 
         void Login(String Token);
 
-        Schema.DataModel DataModel { get; }
+        Schema.Session Schema { get; }
 
         IItem Create(Schema.ItemType ItemType);
 

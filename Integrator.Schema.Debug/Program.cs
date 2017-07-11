@@ -18,9 +18,9 @@ namespace Integrator.Schema.Debug
             XmlDocument doc = new XmlDocument();
             doc.Load(resourcestream);
 
-            DataModel datamodel = new DataModel(doc);
+            Session schema = new Session(doc);
 
-            ItemType test5 = datamodel.ItemType("test5");
+            ItemType test5 = schema.ItemType("test5");
             ItemType test5parent = test5.Parent;
             ItemType test2 = test5parent.Parent;
         }

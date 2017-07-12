@@ -11,9 +11,9 @@ namespace Integrator.Connection
     {
         Schema.ItemType ItemType { get; }
 
-        String ItemID { get; }
+        String ID { get; }
 
-        String VersionID { get; }
+        String ConfigID { get; }
 
         Actions Action { get; }
 
@@ -43,7 +43,7 @@ namespace Integrator.Connection
 
         void UnLock();
 
-        IItem Save(Boolean Unlock=true);
+        IItem Save();
 
         void Delete();
     }

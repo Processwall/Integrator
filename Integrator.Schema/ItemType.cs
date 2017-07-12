@@ -34,7 +34,36 @@ namespace Integrator.Schema
         {
             get
             {
-                return this.Node.Attributes["name"].Value;
+                if (this.Node.Attributes["name"] != null)
+                {
+                    return this.Node.Attributes["name"].Value;
+                }
+                else
+                {
+                    throw new Exceptions.ArgumentException("Item Type Name must be specified");
+                }
+            }
+        }
+
+        public Boolean CanVersion
+        {
+            get
+            {
+                if (this.Node.Attributes["canversion"] != null)
+                {
+                    if (String.Compare(this.Node.Attributes["canversion"].Value, "true", true) == 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 

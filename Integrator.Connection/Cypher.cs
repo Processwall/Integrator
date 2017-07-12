@@ -54,7 +54,6 @@ namespace Integrator.Connection
             memoryStream.Close();
             cryptoStream.Close();
             String plain = Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
-
             int seppos1 = plain.IndexOf(tokensep, 0);
             int seppos2 = plain.IndexOf(tokensep, seppos1 + tokensep.Length);
             string grp = plain.Substring(0, seppos1);

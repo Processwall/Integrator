@@ -53,18 +53,15 @@ namespace Integrator.Schema
             return this.PropertyTypesCache.ContainsKey(Name);
         }
 
-        public PropertyType PropertyType
+        public PropertyType PropertyType(String Name)
         {
-            get
+            if (this.HasProperty(Name))
             {
-                if (this.HasProperty(Name))
-                {
-                    return this.PropertyTypesCache[Name];
-                }
-                else
-                {
-                    throw new Exceptions.ArgumentException("Invalid Property Name: " + Name);
-                }
+                return this.PropertyTypesCache[Name];
+            }
+            else
+            {
+                throw new Exceptions.ArgumentException("Invalid Property Name: " + Name);
             }
         }
 

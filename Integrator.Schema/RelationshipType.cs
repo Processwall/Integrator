@@ -15,11 +15,16 @@ namespace Integrator.Schema
         {
             get
             {
-                String relatedname = this.Node.Attributes["related"].Value;
-
-                if (!String.IsNullOrEmpty(relatedname))
+                if (this.Node.Attributes["related"] != null)
                 {
-                    return this.DataModel.ItemType(relatedname);
+                    if (!String.IsNullOrEmpty(this.Node.Attributes["related"].Value))
+                    {
+                        return this.DataModel.ItemType(this.Node.Attributes["related"].Value);
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {

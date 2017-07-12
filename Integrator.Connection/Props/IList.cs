@@ -7,6 +7,6 @@ namespace Integrator.Connection.Properties
 {
     public interface IList : IProperty
     {
-        System.String Value { get; set; }
+        Schema.ListValue Value { get; set; }
     }
 }

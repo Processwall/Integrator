@@ -5,15 +5,17 @@ using System.Text;
 
 namespace Integrator.Connection
 {
-    public enum State { Created, Stored, Updating, Deleted };
+    public enum Actions { Create, Read, Update, Delete };
 
     public interface IItem : IEquatable<IItem>
     {
         Schema.ItemType ItemType { get; }
 
-        String ID { get; }
+        String ItemID { get; }
 
-        State Status { get; }
+        String VersionID { get; }
+
+        Actions Action { get; }
 
         IEnumerable<IItem> Versions { get; }
 

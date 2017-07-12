@@ -7,9 +7,35 @@ using System.Xml;
 
 namespace Integrator.Schema.PropertyTypes
 {
-    public class Integer : PropertyType
+    public class String : PropertyType
     {
-        internal Integer(ItemType ItemType, XmlNode Node)
+        private const Int32 defaultlength = 32;
+
+        public Int32 Length
+        {
+            get
+            {
+                if (this.Node.Attributes["length"] != null)
+                {
+                    Int32 length = 0;
+
+                    if (Int32.TryParse(this.Node.Attributes["length"].Value, out length))
+                    {
+                        return length;
+                    }
+                    else
+                    {
+                        return defaultlength;
+                    }
+                }
+                else
+                {
+                    return defaultlength;
+                }
+            }
+        }
+
+        internal String(ItemType ItemType, XmlNode Node)
             :base(ItemType, Node)
         {
 

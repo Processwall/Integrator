@@ -33,6 +33,8 @@ namespace Integrator.Connection
 
         IEnumerable<IItem> Query(String ItemTypeName, Condition Condition);
 
+        IItem Get(String ID);
+
         void Close();
     }
 }

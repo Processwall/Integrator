@@ -9,7 +9,7 @@ namespace Integrator.Schema
 {
     public class ItemType : IEquatable<ItemType>
     {
-        public Session DataModel { get; private set; }
+        public Session Session { get; private set; }
 
         protected XmlNode Node { get; private set; }
 
@@ -21,7 +21,7 @@ namespace Integrator.Schema
 
                 if (parentattribute != null)
                 {
-                    return this.DataModel.ItemType(parentattribute.Value);
+                    return this.Session.ItemType(parentattribute.Value);
                 }
                 else
                 {
@@ -254,7 +254,7 @@ namespace Integrator.Schema
         {
             if (other != null)
             {
-                return (this.Name.Equals(other.Name) && this.DataModel.Equals(other.DataModel));
+                return (this.Name.Equals(other.Name) && this.Session.Equals(other.Session));
             }
             else
             {
@@ -283,7 +283,7 @@ namespace Integrator.Schema
 
         public override int GetHashCode()
         {
-            return this.Name.GetHashCode() ^ this.DataModel.GetHashCode();
+            return this.Name.GetHashCode() ^ this.Session.GetHashCode();
         }
 
         public override string ToString()
@@ -295,9 +295,9 @@ namespace Integrator.Schema
         {
             this.PropertyTypesCache = new Dictionary<String, PropertyType>();
             this.RelationshipTypesCache = new Dictionary<String, RelationshipType>();
-            this.DataModel = DataModel;
+            this.Session = DataModel;
             this.Node = Node;
-            this.DataModel.AddItemTypeToCache(this);
+            this.Session.AddItemTypeToCache(this);
             this.Load();
         }
     }

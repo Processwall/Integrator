@@ -5,17 +5,17 @@ using System.Text;
 
 namespace Integrator.Connection
 {
-    public interface ISession : IEquatable<ISession>
+    public interface ISession
     {
-        String Name { get; }
-
-        String Token(String Group, String Username, String Password);
-
         Parameters Parameters { get; }
 
-        void Login(String Token);
+        String Token();
 
         Schema.Session Schema { get; }
+
+        void Open(String Token);
+
+        void Close();
 
         IItem Create(Schema.ItemType ItemType);
 
@@ -33,8 +33,6 @@ namespace Integrator.Connection
 
         IEnumerable<IItem> Query(String ItemTypeName, Condition Condition);
 
-        IItem Get(String ID);
-
-        void Close();
+        IItem Get(String ID);  
     }
 }

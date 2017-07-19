@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{8AB912E8-3B95-4243-B045-3418A1466C25}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{9AD4D3B0-15E6-4539-9797-C48526CFB681}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Integrator.Connection</RootNamespace>
-    <AssemblyName>Integrator.Connection</AssemblyName>
+    <RootNamespace>Integrator.Connection.SQLServer.Debug</RootNamespace>
+    <AssemblyName>Integrator.Connection.SQLServer.Debug</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,16 +22,15 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,27 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Condition.cs" />
-    <Compile Include="ConditionCreation.cs" />
-    <Compile Include="Conditions\And.cs" />
-    <Compile Include="Conditions\Or.cs" />
-    <Compile Include="Conditions\Property.cs" />
-    <Compile Include="IFile.cs" />
-    <Compile Include="IReltionship.cs" />
-    <Compile Include="IItem.cs" />
-    <Compile Include="IProperty.cs" />
-    <Compile Include="ISession.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Integrator.Schema\Integrator.Schema.csproj">
-      <Project>{9636ee04-863e-4c87-85c7-fe7f49673fbe}</Project>
-      <Name>Integrator.Schema</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Integrator\Integrator.csproj">
-      <Project>{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}</Project>
-      <Name>Integrator</Name>
-    </ProjectReference>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

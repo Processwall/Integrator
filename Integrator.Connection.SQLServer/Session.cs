@@ -8,6 +8,35 @@ namespace Integrator.Connection.SQLServer
 {
     public class Session : ISession
     {
+        private readonly String password = "judsuusbFGHfsgFdfgsgFG";
+        private readonly String salt = "hdhdkdTfQWplKJGhj";
+
+        private Parameters _parameters;
+        public Parameters Parameters
+        {
+            get
+            {
+                if (this._parameters == null)
+                {
+                    this._parameters = new Parameters(new String[] { "connection" });
+                }
+
+                return this._parameters;
+            }
+        }
+
+        public String Token()
+        {
+            return this.Parameters.Token(password, salt);
+        }
+
+        public Schema.Session Schema { get; set; }
+
+        public void Open(String Token)
+        {
+            Parameters parameters = new Parameters(Token, password, salt);
+        }
+
         internal String Connection { get; private set; }
 
         public IItem Create(Schema.ItemType ItemType)

@@ -89,10 +89,9 @@ namespace Integrator.Connection.SQLServer
 
         }
 
-
-        internal Session(String Connection)
+        internal Session()
         {
-            this.Connection = Connection;
+
         }
     }
 }

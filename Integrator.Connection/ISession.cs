@@ -9,8 +9,6 @@ namespace Integrator.Connection
     {
         Parameters Parameters { get; }
 
-        String Token();
-
         Schema.Session Schema { get; }
 
         void Open(String Token);

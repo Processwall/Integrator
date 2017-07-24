@@ -8,8 +8,7 @@ namespace Integrator.Connection.SQLServer
 {
     public class Session : ISession
     {
-        private readonly String password = "judsuusbFGHfsgFdfgsgFG";
-        private readonly String salt = "hdhdkdTfQWplKJGhj";
+        private readonly String ApplicationID = "SQL Server Connection";
 
         private Parameters _parameters;
         public Parameters Parameters
@@ -18,23 +17,18 @@ namespace Integrator.Connection.SQLServer
             {
                 if (this._parameters == null)
                 {
-                    this._parameters = new Parameters(new String[] { "connection" });
+                    this._parameters = new Parameters(ApplicationID, System.Security.Cryptography.DataProtectionScope.LocalMachine, new String[] { "connection" });
                 }
 
                 return this._parameters;
             }
         }
 
-        public String Token()
-        {
-            return this.Parameters.Token(password, salt);
-        }
-
         public Schema.Session Schema { get; set; }
 
         public void Open(String Token)
         {
-            Parameters parameters = new Parameters(Token, password, salt);
+            Parameters parameters = new Parameters(ApplicationID, System.Security.Cryptography.DataProtectionScope.LocalMachine, Token);
         }
 
         internal String Connection { get; private set; }

@@ -11,14 +11,12 @@ namespace Integrator
     {
         private const String parametersep = "++++++++++++++++++++";
         private const String valuesep = "--------------------";
-        private const int keysize = 256;
+
+        public String ApplicationID { get; private set; }
+
+        public DataProtectionScope Scope { get; private set; }
 
         public Boolean ReadOnly { get; private set; }
-
-        private static string fixInitVector(string initVector)
-        {
-            return initVector.PadRight(16, '0').Substring(0, 16);
-        }
 
         private Dictionary<String, Integrator.Parameter> _parameters;
 
@@ -44,7 +42,7 @@ namespace Integrator
             }
         }
 
-        public String Token (String Password, String Salt)
+        public String Token ()
         {
             List<String> parameterstrings = new List<String>();
 
@@ -54,26 +52,18 @@ namespace Integrator
             }
 
             String plainText = String.Join(parametersep, parameterstrings);
+            
+            byte[] plainBytes = Encoding.Unicode.GetBytes(plainText);
+            byte[] entropyBytes = Encoding.Unicode.GetBytes(this.ApplicationID);
+            byte[] encryptedBytes = ProtectedData.Protect(plainBytes, entropyBytes, this.Scope);
 
-            byte[] initVectorBytes = Encoding.UTF8.GetBytes(fixInitVector(Salt));
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText.ToString());
-            PasswordDeriveBytes password = new PasswordDeriveBytes(Password, null);
-            byte[] keyBytes = password.GetBytes(keysize / 8);
-            RijndaelManaged symmetricKey = new RijndaelManaged();
-            symmetricKey.Mode = CipherMode.CBC;
-            ICryptoTransform encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes);
-            MemoryStream memoryStream = new MemoryStream();
-            CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write);
-            cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
-            cryptoStream.FlushFinalBlock();
-            byte[] cipherTextBytes = memoryStream.ToArray();
-            memoryStream.Close();
-            cryptoStream.Close();
-            return Convert.ToBase64String(cipherTextBytes);
+            return Convert.ToBase64String(encryptedBytes);
         }
 
-        public Parameters(String[] Names)
+        public Parameters(String ApplicationID, DataProtectionScope Scope, String[] Names)
         {
+            this.ApplicationID = ApplicationID;
+            this.Scope = Scope;
             this.ReadOnly = false;
             this._parameters = new Dictionary<String, Parameter>();
 
@@ -90,25 +80,17 @@ namespace Integrator
             }
         }
 
-        public Parameters(String Token, String Password, String Salt)
+        public Parameters(String ApplicationID, DataProtectionScope Scope, String Token)
         {
+            this.ApplicationID = ApplicationID;
+            this.Scope = Scope;
             this.ReadOnly = true;
             this._parameters = new Dictionary<String, Parameter>();
 
-            byte[] initVectorBytes = Encoding.ASCII.GetBytes(fixInitVector(Salt));
-            byte[] cipherTextBytes = Convert.FromBase64String(Token);
-            PasswordDeriveBytes password = new PasswordDeriveBytes(Password, null);
-            byte[] keyBytes = password.GetBytes(keysize / 8);
-            RijndaelManaged symmetricKey = new RijndaelManaged();
-            symmetricKey.Mode = CipherMode.CBC;
-            ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
-            MemoryStream memoryStream = new MemoryStream(cipherTextBytes);
-            CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
-            byte[] plainTextBytes = new byte[cipherTextBytes.Length];
-            int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-            memoryStream.Close();
-            cryptoStream.Close();
-            String plainText = Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+            byte[] encryptedData = Convert.FromBase64String(Token);
+            byte[] entropyBytes = Encoding.Unicode.GetBytes(this.ApplicationID);
+            byte[] decryptedData = ProtectedData.Unprotect(encryptedData, entropyBytes, this.Scope);
+            String plainText = Encoding.Unicode.GetString(decryptedData, 0, decryptedData.Length);
 
             String[] parameterstrings = plainText.Split(new String[] { parametersep }, StringSplitOptions.None);
 

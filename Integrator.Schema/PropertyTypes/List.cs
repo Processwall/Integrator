@@ -13,7 +13,7 @@ namespace Integrator.Schema.PropertyTypes
         {
             get
             {
-                return this.ItemType.DataModel.List(this.Node.Attributes["list"].Value);
+                return this.ItemType.Session.List(this.Node.Attributes["list"].Value);
             }
         }
 

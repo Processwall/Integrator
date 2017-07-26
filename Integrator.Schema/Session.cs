@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace Integrator.Schema
 {
-    public class DataModel : IEquatable<DataModel>
+    public class Session : IEquatable<Session>
     {
         public XmlDocument Document { get; private set; }
 
@@ -171,7 +171,7 @@ namespace Integrator.Schema
             }
         }
 
-        public bool Equals(DataModel other)
+        public bool Equals(Session other)
         {
             if (other != null)
             {
@@ -187,9 +187,9 @@ namespace Integrator.Schema
         {
             if (obj != null)
             {
-                if (obj is DataModel)
+                if (obj is Session)
                 {
-                    return this.Equals((DataModel)obj);
+                    return this.Equals((Session)obj);
                 }
                 else
                 {
@@ -212,7 +212,7 @@ namespace Integrator.Schema
             return this.Name;
         }
 
-        public DataModel(XmlDocument Document)
+        public Session(XmlDocument Document)
         {
             this.ListsCache = new Dictionary<String, List>();
             this.ItemTypeCache = new Dictionary<String, ItemType>();

@@ -10,7 +10,7 @@ namespace Integrator.Schema
     public class FileType : ItemType
     {
 
-        internal FileType(DataModel DataModel, XmlNode Node)
+        internal FileType(Session DataModel, XmlNode Node)
             :base(DataModel, Node)
         {
 

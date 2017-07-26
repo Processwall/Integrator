@@ -9,7 +9,7 @@ namespace Integrator.Schema
 {
     public class List : IEquatable<List>
     {
-        public DataModel DataModel { get; private set; }
+        public Session DataModel { get; private set; }
 
         private XmlNode Node { get; set; }
 
@@ -90,7 +90,7 @@ namespace Integrator.Schema
             return this.Name;
         }
 
-        internal List(DataModel DataModel, XmlNode Node)
+        internal List(Session DataModel, XmlNode Node)
         {
             this.ListValuesCache = new Dictionary<String, ListValue>();
             this.DataModel = DataModel;

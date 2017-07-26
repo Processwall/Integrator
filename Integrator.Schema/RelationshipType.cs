@@ -15,11 +15,16 @@ namespace Integrator.Schema
         {
             get
             {
-                String relatedname = this.Node.Attributes["related"].Value;
-
-                if (!String.IsNullOrEmpty(relatedname))
+                if (this.Node.Attributes["related"] != null)
                 {
-                    return this.DataModel.ItemType(relatedname);
+                    if (!String.IsNullOrEmpty(this.Node.Attributes["related"].Value))
+                    {
+                        return this.Session.ItemType(this.Node.Attributes["related"].Value);
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
@@ -28,8 +33,39 @@ namespace Integrator.Schema
             }
         }
 
+        List<ItemType> _relatedSubTypes;
+        public IEnumerable<ItemType> RelatedSubTypes
+        {
+            get
+            {
+                if (this.Node.Attributes["relatedsubtypes"] != null)
+                {
+                    this._relatedSubTypes = new List<ItemType>();
+
+                    if (!String.IsNullOrEmpty(this.Node.Attributes["relatedsubtypes"].Value))
+                    {
+                        String[] parts = this.Node.Attributes["relatedsubtypes"].Value.Split(new char[] { ',' });
+
+                        foreach(String part in parts)
+                        {
+                            this._relatedSubTypes.Add(this.Source.Session.ItemType(part));
+                        }
+                    }
+                }
+                else
+                {
+                    this._relatedSubTypes = null;
+                }
+
+                return this._relatedSubTypes;
+            }
+        }
+
+        
+
+
         internal RelationshipType(ItemType Source, XmlNode Node)
-            :base(Source.DataModel, Node)
+            :base(Source.Session, Node)
         {
             this.Source = Source;
         }

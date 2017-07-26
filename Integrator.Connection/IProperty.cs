@@ -9,6 +9,6 @@ namespace Integrator.Connection
     {
         Schema.PropertyType PropertyType { get; }
 
-        object Object { get; set; }
+        object Value { get; set; }
     }
 }

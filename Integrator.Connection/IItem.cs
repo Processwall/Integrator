@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Integrator.Connection
 {
-    public enum State { Created, Stored, Updating, Deleted };
+    public enum Actions { Create, Read, Update, Delete };
 
     public interface IItem : IEquatable<IItem>
     {
@@ -13,7 +13,9 @@ namespace Integrator.Connection
 
         String ID { get; }
 
-        State Status { get; }
+        String ConfigID { get; }
+
+        Actions Action { get; }
 
         IEnumerable<IItem> Versions { get; }
 
@@ -41,7 +43,7 @@ namespace Integrator.Connection
 
         void UnLock();
 
-        IItem Save(Boolean Unlock=true);
+        IItem Save();
 
         void Delete();
     }

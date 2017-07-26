@@ -7,9 +7,9 @@ using System.Xml;
 
 namespace Integrator.Schema.PropertyTypes
 {
-    public class String : PropertyType
+    public class Integer : PropertyType
     {
-        internal String (ItemType ItemType, XmlNode Node)
+        internal Integer (ItemType ItemType, XmlNode Node)
             :base(ItemType, Node)
         {
 

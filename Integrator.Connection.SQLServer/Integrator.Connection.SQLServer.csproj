@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9636EE04-863E-4C87-85C7-FE7F49673FBE}</ProjectGuid>
+    <ProjectGuid>{91DCB03B-6034-49FD-B972-2199473B314B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Integrator.Schema</RootNamespace>
-    <AssemblyName>Integrator.Schema</AssemblyName>
+    <RootNamespace>Integrator.Connection.SQLServer</RootNamespace>
+    <AssemblyName>Integrator.Connection.SQLServer</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -39,25 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileType.cs" />
-    <Compile Include="ItemType.cs" />
     <Compile Include="Session.cs" />
-    <Compile Include="List.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyType.cs" />
-    <Compile Include="ListValue.cs" />
-    <Compile Include="PropertyTypes\Boolean.cs" />
-    <Compile Include="PropertyTypes\Date.cs" />
-    <Compile Include="PropertyTypes\Decimal.cs" />
-    <Compile Include="PropertyTypes\Double.cs" />
-    <Compile Include="PropertyTypes\Integer.cs" />
-    <Compile Include="PropertyTypes\Item.cs" />
-    <Compile Include="PropertyTypes\List.cs" />
-    <Compile Include="PropertyTypes\Text.cs" />
-    <Compile Include="PropertyTypes\String.cs" />
-    <Compile Include="RelationshipType.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Integrator.Connection\Integrator.Connection.csproj">
+      <Project>{8ab912e8-3b95-4243-b045-3418a1466c25}</Project>
+      <Name>Integrator.Connection</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Integrator.Schema\Integrator.Schema.csproj">
+      <Project>{9636ee04-863e-4c87-85c7-fe7f49673fbe}</Project>
+      <Name>Integrator.Schema</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Integrator\Integrator.csproj">
       <Project>{e4567cd2-2b49-4132-9ba5-4dc7ba85161e}</Project>
       <Name>Integrator</Name>

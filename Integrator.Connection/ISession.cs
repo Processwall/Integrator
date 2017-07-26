@@ -5,34 +5,32 @@ using System.Text;
 
 namespace Integrator.Connection
 {
-    public interface ISession : IEquatable<ISession>
+    public interface ISession
     {
-        String Name { get; }
-
-        String Token(String Group, String Username, String Password);
-
         Parameters Parameters { get; }
 
-        void Login(String Token);
+        Schema.Session Schema { get; }
 
-        Schema.DataModel DataModel { get; }
+        void Open(String Token);
+
+        void Close();
 
         IItem Create(Schema.ItemType ItemType);
 
-        IItem Create(String Name);
+        IItem Create(String ItemTypeName);
 
         IFile Create(Schema.FileType FileType, String Filename);
 
-        IFile Create(String Name, String Filename);
+        IFile Create(String FileTypeName, String Filename);
 
         IEnumerable<IItem> Index(Schema.ItemType ItemType);
 
-        IEnumerable<IItem> Index(String Name);
+        IEnumerable<IItem> Index(String ItemTypeName);
 
         IEnumerable<IItem> Query(Schema.ItemType ItemType, Condition Condition);
 
-        IEnumerable<IItem> Query(String Name, Condition Condition);
+        IEnumerable<IItem> Query(String ItemTypeName, Condition Condition);
 
-        void Close();
+        IItem Get(String ID);  
     }
 }

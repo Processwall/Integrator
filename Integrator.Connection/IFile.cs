@@ -14,6 +14,6 @@ namespace Integrator.Connection
 
         Stream Write();
 
-        new IFile Save(Boolean Unlock = true);
+        IFile Save(Boolean Unlock = true);
     }
 }

@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9636EE04-863E-4C87-85C7-FE7F49673FBE}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{0F2D3C8C-4D37-4EE1-B10D-805DD3650992}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Integrator.Schema</RootNamespace>
-    <AssemblyName>Integrator.Schema</AssemblyName>
+    <RootNamespace>Integrator.Debug</RootNamespace>
+    <AssemblyName>Integrator.Debug</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -39,23 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileType.cs" />
-    <Compile Include="ItemType.cs" />
-    <Compile Include="Session.cs" />
-    <Compile Include="List.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyType.cs" />
-    <Compile Include="ListValue.cs" />
-    <Compile Include="PropertyTypes\Boolean.cs" />
-    <Compile Include="PropertyTypes\Date.cs" />
-    <Compile Include="PropertyTypes\Decimal.cs" />
-    <Compile Include="PropertyTypes\Double.cs" />
-    <Compile Include="PropertyTypes\Integer.cs" />
-    <Compile Include="PropertyTypes\Item.cs" />
-    <Compile Include="PropertyTypes\List.cs" />
-    <Compile Include="PropertyTypes\Text.cs" />
-    <Compile Include="PropertyTypes\String.cs" />
-    <Compile Include="RelationshipType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Integrator\Integrator.csproj">

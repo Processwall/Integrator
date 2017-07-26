@@ -9,7 +9,7 @@ namespace Integrator.Schema
 {
     public class ItemType : IEquatable<ItemType>
     {
-        public DataModel DataModel { get; private set; }
+        public Session Session { get; private set; }
 
         protected XmlNode Node { get; private set; }
 
@@ -21,7 +21,7 @@ namespace Integrator.Schema
 
                 if (parentattribute != null)
                 {
-                    return this.DataModel.ItemType(parentattribute.Value);
+                    return this.Session.ItemType(parentattribute.Value);
                 }
                 else
                 {
@@ -34,7 +34,36 @@ namespace Integrator.Schema
         {
             get
             {
-                return this.Node.Attributes["name"].Value;
+                if (this.Node.Attributes["name"] != null)
+                {
+                    return this.Node.Attributes["name"].Value;
+                }
+                else
+                {
+                    throw new Exceptions.ArgumentException("Item Type Name must be specified");
+                }
+            }
+        }
+
+        public Boolean CanVersion
+        {
+            get
+            {
+                if (this.Node.Attributes["canversion"] != null)
+                {
+                    if (String.Compare(this.Node.Attributes["canversion"].Value, "true", true) == 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -53,18 +82,34 @@ namespace Integrator.Schema
             return this.PropertyTypesCache.ContainsKey(Name);
         }
 
-        public PropertyType PropertyType
+        public PropertyType PropertyType(String Name)
         {
-            get
+            if (this.HasProperty(Name))
             {
-                if (this.HasProperty(Name))
+                return this.PropertyTypesCache[Name];
+            }
+            else
+            {
+                throw new Exceptions.ArgumentException("Invalid Property Name: " + Name);
+            }
+        }
+
+        public Boolean IsSubTypeOf(ItemType BaseItemType)
+        {
+            if (this.Parent != null)
+            {
+                if (this.Parent.Equals(BaseItemType))
                 {
-                    return this.PropertyTypesCache[Name];
+                    return true;
                 }
                 else
                 {
-                    throw new Exceptions.ArgumentException("Invalid Property Name: " + Name);
+                    return this.Parent.IsSubTypeOf(BaseItemType);
                 }
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -159,20 +204,40 @@ namespace Integrator.Schema
                 }
             }
 
+            // Load RelationshipTypes
+            List<RelationshipType> reltypes = new List<RelationshipType>();
+
+            foreach (XmlNode reltypenode in this.Node.SelectNodes("relationshiptypes/relationshiptype"))
+            {
+                reltypes.Add(new RelationshipType(this, reltypenode));
+            }
+
             // Load Parent RelationshipTypes
             if (this.Parent != null)
             {
-                foreach (RelationshipType reltype in this.Parent.RelationshipTypes)
+                foreach (RelationshipType parentreltype in this.Parent.RelationshipTypes)
                 {
-                    this.RelationshipTypesCache[reltype.Name] = reltype;
+                    Boolean issubtype = false;
+
+                    foreach(RelationshipType reltype in reltypes)
+                    {
+                        if (reltype.IsSubTypeOf(parentreltype))
+                        {
+                            issubtype = true;
+                            break;
+                        }
+                    }
+
+                    if (!issubtype)
+                    {
+                        this.RelationshipTypesCache[parentreltype.Name] = parentreltype;
+                    }
                 }
             }
 
-            // Load RelationshipTypes
-            foreach (XmlNode reltypenode in this.Node.SelectNodes("relationshiptypes/relationshiptype"))
+            // Add RelationshipTypes to Cache
+            foreach(RelationshipType reltype in reltypes)
             {
-                RelationshipType reltype = new RelationshipType(this, reltypenode);
-
                 if (!this.RelationshipTypesCache.ContainsKey(reltype.Name))
                 {
                     this.RelationshipTypesCache[reltype.Name] = reltype;
@@ -189,7 +254,7 @@ namespace Integrator.Schema
         {
             if (other != null)
             {
-                return (this.Name.Equals(other.Name) && this.DataModel.Equals(other.DataModel));
+                return (this.Name.Equals(other.Name) && this.Session.Equals(other.Session));
             }
             else
             {
@@ -218,7 +283,7 @@ namespace Integrator.Schema
 
         public override int GetHashCode()
         {
-            return this.Name.GetHashCode() ^ this.DataModel.GetHashCode();
+            return this.Name.GetHashCode() ^ this.Session.GetHashCode();
         }
 
         public override string ToString()
@@ -226,13 +291,13 @@ namespace Integrator.Schema
             return this.Name;
         }
 
-        internal ItemType(DataModel DataModel, XmlNode Node)
+        internal ItemType(Session DataModel, XmlNode Node)
         {
             this.PropertyTypesCache = new Dictionary<String, PropertyType>();
             this.RelationshipTypesCache = new Dictionary<String, RelationshipType>();
-            this.DataModel = DataModel;
+            this.Session = DataModel;
             this.Node = Node;
-            this.DataModel.AddItemTypeToCache(this);
+            this.Session.AddItemTypeToCache(this);
             this.Load();
         }
     }

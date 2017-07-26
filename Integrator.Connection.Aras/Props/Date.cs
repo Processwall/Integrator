@@ -65,7 +65,7 @@ namespace Integrator.Connection.Aras.Properties
             }
         }
 
-        internal Date(PropertyTypes.Date PropertyType)
+        internal Date(Schema.PropertyTypes.Date PropertyType)
             : base(PropertyType)
         {
         }

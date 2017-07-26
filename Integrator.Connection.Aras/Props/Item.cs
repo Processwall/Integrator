@@ -60,12 +60,12 @@ namespace Integrator.Connection.Aras.Properties
                 }
                 else
                 {
-                    this.Value = this.Session.Create((ItemType)((PropertyTypes.Item)this.PropertyType).PropertyItemType, value, State.Stored);
+                    this.Value = this.Session.Create((Schema.ItemType)((Schema.PropertyTypes.Item)this.PropertyType).PropertyItemType, value, State.Stored);
                 }
             }
         }
 
-        internal Item(PropertyTypes.Item PropertyType)
+        internal Item(Schema.PropertyTypes.Item PropertyType)
             : base(PropertyType)
         {
         }

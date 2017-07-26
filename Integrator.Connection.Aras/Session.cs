@@ -133,7 +133,8 @@ namespace Integrator.Connection.Aras
             }
         }
 
-        private void ProcessClassStructure(ItemType Base, XmlNode Node)
+        /*
+        private void ProcessClassStructure(Schema.ItemType Base, XmlNode Node)
         {
             if (Node != null)
             {
@@ -142,7 +143,7 @@ namespace Integrator.Connection.Aras
                     String id = childnode.Attributes["id"].Value;
                     String name = childnode.Attributes["name"].Value;
 
-                    if (Base is RelationshipType)
+                    if (Base is Schema.RelationshipType)
                     {
                         RelationshipType relationshiptype = new RelationshipType(this, (RelationshipType)Base, id, Base.Name + "." + name, Base.CanVersion);
                         this._itemTypeCache[relationshiptype.ID] = relationshiptype;
@@ -164,7 +165,7 @@ namespace Integrator.Connection.Aras
             }
         }
 
-        private IEnumerable<ItemType> SubTypes(ItemType ItemType)
+        private IEnumerable<Schema.ItemType> SubTypes(Schema.ItemType ItemType)
         {
             List<ItemType> ret = new List<ItemType>();
 
@@ -184,194 +185,11 @@ namespace Integrator.Connection.Aras
             return ret;
         }
 
-        private Dictionary<String, ItemType> _itemTypeCache;
-        private Dictionary<String, ItemType> ItemTypeCache
-        {
-            get
-            {
-                if (this._itemTypeCache == null)
-                {
-                    this._itemTypeCache = new Dictionary<String, ItemType>();
+        */
 
-                    // Read ItemTypes
-                    IOM.Item iomitemtypes = this.Innovator.newItem("ItemType", "get");
-                    iomitemtypes.setAttribute("select", "id,name,is_relationship,is_versionable,class_structure");
-                    iomitemtypes = iomitemtypes.apply();
+        private Dictionary<Schema.ItemType, Dictionary<String, Item>> ItemCache;
 
-                    if (!iomitemtypes.isError())
-                    {
-                        for (int i = 0; i < iomitemtypes.getItemCount(); i++)
-                        {
-                            IOM.Item iomitemtype = iomitemtypes.getItemByIndex(i);
-
-                            // Process ClassStructure
-                            XmlNode classnode = null;
-
-                            if (!String.IsNullOrEmpty(iomitemtype.getProperty("class_structure")))
-                            {
-                                XmlDocument doc = new XmlDocument();
-                                doc.LoadXml(iomitemtype.getProperty("class_structure"));
-                                classnode = doc.SelectSingleNode("class");
-                            }
-
-                            if (iomitemtype.getProperty("is_relationship", "0").Equals("1"))
-                            {
-                                RelationshipType relationshiptype = new RelationshipType(this, null, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
-                                this._itemTypeCache[relationshiptype.ID] = relationshiptype;
-                                this.ProcessClassStructure(relationshiptype, classnode);
-                            }
-                            else
-                            {
-                                if (iomitemtype.getProperty("name").Equals("File"))
-                                {
-                                    FileType filetype = new FileType(this, null, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
-                                    this._itemTypeCache[filetype.ID] = filetype;
-                                    this.ProcessClassStructure(filetype, classnode);
-                                }
-                                else
-                                {
-                                    ItemType itemtype = new ItemType(this, null, iomitemtype.getID(), iomitemtype.getProperty("name"), iomitemtype.getProperty("is_versionable", "0").Equals("1"));
-                                    this._itemTypeCache[itemtype.ID] = itemtype;
-                                    this.ProcessClassStructure(itemtype, classnode);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new Exceptions.ReadException(iomitemtypes.getErrorString());
-                    }
-
-                    // Read RelationshipTypes
-                    IOM.Item iomrelationshiptypes = this.Innovator.newItem("RelationshipType", "get");
-                    iomrelationshiptypes.setAttribute("select", "source_id,related_id,relationship_id");
-                    iomrelationshiptypes = iomrelationshiptypes.apply();
-
-                    if (!iomrelationshiptypes.isError())
-                    {
-                        for (int i = 0; i < iomrelationshiptypes.getItemCount(); i++)
-                        {
-                            IOM.Item iomrelationshiptype = iomrelationshiptypes.getItemByIndex(i);
-                            
-                            // Store Source
-                            String source_id = iomrelationshiptype.getProperty("source_id", null);
-
-                            if (!String.IsNullOrEmpty(source_id))
-                            {
-                                ((RelationshipType)this._itemTypeCache[iomrelationshiptype.getProperty("relationship_id")]).Source = this._itemTypeCache[source_id];
-                            }
-
-                            // Store Related
-                            String related_id = iomrelationshiptype.getProperty("related_id", null);
-
-                            if (!String.IsNullOrEmpty(related_id))
-                            {
-                                ((RelationshipType)this._itemTypeCache[iomrelationshiptype.getProperty("relationship_id")]).Related = this._itemTypeCache[related_id];
-                            }
-
-                            // Process SubTypes
-                            foreach (RelationshipType subreltype in this.SubTypes(this._itemTypeCache[iomrelationshiptype.getProperty("relationship_id")]))
-                            {
-                                subreltype.Source = ((RelationshipType)this._itemTypeCache[iomrelationshiptype.getProperty("relationship_id")]).Source;
-                                subreltype.Related = ((RelationshipType)this._itemTypeCache[iomrelationshiptype.getProperty("relationship_id")]).Related;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new Exceptions.ReadException(iomitemtypes.getErrorString());
-                    }
-                }
-
-                return this._itemTypeCache;
-            }
-        }
-
-        private List<ItemType> _itemTypes;
-        public IEnumerable<IItemType> ItemTypes
-        {
-            get
-            {
-                if (this._itemTypes == null)
-                {
-                    this._itemTypes = new List<ItemType>();
-
-                    foreach (ItemType itemtype in this.ItemTypeCache.Values)
-                    {
-                        if (!(itemtype is RelationshipType))
-                        {
-                            this._itemTypes.Add(itemtype);
-                        }
-                    }
-                }
-
-                return this._itemTypes;
-            }
-        }
-
-        private List<FileType> _fileTypes;
-        public IEnumerable<IFileType> FileTypes
-        {
-            get
-            {
-                if (this._fileTypes == null)
-                {
-                    this._fileTypes = new List<FileType>();
-
-                    foreach (ItemType itemtype in this.ItemTypeCache.Values)
-                    {
-                        if (itemtype is FileType)
-                        {
-                            this._fileTypes.Add((FileType)itemtype);
-                        }
-                    }
-                }
-
-                return this._fileTypes;
-            }
-        }
-
-        public IFileType FileType(String Name)
-        {
-            foreach (FileType itemtype in this.FileTypes)
-            {
-                if (itemtype.Name.Equals(Name))
-                {
-                    return itemtype;
-                }
-            }
-
-            throw new Exceptions.ArgumentException("Invalid FileType Name: " + Name);
-        }
-
-        internal ItemType ItemTypeByID(String ID)
-        {
-            if (this.ItemTypeCache.ContainsKey(ID))
-            {
-                return this.ItemTypeCache[ID];
-            }
-            else
-            {
-                throw new Exceptions.ArgumentException("Invalid ItemType ID: " + ID);
-            }
-        }
-
-        public IItemType ItemType(String Name)
-        {
-            foreach (ItemType itemtype in this.ItemTypeCache.Values)
-            {
-                if (itemtype.Name.Equals(Name))
-                {
-                    return itemtype;
-                }
-            }
-
-            throw new Exceptions.ArgumentException("Invalid ItemType Name: " + Name);
-        }
-
-        private Dictionary<ItemType, Dictionary<String, Item>> ItemCache;
-
-        internal Item Create(ItemType ItemType, String ID, State Status)
+        internal Item Create(Schema.ItemType ItemType, String ID, State Status)
         {
             if (!this.ItemCache.ContainsKey(ItemType))
             {
@@ -384,25 +202,25 @@ namespace Integrator.Connection.Aras
             }
             else
             {
-                if (ItemType is RelationshipType)
+                if (ItemType is Schema.RelationshipType)
                 {
-                    IOM.Item iomsource = this.Innovator.newItem(((ItemType)ItemType).DBName, "get");
+                    IOM.Item iomsource = this.Innovator.newItem(ItemType.Name, "get");
                     iomsource.setID(ID);
                     iomsource.setAttribute("select", "id,source_id,related_id");
                     iomsource = iomsource.apply();
 
                     if (!iomsource.isError())
                     {
-                        return this.Create((RelationshipType)ItemType, ID, State.Stored, iomsource.getProperty("source_id"), iomsource.getProperty("related_id"));
+                        return this.Create((Schema.RelationshipType)ItemType, ID, State.Stored, iomsource.getProperty("source_id"), iomsource.getProperty("related_id"));
                     }
                     else
                     {
                         throw new Exceptions.ReadException(iomsource.getErrorString());
                     }
                 }
-                else if (ItemType is FileType)
+                else if (ItemType is Schema.FileType)
                 {
-                    File file = new File((FileType)ItemType, ID, Status);
+                    File file = new File((Schema.FileType)ItemType, ID, Status);
                     this.ItemCache[ItemType][ID] = file;
                     return file;
                 }
@@ -415,7 +233,7 @@ namespace Integrator.Connection.Aras
             }
         }
 
-        internal Relationship Create(RelationshipType RelationshipType, String ID, State Status, String SourceID, String RelatedID)
+        internal Relationship Create(Schema.RelationshipType RelationshipType, String ID, State Status, String SourceID, String RelatedID)
         {
             if (!this.ItemCache.ContainsKey(RelationshipType))
             {
@@ -433,16 +251,16 @@ namespace Integrator.Connection.Aras
 
                 if (!System.String.IsNullOrEmpty(SourceID))
                 {
-                    if (RelationshipType.Source is RelationshipType)
+                    if (RelationshipType.Source is Schema.RelationshipType)
                     {
-                        IOM.Item iomsource = this.Innovator.newItem(((ItemType)RelationshipType.Source).DBName, "get");
+                        IOM.Item iomsource = this.Innovator.newItem(RelationshipType.Source.Name, "get");
                         iomsource.setID(SourceID);
                         iomsource.setAttribute("select", "id,source_id,related_id");
                         iomsource = iomsource.apply();
 
                         if (!iomsource.isError())
                         {
-                            source = this.Create((RelationshipType)RelationshipType.Source, SourceID, State.Stored, iomsource.getProperty("source_id"), iomsource.getProperty("related_id"));
+                            source = this.Create((Schema.RelationshipType)RelationshipType.Source, SourceID, State.Stored, iomsource.getProperty("source_id"), iomsource.getProperty("related_id"));
                         }
                         else
                         {
@@ -451,7 +269,7 @@ namespace Integrator.Connection.Aras
                     }
                     else
                     {
-                        source = this.Create((ItemType)RelationshipType.Source, SourceID, Status);
+                        source = this.Create(RelationshipType.Source, SourceID, Status);
                     }
                 }
 
@@ -459,9 +277,9 @@ namespace Integrator.Connection.Aras
                 {
                     if (!System.String.IsNullOrEmpty(RelatedID))
                     {
-                        if (RelationshipType.Related is RelationshipType)
+                        if (RelationshipType.Related is Schema.RelationshipType)
                         {
-                            IOM.Item iomrelated = this.Innovator.newItem(((ItemType)RelationshipType.Related).DBName, "get");
+                            IOM.Item iomrelated = this.Innovator.newItem(((ItemTypeRelationshipType.Related).DBName, "get");
                             iomrelated.setID(RelatedID);
                             iomrelated.setAttribute("select", "id,source_id,related_id");
                             iomrelated = iomrelated.apply();

@@ -16,7 +16,7 @@ namespace Integrator.Connection.Aras
             }
         }
 
-        public Connection.IItemType ItemType { get; private set; }
+        public Schema.ItemType ItemType { get; private set; }
 
         public String ID { get; private set; }
 
@@ -33,7 +33,7 @@ namespace Integrator.Connection.Aras
                     {
                         String config_id = ((Property)this.Property("config_id")).DBValue;
 
-                        IOM.Item iomrevisions = this.Session.Innovator.newItem(((ItemType)this.ItemType).DBName, "get");
+                        IOM.Item iomrevisions = this.Session.Innovator.newItem(this.ItemType.Name, "get");
                         iomrevisions.setProperty("config_id", config_id);
                         iomrevisions.setProperty("generation", "0");
                         iomrevisions.setPropertyCondition("generation", "gt");
@@ -48,7 +48,7 @@ namespace Integrator.Connection.Aras
                             for (int i = 0; i < iomrevisions.getItemCount(); i++)
                             {
                                 IOM.Item iomrevision = iomrevisions.getItemByIndex(i);
-                                this._versions.Add(this.Session.Create((ItemType)this.ItemType, iomrevision.getID(), State.Stored));
+                                this._versions.Add(this.Session.Create(this.ItemType, iomrevision.getID(), State.Stored));
                             }
                         }
                         else
@@ -165,7 +165,7 @@ namespace Integrator.Connection.Aras
             }
         }
 
-        public IProperty Property(IPropertyType PropertyType)
+        public IProperty Property(Schema.PropertyType PropertyType)
         {
             if (this.PropertyCache.ContainsKey((PropertyType)PropertyType))
             {
@@ -506,12 +506,12 @@ namespace Integrator.Connection.Aras
             return this.ID.GetHashCode() ^ this.ItemType.GetHashCode();
         }
 
-        internal Item(ItemType ItemType, String ID, State Status)
+        internal Item(Schema.ItemType ItemType, String ID, State Status)
         {
             this.ItemType = ItemType;
             this.ID = ID;
             this.Status = Status;
-            this.RelationshipsCache = new Dictionary<RelationshipType, List<Relationship>>();
+            this.RelationshipsCache = new Dictionary<Schema.RelationshipType, List<Relationship>>();
         }
     }
 }

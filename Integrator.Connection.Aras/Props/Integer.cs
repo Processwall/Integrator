@@ -65,7 +65,7 @@ namespace Integrator.Connection.Aras.Properties
             }
         }
 
-        internal Integer(PropertyTypes.Integer PropertyType)
+        internal Integer(Schema.PropertyTypes.Integer PropertyType)
             : base(PropertyType)
         {
         }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Integrator.Connection.Aras.Properties
 {
-    public class Float : Property, Connection.Properties.IFloat
+    public class Double : Property, Connection.Properties.IDouble
     {
 
         public override object Object
@@ -65,7 +65,7 @@ namespace Integrator.Connection.Aras.Properties
             }
         }
 
-        internal Float(PropertyTypes.Float PropertyType)
+        internal Double(Schema.PropertyTypes.Double PropertyType)
             : base(PropertyType)
         {
         }

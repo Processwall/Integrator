@@ -71,7 +71,7 @@ namespace Integrator.Connection.Aras.Properties
             }
         }
 
-        internal Boolean(PropertyTypes.Boolean PropertyType)
+        internal Boolean(Schema.PropertyTypes.Boolean PropertyType)
             : base(PropertyType)
         {
         }

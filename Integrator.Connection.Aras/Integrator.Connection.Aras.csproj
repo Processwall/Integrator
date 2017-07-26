@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Integrator.Connection.Aras</RootNamespace>
     <AssemblyName>Integrator.Connection.Aras</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="IOM, Version=11.0.0.6357, Culture=neutral, PublicKeyToken=524d880b05474146, processorArchitecture=MSIL">
@@ -45,42 +48,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="File.cs" />
-    <Compile Include="FileType.cs" />
     <Compile Include="Item.cs" />
-    <Compile Include="ItemType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Property.cs" />
-    <Compile Include="PropertyType.cs" />
-    <Compile Include="PropertyTypes\Boolean.cs" />
-    <Compile Include="PropertyTypes\Float.cs" />
-    <Compile Include="PropertyTypes\MD5.cs" />
-    <Compile Include="PropertyTypes\Date.cs" />
-    <Compile Include="PropertyTypes\Decimal.cs" />
-    <Compile Include="PropertyTypes\Image.cs" />
-    <Compile Include="PropertyTypes\Integer.cs" />
-    <Compile Include="PropertyTypes\Item.cs" />
-    <Compile Include="PropertyTypes\List.cs" />
-    <Compile Include="PropertyTypes\String.cs" />
-    <Compile Include="PropertyTypes\Text.cs" />
     <Compile Include="Props\Boolean.cs" />
-    <Compile Include="Props\Float.cs" />
-    <Compile Include="Props\MD5.cs" />
+    <Compile Include="Props\Double.cs" />
     <Compile Include="Props\Text.cs" />
     <Compile Include="Props\String.cs" />
     <Compile Include="Props\List.cs" />
     <Compile Include="Props\Item.cs" />
     <Compile Include="Props\Integer.cs" />
-    <Compile Include="Props\Image.cs" />
     <Compile Include="Props\Decimal.cs" />
     <Compile Include="Props\Date.cs" />
     <Compile Include="Relationship.cs" />
-    <Compile Include="RelationshipType.cs" />
     <Compile Include="Session.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Integrator.Connection\Integrator.Connection.csproj">
       <Project>{8AB912E8-3B95-4243-B045-3418A1466C25}</Project>
       <Name>Integrator.Connection</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Integrator.Schema\Integrator.Schema.csproj">
+      <Project>{9636ee04-863e-4c87-85c7-fe7f49673fbe}</Project>
+      <Name>Integrator.Schema</Name>
     </ProjectReference>
     <ProjectReference Include="..\Integrator\Integrator.csproj">
       <Project>{E4567CD2-2B49-4132-9BA5-4DC7BA85161E}</Project>

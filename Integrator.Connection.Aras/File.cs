@@ -81,7 +81,7 @@ namespace Integrator.Connection.Aras
                         }
                         else
                         {
-                            File newitem = (File)this.Session.Create((FileType)this.ItemType, iomitem.getID(), State.Stored);
+                            File newitem = (File)this.Session.Create((Schema.FileType)this.ItemType, iomitem.getID(), State.Stored);
                             newitem.Filename = iomitem.getProperty("filename");
                             return newitem;
                         }
@@ -103,7 +103,7 @@ namespace Integrator.Connection.Aras
             }
         }
 
-        internal File(FileType FileType, String ID, State Status)
+        internal File(Schema.FileType FileType, String ID, State Status)
             : base(FileType, ID, Status)
         {
       

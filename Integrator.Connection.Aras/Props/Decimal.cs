@@ -65,7 +65,7 @@ namespace Integrator.Connection.Aras.Properties
             }
         }
 
-        internal Decimal(PropertyTypes.Decimal PropertyType)
+        internal Decimal(Schema.PropertyTypes.Decimal PropertyType)
             : base(PropertyType)
         {
         }

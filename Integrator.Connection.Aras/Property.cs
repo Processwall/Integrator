@@ -47,7 +47,7 @@ namespace Integrator.Connection.Aras
             }
         }
 
-        internal Property(PropertyType PropertyType)
+        internal Property(Schema.PropertyType PropertyType)
         {
             this.PropertyType = PropertyType;
             this.ValueSet = false;

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<integrator name="HMD JDE">
+
+  <itemtypes>
+
+    <itemtype name="ItemMaster">
+      <propertytypes>
+        <propertytype name="szSecondItemNumber" type="String" length="32"/>
+        <propertytype name="szItemDescription" type="String" length="32"/>
+        <propertytype name="szDescriptionLine2" type="String" length="32"/>
+        <propertytype name="cStockingType" type="String" length="1"/>
+        <propertytype name="szSalesReportingCode1" type="String" length="2"/>
+        <propertytype name="szSalesReportingCode2" type="String" length="2"/>
+        <propertytype name="szSalesReportingCode3" type="String" length="3"/>
+        <propertytype name="szSalesReportingCode4" type="String" length="3"/>
+        <propertytype name="szMasterPlanningFamily" type="String" length="3"/>
+        <propertytype name="szBUCatCode" type="String" length="32"/>
+        <propertytype name="szDrawingNumber" type="String" length="20"/>
+        <propertytype name="Notes" type="Text"/>
+      </propertytypes>
+      <relationshiptypes>
+        <relationshiptype name="CrossReferences">
+          <propertytypes>
+            <propertytype name="szXrefItemNumber" type="String" length="32"/>
+            <propertytype name="jdDateBeginning" type="String" length="10"/>
+            <propertytype name="jdDateEnding" type="String" length="10"/>
+          </propertytypes>
+        </relationshiptype>
+        <relationshiptype name="Routings">
+          <propertytypes>
+            <propertytype name="szTypeRouting" type="String" length="1"/>
+            <propertytype name="szWorkCenter" type="String" length="32"/>
+            <propertytype name="mnSequenceNoOperations" type="String" length="4"/>
+            <propertytype name="mnLaborHours" type="Decimal"/>
+            <propertytype name="mnMachineHours" type="Decimal"/>
+            <propertytype name="jdEffectiveFromDate" type="String" length="10"/>
+            <propertytype name="jdEffectiveThruDate" type="String" length="10"/>
+            <propertytype name="mnMoveHours" type="Decimal"/>
+          </propertytypes>
+        </relationshiptype>
+        <relationshiptype name="BOMLines" related="Part">
+          <propertytypes>
+            <propertytype name="mnComponentQtyRequired" type="String" length="24" />
+            <propertytype name="szUnitOfMeasure" type="String" length="2" />
+            <propertytype name="mnOperationSequenceNo" type="String" length="4" />
+            <propertytype name="jdDateEffectiveFrom" type="String" length="10"/>
+            <propertytype name="jdDateEffectiveThru" type="String" length="10"/>
+          </propertytypes>
+        </relationshiptype>
+      </relationshiptypes>
+    </itemtype>
+
+  </itemtypes>
+
+</integrator>

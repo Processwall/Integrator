@@ -48,6 +48,7 @@
     <Compile Include="Conditions\And.cs" />
     <Compile Include="Conditions\Or.cs" />
     <Compile Include="Conditions\Property.cs" />
+    <Compile Include="Exceptions\ParameterException.cs" />
     <Compile Include="IFile.cs" />
     <Compile Include="IReltionship.cs" />
     <Compile Include="IItem.cs" />

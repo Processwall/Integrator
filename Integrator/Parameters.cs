@@ -42,6 +42,11 @@ namespace Integrator
             }
         }
 
+        public Boolean HasParamter(String Name)
+        {
+            return this._parameters.ContainsKey(Name);
+        }
+
         public String Token ()
         {
             List<String> parameterstrings = new List<String>();

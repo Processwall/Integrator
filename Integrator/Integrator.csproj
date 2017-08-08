@@ -53,6 +53,7 @@
     <Compile Include="Exceptions\UpdateException.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Logs\Console.cs" />
+    <Compile Include="Logs\Dummy.cs" />
     <Compile Include="Logs\EventLog.cs" />
     <Compile Include="Logs\File.cs" />
     <Compile Include="Logs\WindowsForms.cs" />

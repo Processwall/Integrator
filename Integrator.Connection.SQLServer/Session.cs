@@ -29,6 +29,8 @@ namespace Integrator.Connection.SQLServer
 
         public Schema.Session Schema { get; set; }
 
+        public Log Log { get; set; }
+
         public void Open()
         {
             this.CheckSQLSchema();
@@ -197,6 +199,9 @@ namespace Integrator.Connection.SQLServer
         public Session()
         {
             this.ItemCache = new Dictionary<String, Item>();
+
+            // Set Dummy Log
+            this.Log = new Integrator.Logs.Dummy();
         }
     }
 }

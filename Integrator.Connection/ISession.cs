@@ -11,6 +11,8 @@ namespace Integrator.Connection
 
         Schema.Session Schema { get; set; }
 
+        Log Log { get; set; }
+
         void Open();
 
         void Open(String Token);

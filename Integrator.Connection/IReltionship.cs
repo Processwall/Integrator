@@ -13,8 +13,6 @@ namespace Integrator.Connection
 
         IItem Related { get; set; }
 
-        new IRelationship Save();
-
         new IEnumerable<IRelationship> Versions { get; }
     }
 }

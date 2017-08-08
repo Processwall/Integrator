@@ -429,7 +429,6 @@ namespace Integrator.Connection.SQLServer
                             String configid = reader.GetString(1);
                             Item item = this.Session.GetItemFromCache(this.ItemType, id, configid);
                             this.SetItemProperties(item, reader, 2);
-                            item.Action = Actions.Read;
                             items.Add(item);
                         }
                     }
@@ -475,7 +474,6 @@ namespace Integrator.Connection.SQLServer
                             Relationship relationship = this.Session.GetRelationshipFromCache((Schema.RelationshipType)this.ItemType, id, configid, Source, related);
 
                             this.SetItemProperties(relationship, reader, 4);
-                            relationship.Action = Actions.Read;
                             relationships.Add(relationship);
                         }
                     }
@@ -497,7 +495,7 @@ namespace Integrator.Connection.SQLServer
             return this.SelectItems(sql);
         }
 
-        internal void Insert(Item Item)
+        internal void Insert(SqlConnection Connection, SqlTransaction Transaction, Item Item)
         {
             String sql = "insert into " + this.Name;
             sql += " (id,configid";
@@ -529,22 +527,14 @@ namespace Integrator.Connection.SQLServer
 
             sql += ") values " + sqlvalues + ");";
 
-            using (SqlConnection connection = new SqlConnection(this.Session.Connection))
-            {
-                connection.Open();
 
-                using (SqlTransaction transaction = connection.BeginTransaction())
-                {
-                    using (SqlCommand command = new SqlCommand(sql, connection, transaction))
-                    {
-                        int res = command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                }
+            using (SqlCommand command = new SqlCommand(sql, Connection, Transaction))
+            {
+                int res = command.ExecuteNonQuery();
             }
         }
 
-        internal void Update(Item Item)
+        internal void Update(SqlConnection Connection, SqlTransaction Transaction, Item Item)
         {
             String sql = "update " + this.Name;
 
@@ -582,18 +572,10 @@ namespace Integrator.Connection.SQLServer
 
             sql += " where id='" + Item.ID + "'";
 
-            using (SqlConnection connection = new SqlConnection(this.Session.Connection))
-            {
-                connection.Open();
 
-                using (SqlTransaction transaction = connection.BeginTransaction())
-                {
-                    using (SqlCommand command = new SqlCommand(sql, connection, transaction))
-                    {
-                        int res = command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                }
+            using (SqlCommand command = new SqlCommand(sql, Connection, Transaction))
+            {
+                int res = command.ExecuteNonQuery();
             }
         }
 

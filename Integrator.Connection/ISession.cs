@@ -9,7 +9,7 @@ namespace Integrator.Connection
     {
         Parameters Parameters { get; }
 
-        Schema.Session Schema { get; }
+        Schema.Session Schema { get; set; }
 
         void Open();
 
@@ -17,13 +17,15 @@ namespace Integrator.Connection
 
         void Close();
 
-        IItem Create(Schema.ItemType ItemType);
+        ITransaction BeginTransaction();
 
-        IItem Create(String ItemTypeName);
+        IItem Create(ITransaction Transaction, Schema.ItemType ItemType);
 
-        IFile Create(Schema.FileType FileType, String Filename);
+        IItem Create(ITransaction Transaction, String ItemTypeName);
 
-        IFile Create(String FileTypeName, String Filename);
+        IFile Create(ITransaction Transaction, Schema.FileType FileType, String Filename);
+
+        IFile Create(ITransaction Transaction, String FileTypeName, String Filename);
 
         IEnumerable<IItem> Index(Schema.ItemType ItemType);
 

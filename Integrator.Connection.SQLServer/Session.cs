@@ -121,26 +121,31 @@ namespace Integrator.Connection.SQLServer
             }
         }
 
-        public IItem Create(Schema.ItemType ItemType)
+        public ITransaction BeginTransaction()
+        {
+            return new Transaction(this);
+        }
+
+        public IItem Create(ITransaction Transaction, Schema.ItemType ItemType)
         {
             String newid = this.NewID();
             Item item = this.GetItemFromCache(ItemType, newid, newid);
-            item.Action = Actions.Create;
+            ((Transaction)Transaction).Add(item, SQLServer.Transaction.Actions.Create);
             return item;
         }
 
-        public IItem Create(String ItemTypeName)
+        public IItem Create(ITransaction Transaction, String ItemTypeName)
         {
             Schema.ItemType itemtype = this.Schema.ItemType(ItemTypeName);
-            return this.Create(itemtype);
+            return this.Create(Transaction, itemtype);
         }
 
-        public IFile Create(Schema.FileType FileType, String Filename)
+        public IFile Create(ITransaction Transaction, Schema.FileType FileType, String Filename)
         {
             throw new NotImplementedException();
         }
 
-        public IFile Create(String FileTypeName, String Filename)
+        public IFile Create(ITransaction Transaction, String FileTypeName, String Filename)
         {
             throw new NotImplementedException();
         }

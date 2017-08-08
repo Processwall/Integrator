@@ -54,6 +54,7 @@
     <Compile Include="IItem.cs" />
     <Compile Include="IProperty.cs" />
     <Compile Include="ISession.cs" />
+    <Compile Include="ITransaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

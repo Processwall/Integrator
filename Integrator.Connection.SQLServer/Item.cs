@@ -24,8 +24,6 @@ namespace Integrator.Connection.SQLServer
 
         public String ConfigID { get; private set; }
 
-        public Actions Action { get; internal set; }
-
         public IEnumerable<IItem> Versions
         {
             get
@@ -66,25 +64,26 @@ namespace Integrator.Connection.SQLServer
             throw new NotImplementedException();
         }
 
-        public IRelationship Create(Schema.RelationshipType RelationshipType)
+        public IRelationship Create(ITransaction Transaction, Schema.RelationshipType RelationshipType)
         {
              String newid = this.Session.NewID();
              Relationship relationship = this.Session.GetRelationshipFromCache(RelationshipType, newid, newid, this, null);
+             ((Transaction)Transaction).Add(relationship, SQLServer.Transaction.Actions.Create);
              return relationship;
         }
 
-        public IRelationship Create(String Name)
+        public IRelationship Create(ITransaction Transaction, String Name)
         {
             Schema.RelationshipType relationshiptype = this.ItemType.RelationshipType(Name);
-            return this.Create(Name);
+            return this.Create(Transaction, relationshiptype);
         }
 
-        public IRelationship Create(Schema.RelationshipType RelationshipType, IItem Related)
+        public IRelationship Create(ITransaction Transaction, Schema.RelationshipType RelationshipType, IItem Related)
         {
             throw new NotImplementedException();
         }
 
-        public IRelationship Create(String Name, IItem Related)
+        public IRelationship Create(ITransaction Transaction, String Name, IItem Related)
         {
             throw new NotImplementedException();
         }
@@ -94,37 +93,12 @@ namespace Integrator.Connection.SQLServer
             throw new NotImplementedException();
         }
 
-        public void Lock()
+        public void Update(ITransaction Transaction)
         {
-            this.Action = Actions.Update;
+            ((Transaction)Transaction).Add(this, SQLServer.Transaction.Actions.Update);
         }
 
-        public void UnLock()
-        {
-            this.Action = Actions.Read;
-        }
-
-        public IItem Save()
-        {
-            switch(this.Action)
-            {
-                case Actions.Create:
-                    this.Table.Insert(this);
-                    this.Action = Actions.Update;
-                    break;
-
-                case Actions.Update:
-                    this.Table.Update(this);
-                    break;
-
-                default:
-                    throw new Integrator.Exceptions.ArgumentException("Action not supported:" + this.Action.ToString());
-            }
-
-            return this;
-        }
-
-        public void Delete()
+        public void Delete(ITransaction Transaction)
         {
             throw new NotImplementedException();
         }

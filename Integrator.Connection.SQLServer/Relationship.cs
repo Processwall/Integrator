@@ -20,12 +20,6 @@ namespace Integrator.Connection.SQLServer
 
         public IItem Related { get; set; }
 
-        public new IRelationship Save()
-        {
-            base.Save();
-            return this;
-        }
-
         public new IEnumerable<IRelationship> Versions
         {
             get

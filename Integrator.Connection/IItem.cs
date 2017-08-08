@@ -5,8 +5,6 @@ using System.Text;
 
 namespace Integrator.Connection
 {
-    public enum Actions { Create, Read, Update, Delete };
-
     public interface IItem : IEquatable<IItem>
     {
         Schema.ItemType ItemType { get; }
@@ -14,8 +12,6 @@ namespace Integrator.Connection
         String ID { get; }
 
         String ConfigID { get; }
-
-        Actions Action { get; }
 
         IEnumerable<IItem> Versions { get; }
 
@@ -29,22 +25,18 @@ namespace Integrator.Connection
 
         IEnumerable<IRelationship> Relationships(String Name);
 
-        IRelationship Create(Schema.RelationshipType RelationshipType);
+        IRelationship Create(ITransaction Transaction, Schema.RelationshipType RelationshipType);
 
-        IRelationship Create(String Name);
+        IRelationship Create(ITransaction Transaction, String Name);
 
-        IRelationship Create(Schema.RelationshipType RelationshipType, IItem Related);
+        IRelationship Create(ITransaction Transaction, Schema.RelationshipType RelationshipType, IItem Related);
 
-        IRelationship Create(String Name, IItem Related);
+        IRelationship Create(ITransaction Transaction, String Name, IItem Related);
 
         void Refresh();
 
-        void Lock();
+        void Update(ITransaction Transaction);
 
-        void UnLock();
-
-        IItem Save();
-
-        void Delete();
+        void Delete(ITransaction Transaction);
     }
 }

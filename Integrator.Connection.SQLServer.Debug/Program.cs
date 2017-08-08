@@ -18,7 +18,7 @@ namespace Integrator.Connection.SQLServer.Debug
             XmlDocument doc = new XmlDocument();
             doc.Load(resourcestream);
 
-            Session sqlconnection = new Session();
+            Integrator.Connection.ISession sqlconnection = new Session();
             sqlconnection.Schema = new Schema.Session(doc);
             sqlconnection.Parameters.Parameter("Connection").Value = "Server=localhost; Database=JDECache; User Id=infodba; Password=infodba; Trusted_Connection=True;";
             sqlconnection.Open();
@@ -26,24 +26,22 @@ namespace Integrator.Connection.SQLServer.Debug
             Schema.ItemType itemmastertype = sqlconnection.Schema.ItemType("ItemMaster");
             Schema.RelationshipType crossreferencetype = itemmastertype.RelationshipType("CrossReferences");
 
+            ITransaction transaction = sqlconnection.BeginTransaction();
+
             IEnumerable<Connection.IItem> itemmasters = sqlconnection.Query(itemmastertype, Integrator.Conditions.Eq("szSecondItemNumber", "1234"));
             Connection.IItem itemmaster = null;
 
             if (itemmasters.Count() == 0)
             {
-                itemmaster = sqlconnection.Create(itemmastertype);
+                itemmaster = sqlconnection.Create(transaction, itemmastertype);
                 itemmaster.Property("szSecondItemNumber").Value = "1234";
                 itemmaster.Property("szItemDescription").Value = "Created Description";
-                itemmaster.Save();
-                itemmaster.UnLock();
             }
             else
             {
                 itemmaster = itemmasters.First();
-                itemmaster.Lock();
+                itemmaster.Update(transaction);
                 itemmaster.Property("szItemDescription").Value = "Updated Description";
-                itemmaster.Save();
-                itemmaster.UnLock();
             }
 
             IEnumerable<Connection.IRelationship> crossreferences = itemmaster.Relationships(crossreferencetype);
@@ -51,19 +49,17 @@ namespace Integrator.Connection.SQLServer.Debug
 
             if (crossreferences.Count() == 0)
             {
-                crossreference = itemmaster.Create(crossreferencetype);
+                crossreference = itemmaster.Create(transaction, crossreferencetype);
                 crossreference.Property("szXrefItemNumber").Value = "6778";
-                crossreference.Save();
-                crossreference.UnLock();
             }
             else
             {
                 crossreference = crossreferences.First();
-                crossreference.Lock();
+                crossreference.Update(transaction);
                 crossreference.Property("jdDateEnding").Value = "2001/01/01";
-                crossreference.Save();
-                crossreference.UnLock();
             }
+
+            transaction.Commit();
 
             sqlconnection.Close();
         }

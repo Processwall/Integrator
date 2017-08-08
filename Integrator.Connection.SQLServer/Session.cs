@@ -11,7 +11,7 @@ namespace Integrator.Connection.SQLServer
     public class Session : ISession
     {
         private readonly String ApplicationID = "SQL Server Connection";
-        private const String connection = "connection";
+        private const String connection = "Connection";
 
         private Parameters _parameters;
         public Parameters Parameters

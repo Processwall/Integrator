@@ -20,7 +20,7 @@ namespace Integrator.Connection.SQLServer.Debug
 
             Session sqlconnection = new Session();
             sqlconnection.Schema = new Schema.Session(doc);
-            sqlconnection.Parameters.Parameter("connection").Value = "Server=localhost\\SQL2012; Database=Integrator; Trusted_Connection=True;";
+            sqlconnection.Parameters.Parameter("Connection").Value = "Server=localhost; Database=JDECache; User Id=infodba; Password=infodba; Trusted_Connection=True;";
             sqlconnection.Open();
 
             Schema.ItemType itemmastertype = sqlconnection.Schema.ItemType("ItemMaster");

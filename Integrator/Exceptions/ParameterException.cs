@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Integrator.Connection.Exceptions
+namespace Integrator.Exceptions
 {
     public class ParameterException : Exception
     {

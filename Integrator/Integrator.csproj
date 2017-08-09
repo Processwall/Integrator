@@ -49,7 +49,9 @@
     <Compile Include="Exceptions\DeleteException.cs" />
     <Compile Include="Exceptions\LoginException.cs" />
     <Compile Include="Exceptions\MappingException.cs" />
+    <Compile Include="Exceptions\ParameterException.cs" />
     <Compile Include="Exceptions\ReadException.cs" />
+    <Compile Include="Exceptions\CreateException.cs" />
     <Compile Include="Exceptions\UpdateException.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Logs\Console.cs" />

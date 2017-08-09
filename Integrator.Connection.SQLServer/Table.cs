@@ -241,6 +241,7 @@ namespace Integrator.Connection.SQLServer
                         }
 
                     case "String":
+                    case "Text":
                         return "'" + Value.ToString().Replace("'", "''") + "'";
                     case "Date":
                         return "'" + ((System.DateTime)Value).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fff") + "'";

@@ -24,7 +24,10 @@ namespace Integrator.Connection.SQLServer
             }
             else
             {
-                throw new Integrator.Exceptions.ArgumentException("Item is already a member of the Transaction");
+                if (this.Cache[Item] != Action)
+                {
+                    throw new Integrator.Exceptions.ArgumentException("Item is already a member of the Transaction");
+                }
             }
         }
 

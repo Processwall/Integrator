@@ -35,6 +35,10 @@ namespace Integrator.Connection.SQLServer
                     {
                         this._sQL += "(" + this.MaxLength + ")";
                     }
+                    else if (this.Type == "decimal")
+                    {
+                        this._sQL += "(18,5)";
+                    }
 
                     if (!this.IsNullable)
                     {

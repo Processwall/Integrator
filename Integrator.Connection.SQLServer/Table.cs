@@ -213,7 +213,6 @@ namespace Integrator.Connection.SQLServer
                     }
                 }
             }
-
         }
 
         private String ValueSQL(Schema.PropertyType PropertyType, Object Value)
@@ -227,6 +226,7 @@ namespace Integrator.Connection.SQLServer
                 switch (PropertyType.GetType().Name)
                 {
                     case "Double":
+                    case "Decimal":
                     case "List":
                         return Value.ToString();
                     case "Item":

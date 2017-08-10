@@ -80,12 +80,15 @@ namespace Integrator.Connection.SQLServer
 
         public IRelationship Create(ITransaction Transaction, Schema.RelationshipType RelationshipType, IItem Related)
         {
-            throw new NotImplementedException();
+            IRelationship relationship = this.Create(Transaction, RelationshipType);
+            relationship.Related = Related;
+            return relationship;
         }
 
         public IRelationship Create(ITransaction Transaction, String Name, IItem Related)
         {
-            throw new NotImplementedException();
+            Schema.RelationshipType relationshiptype = this.ItemType.RelationshipType(Name);
+            return this.Create(Transaction, relationshiptype, Related);
         }
 
         public void Refresh()

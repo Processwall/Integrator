@@ -174,7 +174,7 @@ namespace Integrator.Connection.SQLServer
 
         internal IItem Get(Schema.ItemType ItemType, String ID)
         {
-            IEnumerable<IItem> results = this.Query(ItemType, Integrator.Conditions.Eq("id", ID));
+            IEnumerable<IItem> results = this.Query(ItemType, Integrator.Conditions.ID(ID));
 
             if (results.Count() == 1)
             {

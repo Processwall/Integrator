@@ -7,6 +7,11 @@ namespace Integrator
 {
     public class Conditions
     {
+        public static Connection.Conditions.ID ID(String Value)
+        {
+            return new Connection.Conditions.ID(Value);
+        }
+
         public static Connection.Conditions.Property Eq(String Name, Object Value)
         {
             return new Connection.Conditions.Property(Name, Connection.Conditions.Operators.eq, Value);

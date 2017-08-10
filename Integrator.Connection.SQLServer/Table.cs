@@ -327,6 +327,8 @@ namespace Integrator.Connection.SQLServer
                     Conditions.Property propcondition = (Conditions.Property)Condition;
                     Schema.PropertyType proptype = this.ItemType.PropertyType(propcondition.Name);
                     return "(" + proptype.Name.ToLower() + this.OperatorSQL(propcondition.Operator) + this.ValueSQL(proptype, propcondition.Value) + ")";
+                case "ID":
+                    return "(id='" + ((Conditions.ID)Condition).Value + "')";
                 default:
                     throw new NotImplementedException("Condition Type not implemented: " + Condition.GetType().Name);
             }

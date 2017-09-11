@@ -7,6 +7,8 @@ namespace Integrator.Connection
 {
     public interface ISession
     {
+        String Name { get; set; }
+
         Parameters Parameters { get; }
 
         Schema.Session Schema { get; set; }

@@ -10,8 +10,9 @@ namespace Integrator.Connection.SQLServer
 {
     public class Session : ISession
     {
-        private readonly String ApplicationID = "SQL Server Connection";
         private const String connection = "Connection";
+
+        public String Name { get; set; }
 
         private Parameters _parameters;
         public Parameters Parameters
@@ -20,7 +21,7 @@ namespace Integrator.Connection.SQLServer
             {
                 if (this._parameters == null)
                 {
-                    this._parameters = new Parameters(ApplicationID, System.Security.Cryptography.DataProtectionScope.LocalMachine, new String[] { connection });
+                    this._parameters = new Parameters(this.Name, System.Security.Cryptography.DataProtectionScope.LocalMachine, new String[] { connection });
                 }
 
                 return this._parameters;
@@ -38,7 +39,7 @@ namespace Integrator.Connection.SQLServer
 
         public void Open(String Token)
         {
-            this._parameters = new Parameters(ApplicationID, System.Security.Cryptography.DataProtectionScope.LocalMachine, Token);
+            this._parameters = new Parameters(this.Name, System.Security.Cryptography.DataProtectionScope.LocalMachine, Token);
             this.CheckSQLSchema();
         }
 

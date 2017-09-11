@@ -16,7 +16,8 @@ namespace Integrator.Sync
 
         public abstract void Execute(Parameters Parameters);
 
-        protected Connection.IFile SyncFile(Connection.IFile Source, Connection.IFileType TargetFileType)
+        /*
+        protected Connection.IFile SyncFile(Connection.IFile Source, Schema.FileType TargetFileType)
         {
             int bufferlength = 1024;
             byte[] buffer = new byte[bufferlength];
@@ -70,6 +71,7 @@ namespace Integrator.Sync
 
             return targetitem;
         }
+        */
 
         public Action(String Name, Map Map)
         {

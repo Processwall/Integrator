@@ -12,19 +12,19 @@ namespace Integrator.Sync.Maps
 
         internal XmlNode Node { get; private set; }
 
-        public Connection.IItemType Source
+        public Schema.ItemType Source
         {
             get
             {
-                return this.Map.Source.ItemType(this.Node.Attributes["source"].Value);
+                return this.Map.Source.Schema.ItemType(this.Node.Attributes["source"].Value);
             }
         }
 
-        public Connection.IItemType Target
+        public Schema.ItemType Target
         {
             get
             {
-                return this.Map.Target.ItemType(this.Node.Attributes["target"].Value);
+                return this.Map.Target.Schema.ItemType(this.Node.Attributes["target"].Value);
             }
         }
 

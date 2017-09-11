@@ -12,7 +12,7 @@ namespace Integrator.Sync.Maps
 
         internal XmlNode Node { get; private set; }
 
-        public Connection.IPropertyType Source
+        public Schema.PropertyType Source
         {
             get
             {
@@ -20,7 +20,7 @@ namespace Integrator.Sync.Maps
             }
         }
 
-        public Connection.IPropertyType Target
+        public Schema.PropertyType Target
         {
             get
             {

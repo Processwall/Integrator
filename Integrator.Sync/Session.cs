@@ -78,7 +78,7 @@ namespace Integrator.Sync
                         }
 
                         // Login
-                        this._connectionsCache[name].Login(token);
+                        this._connectionsCache[name].Open(token);
                     }
                 }
 

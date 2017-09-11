@@ -5,7 +5,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.IO;
 
-namespace Integrator
+namespace Integrator.Connection
 {
     public class Parameters : System.Collections.Generic.IEnumerable<Parameter>
     {
@@ -18,7 +18,7 @@ namespace Integrator
 
         public Boolean ReadOnly { get; private set; }
 
-        private Dictionary<String, Integrator.Parameter> _parameters;
+        private Dictionary<String, Integrator.Connection.Parameter> _parameters;
 
         public System.Collections.Generic.IEnumerator<Parameter> GetEnumerator()
         {
@@ -30,7 +30,7 @@ namespace Integrator
             return this.GetEnumerator();
         }
 
-        public Integrator.Parameter Parameter(String Name)
+        public Integrator.Connection.Parameter Parameter(String Name)
         {
             if (this._parameters.ContainsKey(Name))
             {

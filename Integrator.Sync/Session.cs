@@ -67,17 +67,12 @@ namespace Integrator.Sync
 
                         // Create Connection
                         String assemblylocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + assemblyname + ".dll";
-                        Assembly assembly = Assembly.LoadFile(assemblylocation);
+                        Assembly assembly = Assembly.LoadFrom(assemblylocation);
                         Type classtype = assembly.GetType(classname);
-                        this._connectionsCache[name] = (Connection.ISession)Activator.CreateInstance(classtype, name);
+                        this._connectionsCache[name] = (Connection.ISession)Activator.CreateInstance(classtype);
+                        this._connectionsCache[name].Name = name;
 
-                        // Set Parameters
-                        foreach (XmlNode parameternode in connectionnode.SelectNodes("parameters/parameter"))
-                        {
-                            this._connectionsCache[name].Parameters.Parameter(parameternode.Attributes["name"].Value).Value = parameternode.Attributes["value"].Value;
-                        }
-
-                        // Login
+                        // Open
                         this._connectionsCache[name].Open(token);
                     }
                 }

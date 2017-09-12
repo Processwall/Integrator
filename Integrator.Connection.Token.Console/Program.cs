@@ -60,7 +60,7 @@ namespace Integrator.Connection.Token.Console
                 System.Console.WriteLine();
                 System.Console.WriteLine("Enter Parameter Values: ");
 
-                foreach (Integrator.Parameter parameter in connection.Parameters)
+                foreach (Integrator.Connection.Parameter parameter in connection.Parameters)
                 {
                     System.Console.Write(" - " + parameter.Name + ": ");
                     parameter.Value = System.Console.ReadLine();

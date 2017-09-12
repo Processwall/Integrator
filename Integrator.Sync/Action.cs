@@ -16,6 +16,11 @@ namespace Integrator.Sync
 
         public abstract void Execute(Parameters Parameters);
 
+        public override string ToString()
+        {
+            return this.Name;
+        }
+
         public Action(String Name, Map Map)
         {
             this.Name = Name;

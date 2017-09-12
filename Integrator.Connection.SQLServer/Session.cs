@@ -155,12 +155,13 @@ namespace Integrator.Connection.SQLServer
 
         public IEnumerable<IItem> Index(Schema.ItemType ItemType)
         {
-            throw new NotImplementedException();
+            return this.TableCache[ItemType].Select(null);
         }
 
         public IEnumerable<IItem> Index(String ItemTypeName)
         {
-            throw new NotImplementedException();
+            Schema.ItemType itemtype = this.Schema.ItemType(ItemTypeName);
+            return this.Index(itemtype);
         }
 
         public IEnumerable<IItem> Query(Schema.ItemType ItemType, Condition Condition)

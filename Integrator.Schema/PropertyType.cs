@@ -32,9 +32,38 @@ namespace Integrator.Schema
         {
             get
             {
-                if (this.Node.Attributes["fromconfig"] != null)
+                if (this.ItemType.CanVersion)
                 {
-                    if (String.Compare(this.Node.Attributes["fromconfig"].Value, "true", true) == 0)
+                    if (this.Node.Attributes["fromconfig"] != null)
+                    {
+                        if (String.Compare(this.Node.Attributes["fromconfig"].Value, "true", true) == 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public Boolean ReadOnly
+        {
+            get
+            {
+                if (this.Node.Attributes["readonly"] != null)
+                {
+                    if (String.Compare(this.Node.Attributes["readonly"].Value, "true", true) == 0)
                     {
                         return true;
                     }
@@ -47,6 +76,7 @@ namespace Integrator.Schema
                 {
                     return false;
                 }
+
             }
         }
 

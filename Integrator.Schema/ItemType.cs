@@ -49,20 +49,48 @@ namespace Integrator.Schema
         {
             get
             {
-                if (this.Node.Attributes["canversion"] != null)
+                if (this.Parent != null)
                 {
-                    if (String.Compare(this.Node.Attributes["canversion"].Value, "true", true) == 0)
+                    if (this.Parent.CanVersion)
                     {
                         return true;
                     }
                     else
                     {
-                        return false;
+                        if (this.Node.Attributes["canversion"] != null)
+                        {
+                            if (String.Compare(this.Node.Attributes["canversion"].Value, "true", true) == 0)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                 }
                 else
                 {
-                    return false;
+                    if (this.Node.Attributes["canversion"] != null)
+                    {
+                        if (String.Compare(this.Node.Attributes["canversion"].Value, "true", true) == 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
         }

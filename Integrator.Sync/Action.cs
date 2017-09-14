@@ -12,6 +12,14 @@ namespace Integrator.Sync
 
         public Map Map { get; private set; }
 
+        public Integrator.Log Log
+        {
+            get
+            {
+                return this.Map.Log;
+            }
+        }
+
         public abstract Parameters EmptyParameters();
 
         public abstract void Execute(Parameters Parameters);

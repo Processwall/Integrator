@@ -10,6 +10,14 @@ namespace Integrator.Sync
     {
         public Session Session { get; private set; }
 
+        public Integrator.Log Log
+        {
+            get
+            {
+                return this.Session.Log;
+            }
+        }
+
         internal XmlNode Node { get; private set; }
 
         public String Name

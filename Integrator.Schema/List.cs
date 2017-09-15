@@ -31,6 +31,26 @@ namespace Integrator.Schema
             }
         }
 
+        public ListValue Value(String Value)
+        {
+            if (Value != null)
+            {
+                foreach (ListValue listvalue in this.Values)
+                {
+                    if (listvalue.Value.Equals(Value))
+                    {
+                        return listvalue;
+                    }
+                }
+
+                throw new Exceptions.ArgumentException("Invalid List Value");
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         private void Load()
         {
             // Load Values

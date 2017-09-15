@@ -65,7 +65,7 @@ namespace Integrator.Connection
             return Convert.ToBase64String(encryptedBytes);
         }
 
-        public Parameters(String ApplicationID, DataProtectionScope Scope, String[] Names)
+        public Parameters(String ApplicationID, DataProtectionScope Scope, IEnumerable<String> Names)
         {
             this.ApplicationID = ApplicationID;
             this.Scope = Scope;

@@ -372,11 +372,11 @@ namespace Integrator.Connection.SQLServer
 
             if (Condition != null)
             {
-                sql += " where ((source_id='" + Source.ID + "') and (" + this.ConditionSQL(Condition) + "))";
+                sql += " where ((sourceid='" + Source.ID + "') and (" + this.ConditionSQL(Condition) + "))";
             }
             else
             {
-                sql += " where (source_id='" + Source.ID + "')";
+                sql += " where (sourceid='" + Source.ID + "')";
             }
 
             return this.Session.SelectRelationships(Source, (Schema.RelationshipType)this.ItemType, sql);

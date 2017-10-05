@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="FileType.cs" />
     <Compile Include="ItemType.cs" />
+    <Compile Include="Manager.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="List.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -44,6 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Query\Condition.cs" />
+    <Compile Include="Query\ConditionCreation.cs" />
+    <Compile Include="Query\Conditions\And.cs" />
+    <Compile Include="Query\Conditions\ID.cs" />
+    <Compile Include="Query\Conditions\Or.cs" />
+    <Compile Include="Query\Conditions\Property.cs" />
     <Compile Include="Exceptions\ArgumentException.cs" />
     <Compile Include="Exceptions\DeleteException.cs" />
     <Compile Include="Exceptions\LoginException.cs" />

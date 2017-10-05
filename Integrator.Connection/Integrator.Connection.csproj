@@ -44,28 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Condition.cs" />
-    <Compile Include="ConditionCreation.cs" />
-    <Compile Include="Conditions\And.cs" />
-    <Compile Include="Conditions\Or.cs" />
-    <Compile Include="Conditions\ID.cs" />
-    <Compile Include="Conditions\Property.cs" />
+    <Compile Include="Relationship.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Parameter.cs" />
     <Compile Include="Parameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Property.cs" />
-    <Compile Include="Props\Boolean.cs" />
-    <Compile Include="Props\Date.cs" />
-    <Compile Include="Props\Decimal.cs" />
-    <Compile Include="Props\Double.cs" />
-    <Compile Include="Props\Integer.cs" />
-    <Compile Include="Props\Item.cs" />
-    <Compile Include="Props\List.cs" />
-    <Compile Include="Props\String.cs" />
-    <Compile Include="Props\Text.cs" />
-    <Compile Include="Relationship.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="Transaction.cs" />
   </ItemGroup>
@@ -79,6 +63,7 @@
       <Name>Integrator</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

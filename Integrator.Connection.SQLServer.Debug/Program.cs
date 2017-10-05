@@ -17,17 +17,61 @@ namespace Integrator.Connection.SQLServer.Debug
             Stream resourcestream = assembly.GetManifestResourceStream("Integrator.Connection.SQLServer.Debug.Schema.xml");
             XmlDocument doc = new XmlDocument();
             doc.Load(resourcestream);
+            Schema.Session schema = new Schema.Session(doc);
 
-            Integrator.Connection.ISession sqlconnection = new Session();
-            sqlconnection.Schema = new Schema.Session(doc);
-            sqlconnection.Parameters.Parameter("Connection").Value = "Server=localhost; Database=JDECache; User Id=infodba; Password=infodba; Trusted_Connection=True;";
-            sqlconnection.Open();
+            Logs.Console log = new Logs.Console();
 
-            Schema.ItemType itemmastertype = sqlconnection.Schema.ItemType("ItemMaster");
+            using (Integrator.Connection.Session session = new Session(schema, "Test", log))
+            {
+                session.Parameters.Parameter("Connection").Value = "Server=localhost; Database=JDECache; User Id=infodba; Password=infodba; Trusted_Connection=True;";
+                session.Open();
+
+                Schema.ItemType itemmastertype = session.Schema.ItemType("ItemMaster");
+                Schema.RelationshipType crossreferencetype = itemmastertype.RelationshipType("CrossReferences");
+
+                Item itemmaster = null;
+                Relationship crossreference = null;
+
+                IEnumerable<Connection.Item> itemmasters = session.Get(itemmastertype, Integrator.Conditions.Eq("szSecondItemNumber", "1234"));
+
+                if (itemmasters.Count() > 0)
+                {
+                    itemmaster = itemmasters.First();
+                }
+                else
+                {
+                    using (Connection.Transaction transaction = session.BeginTransaction())
+                    {
+                        itemmaster = session.Create(itemmastertype, transaction);
+                        itemmaster.SetProperty("szSecondItemNumber", "1234");
+                        itemmaster.SetProperty("szItemDescription", "Created Description");
+
+                        crossreference = session.Create(crossreferencetype, itemmaster, null, transaction);
+                        crossreference.SetProperty("szXrefItemNumber", "6778");
+
+                        transaction.Commit();
+                    }
+                }
+
+                using (Connection.Transaction transaction = session.BeginTransaction())
+                {
+                    session.Update(itemmaster, transaction);
+                    itemmaster.SetProperty("szItemDescription", "Created Description 999");
+
+                    transaction.Commit();
+                }
+
+                using (Connection.Transaction transaction = session.BeginTransaction())
+                {
+                    session.Delete(itemmaster, transaction);
+
+                    transaction.Commit();
+                }
+            }
+
+            /*
+
             Schema.RelationshipType crossreferencetype = itemmastertype.RelationshipType("CrossReferences");
-
-            ITransaction transaction = sqlconnection.BeginTransaction();
-
             IEnumerable<Connection.IItem> itemmasters = sqlconnection.Query(itemmastertype, Integrator.Conditions.Eq("szSecondItemNumber", "1234"));
             Connection.IItem itemmaster = null;
 
@@ -61,7 +105,7 @@ namespace Integrator.Connection.SQLServer.Debug
 
             transaction.Commit();
 
-            sqlconnection.Close();
+            */
         }
     }
 }

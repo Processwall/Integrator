@@ -8,39 +8,31 @@ using System.IO;
 
 namespace Integrator.Connection.SQLServer
 {
-    public class Session : ISession
+    public class Session : Connection.Session
     {
         private const String connection = "Connection";
 
-        public String Name { get; set; }
-
-        private Parameters _parameters;
-        public Parameters Parameters
+        protected override IEnumerable<String> ParameterNames
         {
             get
             {
-                if (this._parameters == null)
-                {
-                    this._parameters = new Parameters(this.Name, System.Security.Cryptography.DataProtectionScope.LocalMachine, new String[] { connection });
-                }
-
-                return this._parameters;
+                return new List<String>() { connection };
             }
         }
 
-        public Schema.Session Schema { get; set; }
-
-        public Log Log { get; set; }
-
-        public void Open()
+        public override void Open()
         {
             this.CheckSQLSchema();
         }
 
-        public void Open(String Token)
+        public override void Close()
         {
-            this._parameters = new Parameters(this.Name, System.Security.Cryptography.DataProtectionScope.LocalMachine, Token);
-            this.CheckSQLSchema();
+       
+        }
+
+        public override Connection.Transaction BeginTransaction()
+        {
+            return new Transaction(this);
         }
 
         internal String Connection
@@ -75,7 +67,203 @@ namespace Integrator.Connection.SQLServer
             return this.TableCache[ItemType];
         }
 
-        internal String NewID()
+        private static void SetItemProperties(Item Item, SqlDataReader Reader, int StartIndex)
+        {
+            int cnt = StartIndex;
+
+            foreach (Schema.PropertyType proptype in Item.ItemType.PropertyTypes)
+            {
+                if (Reader.IsDBNull(cnt))
+                {
+                    Item.SetProperty(proptype, null);
+                }
+                else
+                {
+                    switch (proptype.GetType().Name)
+                    {
+                        case "Boolean":
+
+                            Item.SetProperty(proptype, Reader.GetBoolean(cnt));
+                            break;
+
+                        case "Date":
+
+                            Item.SetProperty(proptype, Reader.GetDateTime(cnt));
+                            break;
+
+                        case "Decimal":
+
+                            Item.SetProperty(proptype, Reader.GetDecimal(cnt));
+                            break;
+
+                        case "Double":
+
+                            Item.SetProperty(proptype, Reader.GetDouble(cnt));
+                            break;
+
+                        case "Integer":
+
+                            Item.SetProperty(proptype, Reader.GetInt32(cnt));
+                            break;
+
+                        case "String":
+
+                            Item.SetProperty(proptype, Reader.GetString(cnt));
+                            break;
+
+                        case "Text":
+
+                            TextReader text = Reader.GetTextReader(cnt);
+
+                            Item.SetProperty(proptype, text.ToString());
+                            break;
+
+                        default:
+                            throw new NotImplementedException("PropertyType not implemented: " + proptype.GetType().Name);
+                    }
+                }
+
+                cnt++;
+            }
+        }
+
+        internal IEnumerable<Connection.Item> SelectItems(Schema.ItemType ItemType, String SQL)
+        {
+            List<Connection.Item> items = new List<Connection.Item>();
+
+            using (SqlConnection connection = new SqlConnection(this.Connection))
+            {
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand(SQL, connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            String id = reader.GetString(0);
+                            String configid = reader.GetString(1);
+                            Item item = this.Build(ItemType, Item.States.Read, id, configid);
+                            SetItemProperties(item, reader, 2);
+                            items.Add(item);
+                        }
+                    }
+                }
+            }
+
+            return items;
+        }
+
+        internal IEnumerable<Relationship> SelectRelationships(Item Source, Schema.RelationshipType RelationshipType, String SQL)
+        {
+            List<Relationship> relationships = new List<Relationship>();
+
+            using (SqlConnection connection = new SqlConnection(this.Connection))
+            {
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand(SQL, connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            String id = reader.GetString(0);
+                            String configid = reader.GetString(1);
+                            String sourceid = reader.GetString(2);
+
+                            Item related = null;
+
+                            if (!reader.IsDBNull(3))
+                            {
+                                String relatedid = reader.GetString(3);
+
+                                if (RelationshipType.Related != null)
+                                {
+                                    if (relatedid != null)
+                                    {
+                                        related = this.Get(RelationshipType.Related, relatedid);
+                                    }
+                                }
+                            }
+
+                            Relationship relationship = this.Build(RelationshipType, Item.States.Read, id, configid, Source, related);
+                            SetItemProperties(relationship, reader, 4);
+                            relationships.Add(relationship);
+                        }
+                    }
+                }
+            }
+
+            return relationships;
+        }
+
+        public override IEnumerable<Item> Get(Schema.ItemType ItemType)
+        {
+            return this.Table(ItemType).Select(null);
+        }
+
+        public override Item Get(Schema.ItemType ItemType, String ID)
+        {
+            Query.Conditions.ID condition = Integrator.Conditions.ID(ID);
+            IEnumerable<Item> items = this.Table(ItemType).Select(condition);
+
+            if (items.Count() > 0)
+            {
+                return items.First();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public override IEnumerable<Item> Get(Schema.ItemType ItemType, Query.Condition Condition)
+        {
+            return this.Table(ItemType).Select(Condition);
+        }
+
+        public override IEnumerable<File> Get(Schema.FileType FileType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override File Get(Schema.FileType FileType, string ID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<File> Get(Schema.FileType FileType, Query.Condition Condition)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<Relationship> Get(Schema.RelationshipType RelationshipType, Item Source)
+        {
+            return this.Table(RelationshipType).Select(Source, null);
+        }
+
+        public override Relationship Get(Schema.RelationshipType RelationshipType, Item Source, string ID)
+        {
+            Query.Conditions.ID condition = Integrator.Conditions.ID(ID);
+            IEnumerable<Relationship> items = this.Table(RelationshipType).Select(Source, condition);
+
+            if (items.Count() > 0)
+            {
+                return items.First();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public override IEnumerable<Relationship> Get(Schema.RelationshipType RelationshipType, Item Source, Query.Condition Condition)
+        {
+            return this.Table(RelationshipType).Select(Source, Condition);
+        }
+
+        internal static String NewID()
         {
             StringBuilder ret = new StringBuilder(32);
 
@@ -87,123 +275,43 @@ namespace Integrator.Connection.SQLServer
             return ret.ToString();
         }
 
-        private Dictionary<String, Item> ItemCache;
-
-        internal Item GetItemFromCache(Schema.ItemType ItemType, String ID, String ConfigID)
+        internal void Save(Item Item, SqlConnection Connection, SqlTransaction Transaction)
         {
-            if (!(ItemType is Schema.RelationshipType))
+            switch (Item.State)
             {
-                if (!this.ItemCache.ContainsKey(ID))
-                {
-                    Item item = new Item(this, ItemType, ID, ConfigID);
-                    this.ItemCache[ID] = item;
-                    return item;
-                }
-                else
-                {
-                    return this.ItemCache[ID];
-                }
-            }
-            else
-            {
-                throw new Integrator.Exceptions.ArgumentException("Use GetRelationshipFromCache");
+                case Item.States.Create:
+                    String newid = NewID();
+                    this.Table(Item.ItemType).Insert(Connection, Transaction, Item, newid, newid);
+                    this.Created(Item, newid, newid);
+                    break;
+
+                case Item.States.Update:
+                    this.Table(Item.ItemType).Update(Connection, Transaction, Item);
+                    this.Updated(Item);
+                    break;
+
+                default:
+
+                    break;
             }
         }
 
-        internal Relationship GetRelationshipFromCache(Schema.RelationshipType RelationshipType, String ID, String ConfigID, Item Source, Item Related)
+        internal void Delete(Item Item, SqlConnection Connection, SqlTransaction Transaction)
         {
-            if (!this.ItemCache.ContainsKey(ID))
-            {
-                Relationship item = new Relationship(this, RelationshipType, ID, ConfigID, Source, Related);
-                this.ItemCache[ID] = item;
-                return item;
-            }
-            else
-            {
-                return (Relationship)this.ItemCache[ID];
-            }
+            this.Table(Item.ItemType).Delete(Connection, Transaction, Item);
+            this.Deleted(Item);
         }
 
-        public ITransaction BeginTransaction()
+        public Session(Schema.Session Schema, String Name, Log Log)
+            :base(Schema, Name, Log)
         {
-            return new Transaction(this);
+ 
         }
 
-        public IItem Create(ITransaction Transaction, Schema.ItemType ItemType)
+        public Session(Schema.Session Schema, String Name, String Token, Log Log)
+            : base(Schema, Name, Token, Log)
         {
-            String newid = this.NewID();
-            Item item = this.GetItemFromCache(ItemType, newid, newid);
-            ((Transaction)Transaction).Add(item, SQLServer.Transaction.Actions.Create);
-            return item;
-        }
-
-        public IItem Create(ITransaction Transaction, String ItemTypeName)
-        {
-            Schema.ItemType itemtype = this.Schema.ItemType(ItemTypeName);
-            return this.Create(Transaction, itemtype);
-        }
-
-        public IFile Create(ITransaction Transaction, Schema.FileType FileType, String Filename)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IFile Create(ITransaction Transaction, String FileTypeName, String Filename)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<IItem> Index(Schema.ItemType ItemType)
-        {
-            return this.TableCache[ItemType].Select(null);
-        }
-
-        public IEnumerable<IItem> Index(String ItemTypeName)
-        {
-            Schema.ItemType itemtype = this.Schema.ItemType(ItemTypeName);
-            return this.Index(itemtype);
-        }
-
-        public IEnumerable<IItem> Query(Schema.ItemType ItemType, Condition Condition)
-        {
-            return this.TableCache[ItemType].Select(Condition);
-        }
-
-        public IEnumerable<IItem> Query(String ItemTypeName, Condition Condition)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal IItem Get(Schema.ItemType ItemType, String ID)
-        {
-            IEnumerable<IItem> results = this.Query(ItemType, Integrator.Conditions.ID(ID));
-
-            if (results.Count() == 1)
-            {
-                return results.First();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public IItem Get(String ID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Close()
-        {
-
-        }
-
-        public Session()
-        {
-            this.ItemCache = new Dictionary<String, Item>();
-
-            // Set Dummy Log
-            this.Log = new Integrator.Logs.Dummy();
+     
         }
     }
 }

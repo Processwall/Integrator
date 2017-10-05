@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Integrator.Connection
+namespace Integrator.Query
 {
     public abstract class Condition : IEquatable<Condition>
     {

@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Integrator.Connection
 {
-    public abstract class Transaction
+    public abstract class Transaction : IDisposable
     {
         public Session Session { get; private set; }
+
+        public Boolean Comitted { get; private set; }
 
         private List<Item> Cache;
 
@@ -20,26 +22,61 @@ namespace Integrator.Connection
             }
         }
 
-        protected void ItemCreated(Item Item, String ID, String ConfigID)
+        protected abstract void Save(Item Item);
+
+        protected abstract void Delete(Item Item);
+
+        protected abstract void BeforeCommit();
+
+        protected abstract void AfterCommit();
+
+        protected abstract void BeforeRollback();
+
+        protected abstract void AfterRollback();
+
+        public void Commit()
         {
-            Item.ItemCreated(ID, ConfigID);
+            this.BeforeCommit();
+
+            foreach(Item item in this.Cache)
+            {
+                switch(item.State)
+                {
+                    case Item.States.Create:
+                    case Item.States.Update:
+                        this.Save(item);
+                        break;
+                    case Item.States.Delete:
+                        this.Delete(item);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            this.AfterCommit();
+            this.Comitted = true;
         }
 
-        public IEnumerable<Item> Items
+        public void Rollback()
         {
-            get
+            if (!this.Comitted)
             {
-                return this.Cache;
+                this.BeforeRollback();
+
+                this.AfterRollback();
             }
         }
 
-        public abstract void Commit();
+        public void Dispose()
+        {
+            this.Rollback();
+        }
 
-        public abstract void Rollback();
-
-        public Transaction(Session Session)
+        protected Transaction(Session Session)
         {
             this.Cache = new List<Item>();
+            this.Comitted = false;
             this.Session = Session;
         }
     }

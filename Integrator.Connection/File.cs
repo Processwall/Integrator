@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
 
 namespace Integrator.Connection
 {
-    public abstract class File : Item
+    public class File : Item
     {
         public Schema.FileType FileType
         {
@@ -17,22 +16,10 @@ namespace Integrator.Connection
             }
         }
 
-        public String Filename { get; private set; }
-
-        public abstract Stream Read();
-
-        public abstract Stream Write();
-
-        public File(Session Session, Schema.FileType FileType, String Filename)
-            : base(Session, FileType)
+        internal File(Session Session, Schema.FileType FileType, States State, String ID, String ConfigID)
+            : base(Session, FileType, State, ID, ConfigID)
         {
-            this.Filename = Filename;
-        }
 
-        public File(Session Session, Schema.FileType FileType, String ID, String ConfigID, String Filename)
-            : base(Session, FileType, ID, ConfigID)
-        {
-            this.Filename = Filename;
         }
     }
 }

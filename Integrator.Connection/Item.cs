@@ -6,216 +6,152 @@ using System.Threading.Tasks;
 
 namespace Integrator.Connection
 {
-    public abstract class Item : IEquatable<Item>
+    public class Item
     {
-        public enum Actions { Create, Read, Update, Delete };
+        public enum States { Create, Read, Update, Delete };
 
         public Session Session { get; private set; }
 
         public Schema.ItemType ItemType { get; private set; }
 
-        public Actions Action { get; private set; }
+        public States State { get; private set; }
 
-        private Guid SessionID;
+        public String ID { get; set; }
 
-        public String ID { get; private set; }
+        public String ConfigID { get; set; }
 
-        public String ConfigID { get; private set; }
-
-        public abstract IEnumerable<Item> Versions { get; }
-
-        private Dictionary<Schema.PropertyType, Property> PropertyCache;
-
-        public IEnumerable<Property> Properties
+        internal void Created(String ID, String ConfigID)
         {
-            get
+            switch (this.State)
             {
-                return this.PropertyCache.Values;
+                case States.Create:
+                    this.ID = ID;
+                    this.ConfigID = ConfigID;
+                    this.State = States.Read;
+                    break;
+                default:
+                    break;
             }
         }
 
-        public Property Property(Schema.PropertyType PropertyType)
+        internal void Updated()
         {
-            if (this.PropertyCache.ContainsKey(PropertyType))
+            switch (this.State)
             {
-                return this.PropertyCache[PropertyType];
-            }
-            else
-            {
-                throw new Exceptions.ArgumentException("Invalid PropertyType");
-            }
-        }
-
-        public Property Property(String Name)
-        {
-            Schema.PropertyType proptype = this.ItemType.PropertyType(Name);
-            return this.Property(proptype);
-        }
-
-        public abstract IEnumerable<Relationship> Relationships(Schema.RelationshipType RelationshipType);
-
-        public IEnumerable<Relationship> Relationships(String RelationshipTypeName)
-        {
-            Schema.RelationshipType relationshiptype = this.ItemType.RelationshipType(RelationshipTypeName);
-            return this.Relationships(relationshiptype);
-        }
-
-        public Relationship Create(Transaction Transaction, Schema.RelationshipType RelationshipType)
-        {
-            return this.Create(Transaction, RelationshipType, null);
-        }
-
-        public Relationship Create(Transaction Transaction, String RelationshipTypeName)
-        {
-            Schema.RelationshipType relationshiptype = this.ItemType.RelationshipType(RelationshipTypeName);
-            return this.Create(Transaction, relationshiptype);
-        }
-
-        public Relationship Create(Transaction Transaction, Schema.RelationshipType RelationshipType, Item Related)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Relationship Create(Transaction Transaction, String RelationshipTypeName, Item Related)
-        {
-            Schema.RelationshipType relationshiptype = this.ItemType.RelationshipType(RelationshipTypeName);
-            return this.Create(Transaction, relationshiptype, Related);
-        }
-
-        public void Refresh()
-        {
-
-        }
-
-        public void Update(Transaction Transaction)
-        {
-            this.Action = Actions.Update;
-            Transaction.Add(this);
-        }
-
-        public void Delete(Transaction Transaction)
-        {
-            this.Action = Actions.Delete;
-            Transaction.Add(this);
-        }
-
-        internal void ItemCreated(String ID, String ConfigID)
-        {
-            if (this.Action == Actions.Create)
-            {
-                this.ID = ID;
-                this.ConfigID = ConfigID;
-                this.Action = Actions.Read;
-                this.Session.AddToCache(this);
-            }
-            else
-            {
-                throw new Exceptions.ArgumentException("Item already created");
+                case States.Update:
+                    this.State = States.Read;
+                    break;
+                default:
+                    break;
             }
         }
 
-        public Boolean Equals(Item other)
+        internal void Update()
         {
-            if (other != null)
+            switch (this.State)
             {
-                if (this.Action == Actions.Create)
+                case States.Read:
+                case States.Update:
+                    this.State = States.Update;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        internal void Delete()
+        {
+            switch (this.State)
+            {
+                case States.Read:
+                case States.Update:
+                    this.State = States.Delete;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private Dictionary<Schema.PropertyType, Object> PropertyCache;
+
+        public void SetProperty(Schema.PropertyType PropertyType, Object Value)
+        {
+            if (PropertyType != null)
+            {
+                if (PropertyType.ItemType.Equals(this.ItemType))
                 {
-                    return this.SessionID.Equals(other.SessionID);
+                    this.PropertyCache[PropertyType] = Value;
                 }
                 else
                 {
-                    return this.ID.Equals(other.ID);
+                    throw new Exceptions.ArgumentException("Invalid PropertyType");
                 }
             }
             else
             {
-                return false;
+                throw new Exceptions.ArgumentException("PropertyType must be specified");
             }
         }
 
-        public override Boolean Equals(Object obj)
+        public void SetProperty(String Name, Object Value)
         {
-            if ((obj != null) && (obj is Item))
+            Schema.PropertyType proptype = this.ItemType.PropertyType(Name);
+            this.SetProperty(proptype, Value);
+        }
+
+        public Object GetProperty(Schema.PropertyType PropertyType)
+        {
+            if (PropertyType != null)
             {
-                return this.Equals((Item)obj);
+                if (PropertyType.ItemType.Equals(this.ItemType))
+                {
+                    if (!this.PropertyCache.ContainsKey(PropertyType))
+                    {
+                        this.PropertyCache[PropertyType] = null;
+                    }
+
+                    return this.PropertyCache[PropertyType];
+                }
+                else
+                {
+                    throw new Exceptions.ArgumentException("Invalid PropertyType");
+                }
             }
             else
             {
-                return false;
-            }
+                throw new Exceptions.ArgumentException("PropertyType must be specified");
+            }  
         }
 
-        public override int GetHashCode()
+        public Object GetProperty(String Name)
         {
-            if (this.Action == Actions.Create)
+            Schema.PropertyType proptype = this.ItemType.PropertyType(Name);
+            return this.GetProperty(proptype);
+        }
+
+        public void CopyProperties(Item Item)
+        {
+            if (this.ItemType.Equals(Item.ItemType))
             {
-                return this.SessionID.GetHashCode();
+                foreach(Schema.PropertyType proptype in this.ItemType.PropertyTypes)
+                {
+                    this.SetProperty(proptype, Item.GetProperty(proptype));
+                }
             }
             else
             {
-                return this.ID.GetHashCode();
+                throw new Exceptions.ArgumentException("ItemTypes do not match");
             }
         }
 
-        private void Initialise(Session Session, Schema.ItemType ItemType)
+        internal Item(Session Session, Schema.ItemType ItemType, States State, String ID, String ConfigID)
         {
             this.Session = Session;
             this.ItemType = ItemType;
-            this.SessionID = Guid.NewGuid();
-            this.PropertyCache = new Dictionary<Schema.PropertyType, Property>();
-
-            foreach(Schema.PropertyType proptype in this.ItemType.PropertyTypes)
-            {
-                switch (proptype.GetType().Name)
-                {
-                    case "Boolean":
-                        this.PropertyCache[proptype] = new Properties.Boolean(this, (Integrator.Schema.PropertyTypes.Boolean)proptype);
-                        break;
-                    case "Date":
-                        this.PropertyCache[proptype] = new Properties.Date(this, (Integrator.Schema.PropertyTypes.Date)proptype);
-                        break;
-                    case "Decimal":
-                        this.PropertyCache[proptype] = new Properties.Decimal(this, (Integrator.Schema.PropertyTypes.Decimal)proptype);
-                        break;
-                    case "Double":
-                        this.PropertyCache[proptype] = new Properties.Double(this, (Integrator.Schema.PropertyTypes.Double)proptype);
-                        break;
-                    case "Integer":
-                        this.PropertyCache[proptype] = new Properties.Integer(this, (Integrator.Schema.PropertyTypes.Integer)proptype);
-                        break;
-                    case "Item":
-                        this.PropertyCache[proptype] = new Properties.Item(this, (Integrator.Schema.PropertyTypes.Item)proptype);
-                        break;
-                    case "List":
-                        this.PropertyCache[proptype] = new Properties.List(this, (Integrator.Schema.PropertyTypes.List)proptype);
-                        break;
-                    case "String":
-                        this.PropertyCache[proptype] = new Properties.String(this, (Integrator.Schema.PropertyTypes.String)proptype);
-                        break;
-                    case "Text":
-                        this.PropertyCache[proptype] = new Properties.Text(this, (Integrator.Schema.PropertyTypes.Text)proptype);
-                        break;
-                    default:
-                        throw new Integrator.Exceptions.ArgumentException("Property Type not implemented: " + proptype.GetType().Name);
-                }
-            }
-        }
-
-        public Item(Session Session, Schema.ItemType ItemType)
-        {
-            this.Initialise(Session, ItemType);
-            this.Action = Actions.Create;
-            this.ID = null;
-            this.ConfigID = null;
-        }
-
-        public Item(Session Session, Schema.ItemType ItemType, String ID, String ConfigID)
-        {
-            this.Initialise(Session, ItemType);
-            this.Action = Actions.Read;
             this.ID = ID;
             this.ConfigID = ConfigID;
-            this.Session.AddToCache(this);
+            this.State = State;
+            this.PropertyCache = new Dictionary<Schema.PropertyType, Object>();
         }
     }
 }

@@ -231,9 +231,9 @@ namespace Integrator.Connection.SQLServer
                         return Value.ToString();
                     case "Item":
 
-                        if (Value is Connection.IItem)
+                        if (Value is Item)
                         {
-                            return "'" + ((Connection.IItem)Value).ID.ToString() + "'";
+                            return "'" + ((Item)Value).ID.ToString() + "'";
                         }
                         else
                         {
@@ -262,28 +262,28 @@ namespace Integrator.Connection.SQLServer
             }
         }
 
-        private String OperatorSQL(Conditions.Operators Operator)
+        private String OperatorSQL(Query.Conditions.Operators Operator)
         {
             switch (Operator)
             {
-                case Conditions.Operators.eq:
+                case Query.Conditions.Operators.eq:
                     return "=";
-                case Conditions.Operators.ge:
+                case Query.Conditions.Operators.ge:
                     return ">=";
-                case Conditions.Operators.gt:
+                case Query.Conditions.Operators.gt:
                     return ">";
-                case Conditions.Operators.le:
+                case Query.Conditions.Operators.le:
                     return "<=";
-                case Conditions.Operators.lt:
+                case Query.Conditions.Operators.lt:
                     return "<";
-                case Conditions.Operators.ne:
+                case Query.Conditions.Operators.ne:
                     return "<>";
                 default:
                     throw new NotImplementedException("Invalid Condition Operator: " + Operator);
             }
         }
 
-        private String ConditionSQL(Condition Condition)
+        private String ConditionSQL(Query.Condition Condition)
         {
             switch (Condition.GetType().Name)
             {
@@ -324,11 +324,11 @@ namespace Integrator.Connection.SQLServer
                     return orsql;
 
                 case "Property":
-                    Conditions.Property propcondition = (Conditions.Property)Condition;
+                    Query.Conditions.Property propcondition = (Query.Conditions.Property)Condition;
                     Schema.PropertyType proptype = this.ItemType.PropertyType(propcondition.Name);
                     return "(" + proptype.Name.ToLower() + this.OperatorSQL(propcondition.Operator) + this.ValueSQL(proptype, propcondition.Value) + ")";
                 case "ID":
-                    return "(id='" + ((Conditions.ID)Condition).Value + "')";
+                    return "(id='" + ((Query.Conditions.ID)Condition).Value + "')";
                 default:
                     throw new NotImplementedException("Condition Type not implemented: " + Condition.GetType().Name);
             }
@@ -354,139 +354,7 @@ namespace Integrator.Connection.SQLServer
             }
         }
 
-        private void SetItemProperties(Item Item, SqlDataReader Reader, int StartIndex)
-        {
-            int cnt = StartIndex;
-
-            foreach (Schema.PropertyType proptype in this.ItemType.PropertyTypes)
-            {
-                if (Reader.IsDBNull(cnt))
-                {
-                    Item.Property(proptype).Value = null;
-                }
-                else
-                {
-                    switch (proptype.GetType().Name)
-                    {
-                        case "Boolean":
-
-                            Item.Property(proptype).Value = Reader.GetBoolean(cnt);
-                            break;
-
-                        case "Date":
-
-                            Item.Property(proptype).Value = Reader.GetDateTime(cnt).ToLocalTime();
-                            break;
-
-                        case "Decimal":
-
-                            Item.Property(proptype).Value = Reader.GetDecimal(cnt);
-                            break;
-
-                        case "Double":
-
-                            Item.Property(proptype).Value = Reader.GetDouble(cnt);
-                            break;
-
-                        case "Integer":
-
-                            Item.Property(proptype).Value = Reader.GetInt32(cnt);
-                            break;
-
-                        case "String":
-
-                            Item.Property(proptype).Value = Reader.GetString(cnt);
-                            break;
-
-                        case "Text":
-
-                            TextReader text = Reader.GetTextReader(cnt);
-
-                            Item.Property(proptype).Value = text.ToString();
-                            break;
-
-                        default:
-                            throw new NotImplementedException("PropertyType not implemented: " + proptype.GetType().Name);
-                    }
-                }
-
-                cnt++;
-            }
-        }
-
-        private IEnumerable<Connection.IItem> SelectItems(String SQL)
-        {
-            List<Connection.IItem> items = new List<Connection.IItem>();
-
-            using (SqlConnection connection = new SqlConnection(this.Session.Connection))
-            {
-                connection.Open();
-
-                using (SqlCommand command = new SqlCommand(SQL, connection))
-                {
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            String id = reader.GetString(0);
-                            String configid = reader.GetString(1);
-                            Item item = this.Session.GetItemFromCache(this.ItemType, id, configid);
-                            this.SetItemProperties(item, reader, 2);
-                            items.Add(item);
-                        }
-                    }
-                }
-            }
-
-            return items;
-        }
-
-        internal IEnumerable<Relationship> SelectRelationships(Item Source, String SQL)
-        {
-            List<Relationship> relationships = new List<Relationship>();
-
-            using (SqlConnection connection = new SqlConnection(this.Session.Connection))
-            {
-                connection.Open();
-
-                using (SqlCommand command = new SqlCommand(SQL, connection))
-                {
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            String id = reader.GetString(0);
-                            String configid = reader.GetString(1);
-                            String sourceid = reader.GetString(2);
-
-                            Item related = null;
-
-                            if (!reader.IsDBNull(3))
-                            {
-                                String relatedid = reader.GetString(3);
-
-                                if (((Schema.RelationshipType)this.ItemType).Related != null)
-                                {
-                                    if (relatedid != null)
-                                    {
-                                        related = (Item)this.Session.Get(((Schema.RelationshipType)this.ItemType).Related, relatedid);
-                                    }
-                                }
-                            }
-
-                            Relationship relationship = this.Session.GetRelationshipFromCache((Schema.RelationshipType)this.ItemType, id, configid, Source, related);
-
-                            this.SetItemProperties(relationship, reader, 4);
-                            relationships.Add(relationship);
-                        }
-                    }
-                }
-            }
-
-            return relationships;
-        }
-
-        internal IEnumerable<IItem> Select(Condition Condition)
+        internal IEnumerable<Item> Select(Query.Condition Condition)
         {
             String sql = "select " + this.ColumnsSQL + " from " + this.Name;
 
@@ -495,15 +363,31 @@ namespace Integrator.Connection.SQLServer
                 sql += " where (" + this.ConditionSQL(Condition) + ")";
             }
 
-            return this.SelectItems(sql);
+            return this.Session.SelectItems(this.ItemType, sql);
         }
 
-        internal void Insert(SqlConnection Connection, SqlTransaction Transaction, Item Item)
+        internal IEnumerable<Relationship> Select(Item Source, Query.Condition Condition)
+        {
+            String sql = "select " + this.ColumnsSQL + " from " + this.Name;
+
+            if (Condition != null)
+            {
+                sql += " where ((source_id='" + Source.ID + "') and (" + this.ConditionSQL(Condition) + "))";
+            }
+            else
+            {
+                sql += " where (source_id='" + Source.ID + "')";
+            }
+
+            return this.Session.SelectRelationships(Source, (Schema.RelationshipType)this.ItemType, sql);
+        }
+
+        internal void Insert(SqlConnection Connection, SqlTransaction Transaction, Item Item, String ID, String ConfigID)
         {
             String sql = "insert into " + this.Name;
             sql += " (id,configid";
 
-            String sqlvalues = "('" + Item.ID + "','" + Item.ConfigID + "'";
+            String sqlvalues = "('" + ID + "','" + ConfigID + "'";
 
             if (this.ItemType is Schema.RelationshipType)
             {
@@ -521,15 +405,22 @@ namespace Integrator.Connection.SQLServer
 
             foreach (Schema.PropertyType proptype in this.ItemType.PropertyTypes)
             {
-                IProperty property = Item.Property(proptype);
-                sql += "," + property.PropertyType.Name.ToLower();
-
-                sqlvalues += "," + this.ValueSQL(proptype, property.Value);
-
+                sql += "," + proptype.Name.ToLower();
+                sqlvalues += "," + this.ValueSQL(proptype, Item.GetProperty(proptype));
             }
 
             sql += ") values " + sqlvalues + ");";
 
+
+            using (SqlCommand command = new SqlCommand(sql, Connection, Transaction))
+            {
+                int res = command.ExecuteNonQuery();
+            }
+        }
+
+        internal void Delete(SqlConnection Connection, SqlTransaction Transaction, Item Item)
+        {
+            String sql = "delete from " + this.Name + " where id='" + Item.ID + "'";
 
             using (SqlCommand command = new SqlCommand(sql, Connection, Transaction))
             {
@@ -545,8 +436,6 @@ namespace Integrator.Connection.SQLServer
 
             foreach (Schema.PropertyType proptype in this.ItemType.PropertyTypes)
             {
-                IProperty property = Item.Property(proptype);
-
                 if (first)
                 {
                     sql += " set ";
@@ -556,7 +445,7 @@ namespace Integrator.Connection.SQLServer
                     sql += ",";
                 }
 
-                sql += property.PropertyType.Name.ToLower() + "=" + this.ValueSQL(proptype, property.Value);
+                sql += proptype.Name.ToLower() + "=" + this.ValueSQL(proptype, Item.GetProperty(proptype));
 
                 first = false;
             }

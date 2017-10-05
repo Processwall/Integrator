@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Integrator.Connection
 {
-    public abstract class Relationship : Item
+    public class Relationship : Item
     {
         public Schema.RelationshipType RelationshipType
         {
@@ -20,15 +20,8 @@ namespace Integrator.Connection
 
         public Item Related { get; set; }
 
-        public Relationship(Session Session, Schema.RelationshipType RelationshipType, Item Source, Item Related)
-            : base(Session, RelationshipType)
-        {
-            this.Source = Source;
-            this.Related = Related;
-        }
-
-        public Relationship(Session Session, Schema.RelationshipType RelationshipType, String ID, String ConfigID, Item Source, Item Related)
-            : base(Session, RelationshipType, ID, ConfigID)
+        internal Relationship(Session Session, Schema.RelationshipType RelationshipType, States State, String ID, String ConfigID, Item Source, Item Related)
+            : base(Session, RelationshipType, State, ID, ConfigID)
         {
             this.Source = Source;
             this.Related = Related;

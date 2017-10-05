@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Integrator.Connection
 {
-    public abstract class Session
+    public abstract class Session : IDisposable
     {
         public const String DateTimeFomat = "yyyy-MM-ddTHH:mm:ss";
 
-        public String Name { get; private set; }
+        public Schema.Session Schema { get; private set; }
 
-        public Schema.Session Schema { get; set; }
+        public String Name { get; private set; }
 
         public Log Log { get; private set; }
 
@@ -24,115 +24,210 @@ namespace Integrator.Connection
 
         public abstract void Close();
 
-        private Dictionary<Integrator.Schema.ItemType, Dictionary<String, Item>> ItemCache;
+        private Dictionary<Schema.ItemType, Dictionary<String, Item>> Cache;
 
-        public Item GetFromCache(Integrator.Schema.ItemType ItemType, String ID)
+        protected Item Build(Schema.ItemType ItemType, Item.States State, String ID, String ConfigID)
         {
-            if (this.ItemCache.ContainsKey(ItemType))
+            Item item = null;
+
+            if (String.IsNullOrEmpty(ID))
             {
-                if (this.ItemCache[ItemType].ContainsKey(ID))
-                {
-                    return this.ItemCache[ItemType][ID];
-                }
-                else
-                {
-                    return null;
-                }
+                item = new Item(this, ItemType, State, ID, ConfigID);
             }
             else
             {
-                return null;
+                if (this.Cache.ContainsKey(ItemType))
+                {
+                    if (this.Cache[ItemType].ContainsKey(ID))
+                    {
+                        item = this.Cache[ItemType][ID];
+                    }
+                    else
+                    {
+                        item = new Item(this, ItemType, State, ID, ConfigID);
+                        this.Cache[ItemType][ID] = item;
+                    }
+                }
+                else
+                {
+                    this.Cache[ItemType] = new Dictionary<String, Item>();
+                    item = new Item(this, ItemType, State, ID, ConfigID);
+                    this.Cache[ItemType][ID] = item;
+                }
+            }
+
+            return item;
+        }
+
+        protected void Created(Item Item, String ID, String ConfigID)
+        {
+            if (!(String.IsNullOrEmpty(ID) && String.IsNullOrEmpty(ConfigID)))
+            {
+                Item.Created(ID, ConfigID);
+
+                if (!this.Cache.ContainsKey(Item.ItemType))
+                {
+                    this.Cache[Item.ItemType] = new Dictionary<String, Item>();
+                }
+
+                this.Cache[Item.ItemType][ID] = Item;
+            }
+            else
+            {
+                throw new Exceptions.ArgumentException("ID and ConfigID must be specified");
             }
         }
 
-        internal void AddToCache(Item Item)
+        protected void Updated(Item Item)
         {
-            if (!this.ItemCache.ContainsKey(Item.ItemType))
+            Item.Updated();
+        }
+
+        protected void Deleted(Item Item)
+        {
+            this.Cache[Item.ItemType].Remove(Item.ID);
+        }
+
+        protected File Build(Schema.FileType FileType, Item.States State, String ID, String ConfigID)
+        {
+            File file = null;
+
+            if (String.IsNullOrEmpty(ID))
             {
-                this.ItemCache[Item.ItemType] = new Dictionary<String, Item>();
-                this.ItemCache[Item.ItemType][Item.ID] = Item;
+                file = new File(this, FileType, State, ID, ConfigID);
             }
             else
             {
-                if (!this.ItemCache[Item.ItemType].ContainsKey(Item.ID))
+                if (this.Cache.ContainsKey(FileType))
                 {
-                    this.ItemCache[Item.ItemType][Item.ID] = Item;
+                    if (this.Cache[FileType].ContainsKey(ID))
+                    {
+                        file = (File)this.Cache[FileType][ID];
+                    }
+                    else
+                    {
+                        file = new File(this, FileType, State, ID, ConfigID);
+                        this.Cache[FileType][ID] = file;
+                    }
                 }
                 else
                 {
-                    throw new Exceptions.ArgumentException("Item already in Cache");
+                    this.Cache[FileType] = new Dictionary<String, Item>();
+                    file = new File(this, FileType, State, ID, ConfigID);
+                    this.Cache[FileType][ID] = file;
                 }
             }
+
+            return file;
+        }
+
+        protected Relationship Build(Schema.RelationshipType RelationshipType, Item.States State, String ID, String ConfigID, Item Source, Item Related)
+        {
+            Relationship relationship = null;
+
+            if (String.IsNullOrEmpty(ID))
+            {
+                relationship = new Relationship(this, RelationshipType, State, ID, ConfigID, Source, Related);
+            }
+            else
+            {
+                if (this.Cache.ContainsKey(RelationshipType))
+                {
+                    if (this.Cache[RelationshipType].ContainsKey(ID))
+                    {
+                        relationship = (Relationship)this.Cache[RelationshipType][ID];
+                    }
+                    else
+                    {
+                        relationship = new Relationship(this, RelationshipType, State, ID, ConfigID, Source, Related);
+                        this.Cache[RelationshipType][ID] = relationship;
+                    }
+                }
+                else
+                {
+                    this.Cache[RelationshipType] = new Dictionary<String, Item>();
+                    relationship = new Relationship(this, RelationshipType, State, ID, ConfigID, Source, Related);
+                    this.Cache[RelationshipType][ID] = relationship;
+                }
+            }
+
+            return relationship;
         }
 
         public abstract Transaction BeginTransaction();
 
-        protected abstract Item Create(Schema.ItemType ItemType);
-
-        protected abstract Item Create(Schema.ItemType ItemType, String ID, String ConfigID);
-
-        protected abstract File Create(Schema.ItemType ItemType, String Filename);
-
-        protected abstract File Create(Schema.ItemType ItemType, String ID, String ConfigID, String Filename);
-
-        public Item Create(Transaction Transaction, Schema.ItemType ItemType)
+        public Item Create(Schema.ItemType ItemType, Transaction Transaction)
         {
-            Item ret = this.Create(ItemType);
-            Transaction.Add(ret);
-            return ret;
+            Item item = this.Build(ItemType, Item.States.Create, null, null);
+            Transaction.Add(item);
+            return item;
         }
 
-        public Item Create(Transaction Transaction, String ItemTypeName)
+        public File Create(Schema.FileType FileType, Transaction Transaction)
         {
-            Schema.ItemType itemtype = this.Schema.ItemType(ItemTypeName);
-            return this.Create(Transaction, itemtype);
+            File file = this.Build(FileType, Item.States.Create, null, null);
+            Transaction.Add(file);
+            return file;
         }
 
-        public File Create(Transaction Transaction, Schema.FileType FileType, String Filename)
+        public Relationship Create(Schema.RelationshipType RelationshipType, Item Source, Item Related, Transaction Transaction)
         {
-            File ret = this.Create(FileType, Filename);
-            Transaction.Add(ret);
-            return ret;
+            Relationship relationship = this.Build(RelationshipType, Item.States.Create, null, null, Source, Related);
+            Transaction.Add(relationship);
+            return relationship;
         }
 
-        public File Create(Transaction Transaction, String FileTypeName, String Filename)
+        public abstract IEnumerable<Item> Get(Schema.ItemType ItemType);
+
+        public abstract Item Get(Schema.ItemType ItemType, String ID);
+
+        public abstract IEnumerable<Item> Get(Schema.ItemType ItemType, Query.Condition Condition);
+
+        public abstract IEnumerable<File> Get(Schema.FileType FileType);
+
+        public abstract File Get(Schema.FileType FileType, String ID);
+
+        public abstract IEnumerable<File> Get(Schema.FileType FileType, Query.Condition Condition);
+
+        public abstract IEnumerable<Relationship> Get(Schema.RelationshipType RelationshipType, Item Source);
+
+        public abstract Relationship Get(Schema.RelationshipType RelationshipType, Item Source, String ID);
+
+        public abstract IEnumerable<Relationship> Get(Schema.RelationshipType RelationshipType, Item Source, Query.Condition Condition);
+
+        public void Update(Item Item, Transaction Transaction)
         {
-            Schema.FileType filetype = this.Schema.FileType(FileTypeName);
-            return this.Create(Transaction, filetype, Filename);
+            Transaction.Add(Item);
+            Item.Update();
         }
 
-        public abstract IEnumerable<Item> Index(Schema.ItemType ItemType);
-
-        public IEnumerable<Item> Index(String ItemTypeName)
+        public void Delete(Item Item, Transaction Transaction)
         {
-            Schema.ItemType itemtype = this.Schema.ItemType(ItemTypeName);
-            return this.Index(itemtype);
+            Transaction.Add(Item);
+            Item.Delete();
         }
 
-        public abstract IEnumerable<Item> Query(Schema.ItemType ItemType, Condition Condition);
-
-        public IEnumerable<Item> Query(String ItemTypeName, Condition Condition)
+        public void Dispose()
         {
-            Schema.ItemType itemtype = this.Schema.ItemType(ItemTypeName);
-            return this.Query(itemtype, Condition);
+            this.Close();
         }
 
-        public abstract Item Get(String ID);
-
-        public Session(String Name, Log Log)
+        public Session(Schema.Session Schema, String Name, Log Log)
         {
+            this.Cache = new Dictionary<Schema.ItemType, Dictionary<String, Item>>();
+            this.Schema = Schema;
             this.Name = Name;
             this.Log = Log;
             this.Parameters = new Integrator.Connection.Parameters(this.Name, System.Security.Cryptography.DataProtectionScope.LocalMachine, this.ParameterNames);
-            this.ItemCache = new Dictionary<Schema.ItemType, Dictionary<String, Item>>();
         }
 
-        public Session(String Name, String Token, Log Log)
+        public Session(Schema.Session Schema, String Name, String Token, Log Log)
         {
+            this.Cache = new Dictionary<Schema.ItemType, Dictionary<String, Item>>();
+            this.Schema = Schema;
             this.Name = Name;
             this.Log = Log;
             this.Parameters = new Parameters(this.Name, System.Security.Cryptography.DataProtectionScope.LocalMachine, Token);
-            this.ItemCache = new Dictionary<Schema.ItemType, Dictionary<String, Item>>();
         }
     }
 }

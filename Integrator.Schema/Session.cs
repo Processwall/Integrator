@@ -212,7 +212,7 @@ namespace Integrator.Schema
             return this.Name;
         }
 
-        public Session(XmlDocument Document)
+        internal Session(XmlDocument Document)
         {
             this.ListsCache = new Dictionary<String, List>();
             this.ItemTypeCache = new Dictionary<String, ItemType>();

@@ -13,11 +13,7 @@ namespace Integrator.Connection.SQLServer.Debug
     {
         static void Main(string[] args)
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Stream resourcestream = assembly.GetManifestResourceStream("Integrator.Connection.SQLServer.Debug.Schema.xml");
-            XmlDocument doc = new XmlDocument();
-            doc.Load(resourcestream);
-            Schema.Session schema = new Schema.Session(doc);
+            Schema.Session schema = Schema.Manager.Load("Integrator.Connection.SQLServer.Debug", "Integrator.Connection.SQLServer.Debug.Schema.xml");
 
             Logs.Console log = new Logs.Console();
 

@@ -156,44 +156,116 @@ namespace Integrator.Connection
 
         public abstract Transaction BeginTransaction();
 
-        public Item Create(Schema.ItemType ItemType, Transaction Transaction)
+        public Item CreateItem(Schema.ItemType ItemType, Transaction Transaction)
         {
-            Item item = this.Build(ItemType, Item.States.Create, null, null);
+            Item item = this.Build(ItemType, Connection.Item.States.Create, null, null);
             Transaction.Add(item);
             return item;
         }
 
-        public File Create(Schema.FileType FileType, Transaction Transaction)
+        public Item CreateItem(String ItemTypeName, Transaction Transaction)
         {
-            File file = this.Build(FileType, Item.States.Create, null, null);
+            Schema.ItemType ItemType = this.Schema.ItemType(ItemTypeName);
+            return this.CreateItem(ItemType, Transaction);
+        }
+
+        public File CreateFile(Schema.FileType FileType, Transaction Transaction)
+        {
+            File file = this.Build(FileType, Connection.Item.States.Create, null, null);
             Transaction.Add(file);
             return file;
         }
 
-        public Relationship Create(Schema.RelationshipType RelationshipType, Item Source, Item Related, Transaction Transaction)
+        public File CreateFile(String FileTypeName, Transaction Transaction)
         {
-            Relationship relationship = this.Build(RelationshipType, Item.States.Create, null, null, Source, Related);
+            Schema.FileType FileType = this.Schema.FileType(FileTypeName);
+            return this.CreateFile(FileType, Transaction);
+        }
+
+        public Relationship CreateRelationship(Schema.RelationshipType RelationshipType, Item Source, Item Related, Transaction Transaction)
+        {
+            Relationship relationship = this.Build(RelationshipType, Connection.Item.States.Create, null, null, Source, Related);
             Transaction.Add(relationship);
             return relationship;
         }
 
-        public abstract IEnumerable<Item> Get(Schema.ItemType ItemType);
+        public Relationship CreateRelationship(String RelationshipTypeName, Item Source, Item Related, Transaction Transaction)
+        {
+            Schema.RelationshipType RelationshipType = Source.ItemType.RelationshipType(RelationshipTypeName);
+            return this.CreateRelationship(RelationshipType, Source, Related, Transaction);
+        }
 
-        public abstract Item Get(Schema.ItemType ItemType, String ID);
+        public abstract IEnumerable<Item> ReadItems(Schema.ItemType ItemType);
 
-        public abstract IEnumerable<Item> Get(Schema.ItemType ItemType, Query.Condition Condition);
+        public IEnumerable<Item> ReadItems(String ItemTypeName)
+        {
+            Schema.ItemType ItemType = this.Schema.ItemType(ItemTypeName);
+            return this.ReadItems(ItemType);
+        }
 
-        public abstract IEnumerable<File> Get(Schema.FileType FileType);
+        public abstract Item ReadItem(Schema.ItemType ItemType, String ID);
 
-        public abstract File Get(Schema.FileType FileType, String ID);
+        public Item Item(String ItemTypeName, String ID)
+        {
+            Schema.ItemType ItemType = this.Schema.ItemType(ItemTypeName);
+            return this.ReadItem(ItemType, ID);
+        }
 
-        public abstract IEnumerable<File> Get(Schema.FileType FileType, Query.Condition Condition);
+        public abstract IEnumerable<Item> ReadItems(Schema.ItemType ItemType, Query.Condition Condition);
 
-        public abstract IEnumerable<Relationship> Get(Schema.RelationshipType RelationshipType, Item Source);
+        public IEnumerable<Item> ReadItems(String ItemTypeName, Query.Condition Condition)
+        {
+            Schema.ItemType ItemType = this.Schema.ItemType(ItemTypeName);
+            return this.ReadItems(ItemType, Condition);
+        }
 
-        public abstract Relationship Get(Schema.RelationshipType RelationshipType, Item Source, String ID);
+        public abstract IEnumerable<File> ReadFiles(Schema.FileType FileType);
 
-        public abstract IEnumerable<Relationship> Get(Schema.RelationshipType RelationshipType, Item Source, Query.Condition Condition);
+        public IEnumerable<File> ReadFiles(String FileTypeName)
+        {
+            Schema.FileType FileType = this.Schema.FileType(FileTypeName);
+            return this.ReadFiles(FileType);
+        }
+
+        public abstract File ReadFile(Schema.FileType FileType, String ID);
+
+        public File File(String FileTypeName, String ID)
+        {
+            Schema.FileType FileType = this.Schema.FileType(FileTypeName);
+            return this.ReadFile(FileType, ID);
+        }
+
+        public abstract IEnumerable<File> ReadFiles(Schema.FileType FileType, Query.Condition Condition);
+
+        public IEnumerable<File> ReadFiles(String FileTypeName, Query.Condition Condition)
+        {
+            Schema.FileType FileType = this.Schema.FileType(FileTypeName);
+            return this.ReadFiles(FileType, Condition);
+        }
+
+        public abstract IEnumerable<Relationship> ReadRelationships(Schema.RelationshipType RelationshipType, Item Source);
+
+        public IEnumerable<Relationship> ReadRelationships(String RelationshipTypeName, Item Source)
+        {
+            Schema.RelationshipType RelationshipType = Source.ItemType.RelationshipType(RelationshipTypeName);
+            return this.ReadRelationships(RelationshipType, Source);
+        }
+
+        public abstract Relationship ReadRelationship(Schema.RelationshipType RelationshipType, Item Source, String ID);
+
+        public Relationship ReadRelationship(String RelationshipTypeName, Item Source, String ID)
+        {
+            Schema.RelationshipType RelationshipType = Source.ItemType.RelationshipType(RelationshipTypeName);
+            return this.ReadRelationship(RelationshipType, Source, ID);
+        }
+
+        public abstract IEnumerable<Relationship> ReadRelationships(Schema.RelationshipType RelationshipType, Item Source, Query.Condition Condition);
+
+        public IEnumerable<Relationship> ReadRelationships(String RelationshipTypeName, Item Source, Query.Condition Condition)
+        {
+            Schema.RelationshipType RelationshipType = Source.ItemType.RelationshipType(RelationshipTypeName);
+            return this.ReadRelationships(RelationshipType, Source, Condition);
+        }
 
         public void Update(Item Item, Transaction Transaction)
         {

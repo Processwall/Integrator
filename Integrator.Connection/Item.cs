@@ -78,14 +78,7 @@ namespace Integrator.Connection
         {
             if (PropertyType != null)
             {
-                if (PropertyType.ItemType.Equals(this.ItemType))
-                {
-                    this.PropertyCache[PropertyType] = Value;
-                }
-                else
-                {
-                    throw new Exceptions.ArgumentException("Invalid PropertyType");
-                }
+                this.PropertyCache[PropertyType] = Value;
             }
             else
             {
@@ -103,24 +96,18 @@ namespace Integrator.Connection
         {
             if (PropertyType != null)
             {
-                if (PropertyType.ItemType.Equals(this.ItemType))
+                if (!this.PropertyCache.ContainsKey(PropertyType))
                 {
-                    if (!this.PropertyCache.ContainsKey(PropertyType))
-                    {
-                        this.PropertyCache[PropertyType] = null;
-                    }
+                    this.PropertyCache[PropertyType] = null;
+                }
 
-                    return this.PropertyCache[PropertyType];
-                }
-                else
-                {
-                    throw new Exceptions.ArgumentException("Invalid PropertyType");
-                }
+                return this.PropertyCache[PropertyType];
+
             }
             else
             {
                 throw new Exceptions.ArgumentException("PropertyType must be specified");
-            }  
+            }
         }
 
         public Object GetProperty(String Name)

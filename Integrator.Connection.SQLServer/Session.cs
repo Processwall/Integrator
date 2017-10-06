@@ -143,7 +143,7 @@ namespace Integrator.Connection.SQLServer
                         {
                             String id = reader.GetString(0);
                             String configid = reader.GetString(1);
-                            Item item = this.Build(ItemType, Item.States.Read, id, configid);
+                            Item item = this.Build(ItemType, Integrator.Connection.Item.States.Read, id, configid);
                             SetItemProperties(item, reader, 2);
                             items.Add(item);
                         }
@@ -182,12 +182,12 @@ namespace Integrator.Connection.SQLServer
                                 {
                                     if (relatedid != null)
                                     {
-                                        related = this.Get(RelationshipType.Related, relatedid);
+                                        related = this.ReadItem(RelationshipType.Related, relatedid);
                                     }
                                 }
                             }
 
-                            Relationship relationship = this.Build(RelationshipType, Item.States.Read, id, configid, Source, related);
+                            Relationship relationship = this.Build(RelationshipType, Integrator.Connection.Item.States.Read, id, configid, Source, related);
                             SetItemProperties(relationship, reader, 4);
                             relationships.Add(relationship);
                         }
@@ -198,12 +198,12 @@ namespace Integrator.Connection.SQLServer
             return relationships;
         }
 
-        public override IEnumerable<Item> Get(Schema.ItemType ItemType)
+        public override IEnumerable<Item> ReadItems(Schema.ItemType ItemType)
         {
             return this.Table(ItemType).Select(null);
         }
 
-        public override Item Get(Schema.ItemType ItemType, String ID)
+        public override Item ReadItem(Schema.ItemType ItemType, String ID)
         {
             Query.Conditions.ID condition = Integrator.Conditions.ID(ID);
             IEnumerable<Item> items = this.Table(ItemType).Select(condition);
@@ -218,32 +218,32 @@ namespace Integrator.Connection.SQLServer
             }
         }
 
-        public override IEnumerable<Item> Get(Schema.ItemType ItemType, Query.Condition Condition)
+        public override IEnumerable<Item> ReadItems(Schema.ItemType ItemType, Query.Condition Condition)
         {
             return this.Table(ItemType).Select(Condition);
         }
 
-        public override IEnumerable<File> Get(Schema.FileType FileType)
+        public override IEnumerable<File> ReadFiles(Schema.FileType FileType)
         {
             throw new NotImplementedException();
         }
 
-        public override File Get(Schema.FileType FileType, string ID)
+        public override File ReadFile(Schema.FileType FileType, string ID)
         {
             throw new NotImplementedException();
         }
 
-        public override IEnumerable<File> Get(Schema.FileType FileType, Query.Condition Condition)
+        public override IEnumerable<File> ReadFiles(Schema.FileType FileType, Query.Condition Condition)
         {
             throw new NotImplementedException();
         }
 
-        public override IEnumerable<Relationship> Get(Schema.RelationshipType RelationshipType, Item Source)
+        public override IEnumerable<Relationship> ReadRelationships(Schema.RelationshipType RelationshipType, Item Source)
         {
             return this.Table(RelationshipType).Select(Source, null);
         }
 
-        public override Relationship Get(Schema.RelationshipType RelationshipType, Item Source, string ID)
+        public override Relationship ReadRelationship(Schema.RelationshipType RelationshipType, Item Source, string ID)
         {
             Query.Conditions.ID condition = Integrator.Conditions.ID(ID);
             IEnumerable<Relationship> items = this.Table(RelationshipType).Select(Source, condition);
@@ -258,7 +258,7 @@ namespace Integrator.Connection.SQLServer
             }
         }
 
-        public override IEnumerable<Relationship> Get(Schema.RelationshipType RelationshipType, Item Source, Query.Condition Condition)
+        public override IEnumerable<Relationship> ReadRelationships(Schema.RelationshipType RelationshipType, Item Source, Query.Condition Condition)
         {
             return this.Table(RelationshipType).Select(Source, Condition);
         }

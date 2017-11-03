@@ -28,7 +28,7 @@ namespace Integrator.Sync
             }
         }
 
-        public Connection.ISession Source
+        public Connection.Session Source
         {
             get
             {
@@ -36,7 +36,7 @@ namespace Integrator.Sync
             }
         }
 
-        public Connection.ISession Target
+        public Connection.Session Target
         {
             get
             {

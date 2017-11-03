@@ -42,14 +42,14 @@ namespace Integrator.Sync
             }
         }
 
-        private Dictionary<String, Connection.ISession> _connectionsCache;
-        private Dictionary<String, Connection.ISession> ConnectionsCache
+        private Dictionary<String, Connection.Session> _connectionsCache;
+        private Dictionary<String, Connection.Session> ConnectionsCache
         {
             get
             {
                 if (this._connectionsCache == null)
                 {
-                    this._connectionsCache = new Dictionary<string, Integrator.Connection.ISession>();
+                    this._connectionsCache = new Dictionary<string, Integrator.Connection.Session>();
 
                     XmlNode connectionsnode = this.SyncNode.SelectSingleNode("connections");
 
@@ -69,7 +69,7 @@ namespace Integrator.Sync
                         String assemblylocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + assemblyname + ".dll";
                         Assembly assembly = Assembly.LoadFrom(assemblylocation);
                         Type classtype = assembly.GetType(classname);
-                        this._connectionsCache[name] = (Connection.ISession)Activator.CreateInstance(classtype);
+                        this._connectionsCache[name] = (Connection.Session)Activator.CreateInstance(classtype);
                         this._connectionsCache[name].Name = name;
 
                         // Open
@@ -81,7 +81,7 @@ namespace Integrator.Sync
             }
         }
 
-        public IEnumerable<Connection.ISession> Connections
+        public IEnumerable<Connection.Session> Connections
         {
             get
             {
@@ -89,7 +89,7 @@ namespace Integrator.Sync
             }
         }
 
-        public Connection.ISession Connection(String Name)
+        public Connection.Session Connection(String Name)
         {
             if (this.ConnectionsCache.ContainsKey(Name))
             {

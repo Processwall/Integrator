@@ -54,8 +54,7 @@ namespace Integrator.Connection.Token.Console
 
             if (connectiontype != null)
             {
-                Connection.ISession connection = (Connection.ISession)System.Activator.CreateInstance(connectiontype);
-                connection.Name = name;
+                Connection.Session connection = (Connection.Session)System.Activator.CreateInstance(connectiontype, new Object[] {null, name, null});
 
                 System.Console.WriteLine();
                 System.Console.WriteLine("Enter Parameter Values: ");

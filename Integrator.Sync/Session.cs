@@ -60,20 +60,26 @@ namespace Integrator.Sync
 
                     foreach (XmlNode connectionnode in connectionsnode.SelectNodes("connection"))
                     {
+                        // Get Connection Attributes
                         String name = connectionnode.Attributes["name"].Value;
                         String assemblyname = connectionnode.Attributes["assembly"].Value;
                         String classname = connectionnode.Attributes["class"].Value;
                         String token = connectionnode.Attributes["token"].Value;
 
+                        // Get Schema Attributes
+                        XmlNode schemanode = connectionnode.SelectSingleNode("schema");
+                        String schemaassemblyname = schemanode.Attributes["assembly"].Value;
+                        String schemaresource = schemanode.Attributes["resource"].Value;
+
+                        // Open Schema
+                        Integrator.Schema.Session schema = Integrator.Schema.Manager.Load(schemaassemblyname, schemaresource);
+
                         // Create Connection
                         String assemblylocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + assemblyname + ".dll";
                         Assembly assembly = Assembly.LoadFrom(assemblylocation);
                         Type classtype = assembly.GetType(classname);
-                        this._connectionsCache[name] = (Connection.Session)Activator.CreateInstance(classtype);
-                        this._connectionsCache[name].Name = name;
-
-                        // Open
-                        this._connectionsCache[name].Open(token);
+                        this._connectionsCache[name] = (Connection.Session)Activator.CreateInstance(classtype, new Object[] {schema, name, token, this.Log});
+                        this._connectionsCache[name].Open();
                     }
                 }
 

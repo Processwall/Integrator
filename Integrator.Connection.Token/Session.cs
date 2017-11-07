@@ -39,7 +39,7 @@ namespace Integrator.Connection.Token
 
                     foreach(Type type in this.Assembly.GetTypes())
                     {
-                        if (type.GetInterfaces().Contains(typeof(Connection.ISession)))
+                        if ((type.BaseType != null) && (type.BaseType == typeof(Connection.Session)))
                         {
                             this._connectionTypes.Add(type);
                         }

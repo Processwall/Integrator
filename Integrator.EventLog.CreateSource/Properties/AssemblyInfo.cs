@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Integrator.EventLog.CreateSource")]
+[assembly: AssemblyTitle("Integrator EventLog CreateSource")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Processwall Limited")]
-[assembly: AssemblyProduct("Integrator.EventLog.CreateSource")]
+[assembly: AssemblyProduct("Integrator EventLog CreateSource")]
 [assembly: AssemblyCopyright("Copyright © Processwall Limited 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

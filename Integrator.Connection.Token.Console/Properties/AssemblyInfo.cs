@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Integrator.Connection.Token.Console")]
+[assembly: AssemblyTitle("Integrator Connection Token Console")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Processwall Limited")]
-[assembly: AssemblyProduct("Integrator.Connection.Token.Console")]
+[assembly: AssemblyProduct("Integrator Connection Token Console")]
 [assembly: AssemblyCopyright("Copyright © Processwall Limited 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

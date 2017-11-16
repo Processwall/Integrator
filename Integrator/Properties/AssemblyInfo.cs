@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Processwall Limited")]
 [assembly: AssemblyProduct("Integrator")]
-[assembly: AssemblyCopyright("Copyright © Processwall Limited  2016")]
+[assembly: AssemblyCopyright("Copyright © Processwall Limited  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

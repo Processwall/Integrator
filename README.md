@@ -1,6 +1,6 @@
 ### Integrator
 
-Integrator provides a set of .NET library for building migration and synchroisation applications for PLM (Product Lifecycle Management) applications.
+Integrator provides a set of .NET libraries for building migration and synchronisation utilities for PLM (Product Lifecycle Management) Applications.
 
 Copyright (C) 2017 [Processwall Limited](http://www.processwall.com).
 

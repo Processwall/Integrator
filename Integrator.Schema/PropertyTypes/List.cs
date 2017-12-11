@@ -42,6 +42,11 @@ namespace Integrator.Schema.PropertyTypes
             }
         }
 
+        public override void Validate(object Value)
+        {
+            throw new NotImplementedException();
+        }
+
         internal List(ItemType ItemType, XmlNode Node)
             :base(ItemType, Node)
         {

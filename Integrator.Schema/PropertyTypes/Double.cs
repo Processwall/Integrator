@@ -34,6 +34,11 @@ namespace Integrator.Schema.PropertyTypes
 {
     public class Double : PropertyType
     {
+        public override void Validate(object Value)
+        {
+            throw new NotImplementedException();
+        }
+
         internal Double(ItemType ItemType, XmlNode Node)
             :base(ItemType, Node)
         {

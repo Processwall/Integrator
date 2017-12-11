@@ -82,6 +82,8 @@ namespace Integrator.Schema
             }
         }
 
+        public abstract void Validate(Object Value);
+
         public Boolean ReadOnly
         {
             get

@@ -103,6 +103,7 @@ namespace Integrator.Connection
         {
             if (PropertyType != null)
             {
+                PropertyType.Validate(Value);
                 this.PropertyCache[PropertyType] = Value;
             }
             else

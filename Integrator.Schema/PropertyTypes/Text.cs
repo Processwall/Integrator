@@ -34,6 +34,17 @@ namespace Integrator.Schema.PropertyTypes
 {
     public class Text : PropertyType
     {
+        public override void Validate(object Value)
+        {
+            if (Value != null)
+            {
+                if (!(Value is System.String))
+                {
+                    throw new Exceptions.ArgumentException("Value of Text Property " + this.Name + " must be a System.String: " + Value.GetType().FullName);
+                }
+            }
+        }
+
         internal Text(ItemType ItemType, XmlNode Node)
             :base(ItemType, Node)
         {

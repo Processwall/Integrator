@@ -34,6 +34,11 @@ namespace Integrator.Schema.PropertyTypes
 {
     public class Date : PropertyType
     {
+        public override void Validate(object Value)
+        {
+            throw new NotImplementedException();
+        }
+
         internal Date(ItemType ItemType, XmlNode Node)
             :base(ItemType, Node)
         {

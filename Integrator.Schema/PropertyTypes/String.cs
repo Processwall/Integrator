@@ -60,6 +60,24 @@ namespace Integrator.Schema.PropertyTypes
             }
         }
 
+        public override void Validate(object Value)
+        {
+            if (Value != null)
+            {
+                if (Value is System.String)
+                {
+                    if (((System.String)Value).Length > this.Length)
+                    {
+                        throw new Exceptions.ArgumentException("Value of String Property " + this.Name + " is longer than " + this.Length + ": " + ((System.String)Value).Length);
+                    }
+                }
+                else
+                {
+                    throw new Exceptions.ArgumentException("Value of Property " + this.Name + " must be a System.String: " + Value.GetType().FullName);
+                }
+            }
+        }
+
         internal String(ItemType ItemType, XmlNode Node)
             :base(ItemType, Node)
         {

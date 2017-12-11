@@ -34,6 +34,11 @@ namespace Integrator.Schema.PropertyTypes
 {
     public class Integer : PropertyType
     {
+        public override void Validate(object Value)
+        {
+            throw new NotImplementedException();
+        }
+
         internal Integer (ItemType ItemType, XmlNode Node)
             :base(ItemType, Node)
         {

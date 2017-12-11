@@ -34,6 +34,17 @@ namespace Integrator.Schema.PropertyTypes
 {
     public class Boolean : PropertyType
     {
+        public override void Validate(object Value)
+        {
+            if (Value != null)
+            {
+                if (!(Value is System.Boolean))
+                {
+                    throw new Exceptions.ArgumentException("Value of Boolean Property " + this.Name + " must be a System.Boolean: " + Value.GetType().FullName);
+                }
+            }
+        }
+
         internal Boolean(ItemType ItemType, XmlNode Node)
             :base(ItemType, Node)
         {

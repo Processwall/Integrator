@@ -34,6 +34,11 @@ namespace Integrator.Schema.PropertyTypes
 {
     public class Decimal : PropertyType
     {
+        public override void Validate(object Value)
+        {
+            throw new NotImplementedException();
+        }
+
         internal Decimal(ItemType ItemType, XmlNode Node)
             : base(ItemType, Node)
         {

@@ -36,7 +36,13 @@ namespace Integrator.Schema.PropertyTypes
     {
         public override void Validate(object Value)
         {
-            throw new NotImplementedException();
+            if (Value != null)
+            {
+                if (!(Value is System.Int32))
+                {
+                    throw new Exceptions.ArgumentException("Value of Integer Property " + this.Name + " must be a System.Int32: " + Value.GetType().FullName);
+                }
+            }
         }
 
         internal Integer (ItemType ItemType, XmlNode Node)
